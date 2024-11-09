@@ -67,6 +67,20 @@ function App() {
     }));
   };
 
+  const handleDeleteTask = (columnId, taskId) => {
+    setColumns(columns.map(column => {
+      if (column.id === columnId) {
+        return {
+          ...column,
+          tasks: column.tasks.filter(task => task.id !== taskId),
+        };
+      }
+      return column;
+    }));
+
+    console.log('Task deleted:', taskId);
+  };
+
   const onDragEnd = (result) => {
     const { destination, source } = result;
 
@@ -79,39 +93,27 @@ function App() {
       return;
     }
 
-    const sourceColumn = columns.find((col) => col.id === source.droppableId);
-    const destColumn = columns.find((col) => col.id === destination.droppableId);
+    const sourceColumnIndex = columns.findIndex(column => column.id === source.droppableId);
+    const destColumnIndex = columns.findIndex(column => column.id === destination.droppableId);
 
-    if (!sourceColumn || !destColumn) return;
+    const sourceColumn = columns[sourceColumnIndex];
+    const destColumn = columns[destColumnIndex];
 
-    const newColumns = [...columns];
-    const sourceColumnIndex = columns.findIndex((col) => col.id === source.droppableId);
-    const destColumnIndex = columns.findIndex((col) => col.id === destination.droppableId);
+    const sourceTasks = Array.from(sourceColumn.tasks);
+    const destTasks = Array.from(destColumn.tasks);
 
-    if (source.droppableId === destination.droppableId) {
-      const newTasks = Array.from(sourceColumn.tasks);
-      const [removed] = newTasks.splice(source.index, 1);
-      newTasks.splice(destination.index, 0, removed);
+    const [movedTask] = sourceTasks.splice(source.index, 1);
+    destTasks.splice(destination.index, 0, movedTask);
 
-      newColumns[sourceColumnIndex] = {
-        ...sourceColumn,
-        tasks: newTasks,
-      };
-    } else {
-      const sourceTasks = Array.from(sourceColumn.tasks);
-      const destTasks = Array.from(destColumn.tasks);
-      const [removed] = sourceTasks.splice(source.index, 1);
-      destTasks.splice(destination.index, 0, removed);
-
-      newColumns[sourceColumnIndex] = {
-        ...sourceColumn,
-        tasks: sourceTasks,
-      };
-      newColumns[destColumnIndex] = {
-        ...destColumn,
-        tasks: destTasks,
-      };
-    }
+    const newColumns = Array.from(columns);
+    newColumns[sourceColumnIndex] = {
+      ...sourceColumn,
+      tasks: sourceTasks,
+    };
+    newColumns[destColumnIndex] = {
+      ...destColumn,
+      tasks: destTasks,
+    };
 
     setColumns(newColumns);
   };
@@ -131,6 +133,7 @@ function App() {
               key={column.id} 
               column={column} 
               onAddTask={handleAddTask}
+              onDeleteTask={handleDeleteTask}
             />
           ))}
         </div>

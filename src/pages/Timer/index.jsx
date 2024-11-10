@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useList } from '../../context/ListContext';
 import { invoke } from '@tauri-apps/api/core';
 import AddTask from '../../components/AddTask';
@@ -7,12 +7,40 @@ import { ChevronLeft } from 'lucide-react';
 
 const Timer = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const { todayTasks } = location.state;
+    const { lists, setLists, currentList, setCurrentList } = useList();
+    const todayTasks = currentList.columns.find(column => column.id === 'today').tasks;
 
     const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
     const [currentTask, setCurrentTask] = useState(todayTasks[0]);
     const [currentCountdown, setCurrentCountdown] = useState(todayTasks[0].time + ':00'); // Initialize with seconds
+
+    const handleAddTask = (task) => {
+        const newTask = {
+          ...task,
+          id: Math.random().toString(36).substr(2, 9), // Ensure unique id
+        };
+    
+        const updatedLists = lists.map(list => {
+          if (list === currentList) {
+            return {
+              ...list,
+              columns: list.columns.map(column => {
+                if (column.id === 'today') {
+                  return {
+                    ...column,
+                    tasks: [...column.tasks, newTask],
+                  };
+                }
+                return column;
+              }),
+            };
+          }
+          return list;
+        });
+    
+        setLists(updatedLists);
+        setCurrentList(updatedLists.find(list => list.title === currentList.title));
+    };
 
     useEffect(() => {
         invoke('set_window_size', { size: 'small' });
@@ -88,7 +116,7 @@ const Timer = () => {
                     )
                 ))}
 
-                <AddTask/>
+                <AddTask onAddTask={(task) => handleAddTask(task)}/>
             </div>
 
             <button className='font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-indigo-500 to-secondary hover:-translate-y-1 duration-100'>

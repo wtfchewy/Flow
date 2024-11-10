@@ -7,6 +7,10 @@ import { useNavigate } from 'react-router-dom';
 const Column = ({ column, onAddTask, onDeleteTask }) => {
   const navigate = useNavigate();
 
+  const openTimer = () => {
+    navigate('/timer');
+  };
+
   return (
     <div className={`w-1/4 bg-column rounded-lg border border-zinc-700 p-4 flex flex-col  ${column.id == 'today' ? 'border-secondary' : ''} `}>
       <h2 className="text-lg font-semibold mb-4 text-white">{column.title} ({column.tasks.length})</h2>
@@ -27,7 +31,7 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
           </div>
         )}
       </Droppable>
-      { column.id === 'today' && <button onClick={() => navigate('/timer', { state: { todayTasks: column.tasks } })} className="mt-4 bg-gradient-to-r from-indigo-500 to-secondary text-background font-semibold py-2 rounded-lg hover:-translate-y-1 duration-100">Get into the Flow</button> }
+      { column.id === 'today' && <button onClick={() => openTimer()} className="mt-4 bg-gradient-to-r from-indigo-500 to-secondary text-background font-semibold py-2 rounded-lg hover:-translate-y-1 duration-100">Get into the Flow</button> }
     </div>
   );
 };

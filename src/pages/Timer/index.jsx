@@ -73,7 +73,7 @@ const Timer = () => {
                 </button>
             </div>
 
-            <div className='flex flex-col gap-3'>
+            <div className='flex flex-col flex-grow gap-3'>
                 <div className='border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7'>
                     <h3 className='text-white font-medium'>{currentTask.title}</h3>
                     <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
@@ -90,6 +90,10 @@ const Timer = () => {
 
                 <AddTask/>
             </div>
+
+            <button className='font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-indigo-500 to-secondary hover:-translate-y-1 duration-100'>
+                Focus
+            </button>
         </div>
     );
 };

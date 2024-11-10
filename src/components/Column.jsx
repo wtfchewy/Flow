@@ -27,7 +27,7 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
           </div>
         )}
       </Droppable>
-      { column.id === 'today' && <button onClick={() => navigate('/timer')} className="mt-4 bg-gradient-to-r from-indigo-500 to-secondary text-background font-semibold py-2 rounded-lg hover:-translate-y-1 duration-100">Get into the Flow</button> }
+      { column.id === 'today' && <button onClick={() => navigate('/timer', { state: { todayTasks: column.tasks } })} className="mt-4 bg-gradient-to-r from-indigo-500 to-secondary text-background font-semibold py-2 rounded-lg hover:-translate-y-1 duration-100">Get into the Flow</button> }
     </div>
   );
 };

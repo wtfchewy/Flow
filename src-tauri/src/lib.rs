@@ -11,7 +11,7 @@ fn set_window_size(size: String, window: tauri::Window) {
       window.set_size(Size::Physical(PhysicalSize { width: 1250, height: 750 })).unwrap();
     }
     // window.set_size(Size::Physical(PhysicalSize { width: 350, height: 800 })).unwrap();
-  }
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

@@ -35,7 +35,7 @@ const Home = () => {
     return (
         <div className="flex flex-col w-full h-screen bg-background px-10">
             <div className="flex flex-row w-full items-center h-20">
-                <h1 className="text-4xl text-white font-bold">Flow.</h1>
+                <h1 className="text-xl text-white font-black bg-zinc-800 py-1 px-7 rounded-lg tracking-wider">Flow.</h1>
             </div>
 
             <div className="w-full flex-grow">

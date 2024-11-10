@@ -8,7 +8,7 @@ export const useList = () => useContext(ListContext);
 export const ListProvider = ({ children }) => {
   const [lists, setLists] = useState([
     {
-      title: 'Testing',
+      title: 'Flow App',
       columns: [
         {
           id: 'backlog',
@@ -26,7 +26,7 @@ export const ListProvider = ({ children }) => {
           tasks: [
             {
               id: 'task-1', // Add unique id here
-              title: 'asd',
+              title: 'Finish the Timer page',
               time: '00:20',
             },
           ],

@@ -19,7 +19,7 @@ const Timer = () => {
     }, []);
     
     const handleBack = () => {
-        navigate('/');
+        navigate('/list');
         invoke('set_window_size', { size: 'normal' });
     }
 
@@ -57,6 +57,12 @@ const Timer = () => {
         }
     };
 
+    const selectTask = (index) => {
+        setCurrentTaskIndex(index);
+        setCurrentTask(todayTasks[index]);
+        setCurrentCountdown(todayTasks[index].time + ':00');
+    }
+
     return (
         <div className="flex flex-col bg-background h-screen w-screen p-8">
             <div className="flex items-center justify-between mt-4">
@@ -75,10 +81,10 @@ const Timer = () => {
 
                 {todayTasks.map((task, index) => (
                     index !== currentTaskIndex && (
-                        <div key={task.id} className={`flex flex-row justify-between bg-task rounded-lg p-4`}>
+                        <button onClick={() => selectTask(index)} key={task.id} className={`w-full flex flex-row justify-between bg-task hover:bg-zinc-700 rounded-lg p-4`}>
                             <h3 className='text-white font-medium'>{task.title}</h3>
                             {/* <p className='text-gray-300 text-sm'>{task.time}</p> */}
-                        </div>
+                        </button>
                     )
                 ))}
 

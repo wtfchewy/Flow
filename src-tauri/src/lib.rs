@@ -1,16 +1,22 @@
-use tauri::{TitleBarStyle, WebviewUrl, WebviewWindowBuilder, PhysicalSize, Size};
+use tauri::{TitleBarStyle, WebviewUrl, WebviewWindowBuilder, LogicalSize, Size, LogicalPosition, Position};
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn set_window_size(size: String, window: tauri::Window) {
-    // println!("Window: {}", window.label());
-    // println!("{}", window.current_monitor().unwrap().size());
+    let monitor = window.current_monitor().expect("Failed to get current monitor").expect("Failed to unwrap monitor");
+    let window_height = monitor.size().height as f64;
+    let window_width = monitor.size().width as f64 / 8.0;
+
+    let center_x = (monitor.size().width as f64 / 4.0) - (1250.0 / 2.0);
+    let center_y = (monitor.size().height as f64 / 4.5) - (750.0 / 2.0);
+
     if size == "small" {
-      window.set_size(Size::Physical(PhysicalSize { width: 350, height: 800 })).unwrap();
+        window.set_size(Size::Logical(LogicalSize { width: window_width, height: window_height })).unwrap();
+        window.set_position(Position::Logical(LogicalPosition { x: 0.0, y: 0.0 })).unwrap();
     } else if size == "normal" {
-      window.set_size(Size::Physical(PhysicalSize { width: 1250, height: 750 })).unwrap();
+        window.set_size(Size::Logical(LogicalSize { width: 1250.0, height: 750.0 })).unwrap();
+        window.set_position(Position::Logical(LogicalPosition { x: center_x, y: center_y })).unwrap();
     }
-    // window.set_size(Size::Physical(PhysicalSize { width: 350, height: 800 })).unwrap();
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

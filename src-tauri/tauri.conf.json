@@ -11,12 +11,6 @@
   },
   "app": {
     "windows": [
-      {
-        "title": "Flow",
-        "width": 1250,
-        "height": 750,
-        "dragDropEnabled": true
-      }
     ],
     "security": {
       "csp": null

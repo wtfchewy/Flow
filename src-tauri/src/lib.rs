@@ -1,16 +1,23 @@
+use tauri::{TitleBarStyle, WebviewUrl, WebviewWindowBuilder, PhysicalSize, Size};
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-use tauri::{TitleBarStyle, WebviewUrl, WebviewWindowBuilder};
+fn set_window_size(size: String, window: tauri::Window) {
+    // println!("Window: {}", window.label());
+    // println!("{}", window.current_monitor().unwrap().size());
+    if size == "small" {
+      window.set_size(Size::Physical(PhysicalSize { width: 350, height: 800 })).unwrap();
+    } else if size == "normal" {
+      window.set_size(Size::Physical(PhysicalSize { width: 1250, height: 750 })).unwrap();
+    }
+    // window.set_size(Size::Physical(PhysicalSize { width: 350, height: 800 })).unwrap();
+  }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![set_window_size])
         .setup(|app| {
             let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
                 .title("")

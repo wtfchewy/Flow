@@ -12,10 +12,9 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![greet])
         .setup(|app| {
-            let win_builder =
-                WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
-                    .title("")
-                    .inner_size(1250.0, 750.0);
+            let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
+                .title("")
+                .inner_size(1250.0, 750.0);
 
             // set transparent title bar only when building for macOS
             #[cfg(target_os = "macos")]

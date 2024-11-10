@@ -1,48 +1,35 @@
 import React, { useState } from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
 import Column from './components/Column';
+import { ChevronLeft } from 'lucide-react';
 
 const initialData = [
   {
-    id: 'todo',
-    title: 'To Do',
+    id: 'backlog',
+    title: 'Backlog',
     tasks: [
-      {
-        id: '1',
-        title: 'Research competitors',
-        description: 'Analyze main competitors and their features',
-        priority: 'high',
-      },
-      {
-        id: '2',
-        title: 'Design system',
-        description: 'Create a consistent design system for the app',
-        priority: 'medium',
-      },
+
     ],
   },
   {
-    id: 'in-progress',
-    title: 'In Progress',
+    id: 'week',
+    title: 'This Week',
     tasks: [
-      {
-        id: '3',
-        title: 'User authentication',
-        description: 'Implement OAuth and email authentication',
-        priority: 'high',
-      },
+
+    ],
+  },
+  {
+    id: 'today',
+    title: 'Today',
+    tasks: [
+
     ],
   },
   {
     id: 'done',
     title: 'Done',
     tasks: [
-      {
-        id: '4',
-        title: 'Project setup',
-        description: 'Initialize repository and setup basic configuration',
-        priority: 'low',
-      },
+
     ],
   },
 ];
@@ -118,16 +105,35 @@ function App() {
     setColumns(newColumns);
   };
 
-  return (
-    <div className="flex justify-between min-h-screen bg-background from-gray-100 to-gray-200 p-8">
-      <div className="flex flex-col mb-8 items-start">
-        <h1 className="text-3xl font-bold text-white">Test Board</h1>
-        <h1 className='text-indigo-500 font-black text-2xl'>00:00:00</h1>
+  const countTasks = columns.reduce((acc, column) => acc + column.tasks.length, 0);
+  const estTime = columns.reduce((acc, column) => {
+    column.tasks.forEach(task => {
+      const [hours, minutes] = task.time.split(':');
+      acc += parseInt(hours) * 60 + parseInt(minutes);
+    });
+    return acc;
+  }
+  , 0);
 
-        <button className='mt-2 text-zinc-500 font-semibold'>Back</button>
+  return (
+    <div className="flex flex-col justify-between min-h-screen bg-background px-8 pb-8 py-1">
+      <div className='mb-4 w-full h-10 flex flex-row justify-between items-center'>
+        <div className='flex flex-row items-center gap-4'>
+          <button className='flex flex-row font-bold text-zinc-600 hover:text-zinc-500'>
+            <ChevronLeft className='w-6 h-6' />
+            BACK
+          </button>
+
+          <span className='font-light text-sm text-zinc-500'>This list has {countTasks} pending tasks, Est: {estTime}</span>
+        </div>
+
+        <div className='flex flex-row items-center bg-zinc-800 rounded-md px-7 py-1'>
+          <h1 className='text-lg font-semibold text-white'>Flow</h1>
+        </div>
       </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex gap-6 overflow-x-auto pb-4">
+        <div className="w-full flex flex-grow gap-6 overflow-x-auto">
           {columns.map((column) => (
             <Column 
               key={column.id} 

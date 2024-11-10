@@ -10,6 +10,7 @@ export default {
         'background': '#111111',
         'column': '#171717',
         'task': '#262626',
+        'secondary': '#f163ad',
       }
     },
   },

@@ -2,13 +2,14 @@ import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import { AlertCircle, AlertTriangle, AlertOctagon, XIcon } from 'lucide-react';
 
-const priorityIcons = {
-  low: <AlertCircle className="w-4 h-4 text-blue-500" />,
-  medium: <AlertTriangle className="w-4 h-4 text-yellow-500" />,
-  high: <AlertOctagon className="w-4 h-4 text-red-500" />,
-};
-
 const TaskCard = ({ column, task, index, onDeleteTask }) => {
+
+  const convertTime = (time) => {
+    if (time == ('00:00')) return 'No time estimate';
+    const [hours, minutes] = time.split(':');
+    return `${parseInt(hours) > 0 ? `${hours}hr` : ''} ${parseInt(minutes) > 0 ? `${minutes}m` : ''
+      }`;
+  }
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided, snapshot) => (
@@ -22,14 +23,14 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
         >
           <div className="flex items-center justify-between mb-2">
             <div className='flex items-center gap-2'>
-              {priorityIcons[task.priority]}
+              <span className='text-zinc-600'>{index + 1}</span>
               <h3 className="font-medium text-white">{task.title}</h3>
             </div>
             <button onClick={() => onDeleteTask(column.id, task.id)}>
               <XIcon className="w-4 h-4 text-red-500" />
             </button>
           </div>
-          <p className="text-sm text-gray-300">{task.description}</p>
+          <p className="text-sm text-gray-300">{convertTime(task.time)}</p>
         </div>
       )}
     </Draggable>

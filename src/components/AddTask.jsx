@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Plus, AlertCircle, AlertTriangle, AlertOctagon } from 'lucide-react';
+import { Plus} from 'lucide-react';
 
 const AddTask = ({ onAddTask }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState('medium');
+  const [time, setTime] = useState('00:00');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,13 +12,11 @@ const AddTask = ({ onAddTask }) => {
 
     onAddTask({
       title: title.trim(),
-      description: description.trim(),
-      priority,
+      time: time.trim(),
     });
 
     setTitle('');
-    setDescription('');
-    setPriority('medium');
+    setTime('00:00');
     setIsOpen(false);
   };
 
@@ -37,46 +34,31 @@ const AddTask = ({ onAddTask }) => {
         </button>
       ) : (
         <form onSubmit={handleSubmit} className="bg-task rounded-lg p-3 shadow-sm">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Task title"
-            className="w-full mb-2 px-3 py-2 text-gray-300 bg-zinc-900 rounded-md 
-              focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            autoFocus
-          />
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description (optional)"
-            className="w-full mb-1 px-3 py-2 text-gray-300 bg-zinc-900 rounded-md 
-              focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-              resize-none h-20"
-          />
-          <div className="flex items-center gap-2 mb-3 rounded-md bg-zinc-900 px-3 py-1">
-            <span className="text-sm text-white">Priority:</span>
-            <div className="flex gap-2">
-              {[
-                { value: 'low', icon: AlertCircle, color: 'blue' },
-                { value: 'medium', icon: AlertTriangle, color: 'yellow' },
-                { value: 'high', icon: AlertOctagon, color: 'red' },
-              ].map(({ value, icon: Icon, color }) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setPriority(value)}
-                  className={`p-2 rounded-md transition-colors duration-200 
-                    ${priority === value 
-                      ? `bg-indigo-500 text-white` 
-                      : 'text-gray-400 hover:bg-zinc-800'}`}
-                >
-                  <Icon className="w-4 h-4" />
-                </button>
-              ))}
-            </div>
+          <div className='flex flex-row gap-2'>
+            <label className='flex flex-col gap-1'>
+              <span className="text-xs text-zinc-500">Title</span>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter task title"
+                className="text-sm w-full mb-2 px-3 py-2 text-gray-300 bg-zinc-900 rounded-md 
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                autoFocus
+              />
+            </label>
+            <label className='flex flex-col w-2/6 gap-1'>
+              <span className="text-xs text-zinc-500">Est. Time</span>
+              <input
+                type="text"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="text-sm mb-2 px-3 py-2 text-gray-300 bg-zinc-900 rounded-md 
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </label>
           </div>
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 mt-2">
             <button
               type="button"
               onClick={() => setIsOpen(false)}

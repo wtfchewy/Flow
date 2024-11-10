@@ -42,7 +42,7 @@ const AddTask = ({ onAddTask }) => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter task title"
-                className="text-sm w-full mb-2 px-3 py-2 text-gray-300 bg-zinc-900 rounded-md 
+                className="text-sm w-full mb-2 px-3 py-2 text-gray-300 bg-zinc-900 rounded-lg 
                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 autoFocus
               />
@@ -53,7 +53,7 @@ const AddTask = ({ onAddTask }) => {
                 type="text"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="text-sm mb-2 px-3 py-2 text-gray-300 bg-zinc-900 rounded-md 
+                className="text-sm mb-2 px-3 py-2 text-gray-300 bg-zinc-900 rounded-lg 
                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
             </label>
@@ -62,14 +62,14 @@ const AddTask = ({ onAddTask }) => {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="w-1/4 flex justify-center px-4 py-2 text-sm bg-red-500 rounded-md text-white hover:bg-red-600 
+              className="w-1/4 flex justify-center px-4 py-2 text-sm bg-red-500 rounded-lg text-white hover:bg-red-600 
                 transition-colors duration-200"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="w-3/4 px-4 py-2 text-sm bg-indigo-500 text-white rounded-md 
+              className="w-3/4 px-4 py-2 text-sm bg-indigo-500 text-white rounded-lg 
                 hover:bg-indigo-600 transition-colors duration-200"
             >
               Add Task

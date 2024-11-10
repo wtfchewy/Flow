@@ -107,13 +107,20 @@ function App() {
 
   const countTasks = columns.reduce((acc, column) => acc + column.tasks.length, 0);
   const estTime = columns.reduce((acc, column) => {
-    column.tasks.forEach(task => {
-      const [hours, minutes] = task.time.split(':');
-      acc += parseInt(hours) * 60 + parseInt(minutes);
-    });
+    if (column.id !== 'done') {
+      column.tasks.forEach(task => {
+        const [hours, minutes] = task.time.split(':');
+        acc += parseInt(hours) * 60 + parseInt(minutes);
+      });
+    }
     return acc;
+  }, 0);
+  const convertTime = (time) => {
+    if (time == 0) return 'No time estimate';
+    const hours = Math.floor(time / 60);
+    const minutes = time % 60;
+    return `${hours > 0 ? `${hours} hours` : ''} ${minutes > 0 ? `${minutes} minutes` : ''}`;
   }
-  , 0);
 
   return (
     <div className="flex flex-col justify-between min-h-screen bg-background px-8 pb-8 py-1">
@@ -124,7 +131,7 @@ function App() {
             BACK
           </button>
 
-          <span className='font-light text-sm text-zinc-500'>This list has {countTasks} pending tasks, Est: {estTime}</span>
+          <span className='font-light text-sm text-zinc-500'>This list has {countTasks} pending tasks, Est: {convertTime(estTime)}</span>
         </div>
 
         <div className='flex flex-row items-center bg-zinc-800 rounded-md px-7 py-1'>

@@ -9,12 +9,19 @@ export const ListProvider = ({ children }) => {
   const [lists, setLists] = useState([]);
   const [currentList, setCurrentList] = useState(null);
 
+
   useEffect(() => {
     const loadLists = async () => {
-      const store = await load('store.json', { autoSave: true });
-      const savedLists = await store.get('lists');
-      if (savedLists) {
-        setLists(savedLists);
+      try {
+        const store = await load('store.json', { autoSave: true });
+        const savedLists = await store.get('lists');
+        if (savedLists) {
+          console.log('Lists loaded');
+          setLists(savedLists);
+        }
+        console.log(savedLists);
+      } catch (error) {
+        console.error('Failed to load lists:', error);
       }
     };
 
@@ -23,9 +30,13 @@ export const ListProvider = ({ children }) => {
 
   useEffect(() => {
     const saveLists = async () => {
-      const store = await load('store.json', { autoSave: true });
-      await store.set('lists', lists);
-      await store.save();
+      try {
+        const store = await load('store.json', { autoSave: true });
+        await store.set('lists', lists);
+        await store.save();
+      } catch (error) {
+        console.error('Failed to save lists:', error);
+      }
     };
 
     saveLists();

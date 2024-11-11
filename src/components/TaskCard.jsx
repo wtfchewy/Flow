@@ -1,20 +1,17 @@
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { AlertCircle, AlertTriangle, AlertOctagon, XIcon, Clock, Plus } from 'lucide-react';
+import { XIcon, Plus, Clock } from 'lucide-react';
 
 const TaskCard = ({ column, task, index, onDeleteTask }) => {
-  const [isSettingTime, setIsSettingTime] = React.useState(false);
-
-  
 
   const convertTime = (time) => {
-    if (time == ('00:00')) return 'No time estimate';
+    if (time === '00:00') return 'No time estimate';
     const [hours, minutes] = time.split(':');
-    return `${parseInt(hours) > 0 ? `${hours}hr` : ''} ${parseInt(minutes) > 0 ? `${minutes}m` : ''
-      }`;
+    return `${parseInt(hours) > 0 ? `${hours}hr` : ''} ${parseInt(minutes) > 0 ? `${minutes}m` : ''}`;
   }
+
   return (
-    <Draggable draggableId={task.id} index={index} className=''>
+    <Draggable draggableId={task.id} index={index}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
@@ -25,15 +22,15 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
             hover:shadow-md transition-all duration-200`}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-2 overflow-hidden'>
               <span className='text-zinc-600'>{index + 1}</span>
-              <h3 className="font-medium text-white">{task.title}</h3>
+              <h3 className="font-medium text-white text-nowrap overflow-hidden text-ellipsis">{task.title}</h3>
             </div>
             <button onClick={() => onDeleteTask(column.id, task.id)}>
               <XIcon className="w-4 h-4 text-red-500" />
             </button>
           </div>
-          {task.time == '00:00' ? (
+          {task.time === '00:00' ? (
             <button className="flex items-center gap-1 text-gray-300">
               <Plus className="w-4 h-4" />
               <p className="text-sm">EST</p>

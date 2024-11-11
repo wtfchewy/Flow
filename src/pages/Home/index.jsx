@@ -39,7 +39,7 @@ const Home = () => {
                         ))}
 
                         <div className="flex flex-col items-center justify-center">
-                            <button onClick={handleCreateList} className="text-zinc-500 hover:border-indigo-500 hover:text-indigo-500 items-center justify-center flex flex-col bg-column border-2 border-zinc-700 border-dashed rounded-lg w-full h-80 p-3">
+                            <button onClick={handleCreateList} className="text-zinc-500 hover:border-primary hover:text-primary items-center justify-center flex flex-col bg-column border-2 border-zinc-700 border-dashed rounded-lg w-full h-80 p-3">
                                 <Plus className="w-8 h-8 mb-3" />
                                 <h1 className="text-xl font-bold">CREATE LIST</h1>
                             </button>

@@ -184,7 +184,7 @@ const Timer = () => {
                         <h1 className='text-zinc-700 font-semibold text-md w-full border-t border-zinc-700 pt-4 -mb-1'>{doneTasks.length} Done</h1>
                         {doneTasks.map((task, index) => (
                             <div key={task.id} className="bg-task rounded-lg p-3 flex items-center gap-2 -mb-1">
-                                <CircleCheck className="w-4 h-4 text-indigo-500" />
+                                <CircleCheck className="w-4 h-4 text-primary" />
                                 <h3 className="font-medium text-sm text-white line-through">{task.title}</h3>
                             </div>
                         ))}
@@ -192,7 +192,7 @@ const Timer = () => {
                 )}
             </div>
 
-            <button onClick={() => setFocused(true)} className='font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-indigo-500 to-secondary hover:-translate-y-1 duration-100'>
+            <button onClick={() => setFocused(true)} className='font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-primary to-secondary hover:-translate-y-1 duration-100'>
                 Focus
             </button>
         </div>

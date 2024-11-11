@@ -23,7 +23,7 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
         >
           <div className="flex items-center justify-between">
             <div className='flex items-center gap-2'>
-                <CircleCheck className="w-4 h-4 text-indigo-500" />
+                <CircleCheck className="w-4 h-4 text-primary" />
                 <h3 className="font-medium text-sm text-white line-through">{task.title}</h3>
             </div>
 

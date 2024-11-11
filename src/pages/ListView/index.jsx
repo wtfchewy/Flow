@@ -195,7 +195,7 @@ const ListView = () => {
                 <h1 className='font-semibold tracking-wide'>Delete List</h1>
               </button>
 
-              {/* <button className='flex flex-row justify-center items-center px-2 py-1 mt-1 text-sm text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg w-full'>
+              {/* <button className='flex flex-row justify-center items-center px-2 py-1 mt-1 text-sm text-white bg-primary hover:bg-indigo-600 rounded-lg w-full'>
                 <h1 className='font-semibold tracking-wide'>Save</h1>
               </button> */}
             </div>

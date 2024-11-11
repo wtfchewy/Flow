@@ -26,7 +26,7 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
           >
             {column.tasks.length === 0 && (
               <div className="flex flex-col gap-3 flex-grow w-full h-full items-center justify-center text-zinc-500 font-medium">
-                <CircleCheck className="w-10 h-10 text-indigo-500" />
+                <CircleCheck className="w-10 h-10 text-primary" />
                 All Tasks Completed
               </div>
             )}
@@ -40,7 +40,7 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
           </div>
         )}
       </Droppable>
-      { column.id === 'today' && <button onClick={() => openTimer()} className="mt-4 bg-gradient-to-r from-indigo-500 to-secondary text-background font-semibold py-2 rounded-lg hover:-translate-y-1 duration-100">Get into the Flow</button> }
+      { column.id === 'today' && <button onClick={() => openTimer()} className="mt-4 bg-gradient-to-r from-primary to-secondary text-background font-semibold py-2 rounded-lg hover:-translate-y-1 duration-100">Get into the Flow</button> }
     </div>
   );
 };

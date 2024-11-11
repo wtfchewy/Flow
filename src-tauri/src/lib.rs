@@ -10,7 +10,7 @@ fn set_window_size(size: String, window: tauri::Window) {
         .expect("Failed to get current monitor")
         .expect("Failed to unwrap monitor");
     let window_height = monitor.size().height as f64;
-    let window_width = monitor.size().width as f64 / 5.4;
+    let window_width = monitor.size().width as f64 / 8.4;
 
     let center_x = (monitor.size().width as f64 / 4.0) - (1250.0 / 2.0);
     let center_y = (monitor.size().height as f64 / 4.5) - (750.0 / 2.0);
@@ -40,6 +40,14 @@ fn set_window_size(size: String, window: tauri::Window) {
             }))
             .unwrap();
         window.set_always_on_top(false).unwrap();
+    } else if size == "focus" {
+        window
+            .set_size(Size::Logical(LogicalSize {
+                width: window_width,
+                height: 65.4,
+            }))
+            .unwrap();
+        window.set_always_on_top(true).unwrap();
     }
 }
 

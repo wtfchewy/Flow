@@ -7,18 +7,21 @@ import { ChevronLeft, CircleCheck } from 'lucide-react';
 
 const Timer = () => {
     const navigate = useNavigate();
+    const [focused, setFocused] = useState(false);
+    const [isHovering, setIsHovering] = useState(false);
+
     const { lists, setLists, currentList, setCurrentList } = useList();
     const todayTasks = currentList.columns.find(column => column.id === 'today').tasks;
     const doneTasks = currentList.columns.find(column => column.id === 'done').tasks;
 
     const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
     const [currentTask, setCurrentTask] = useState(todayTasks[0]);
-    const [currentCountdown, setCurrentCountdown] = useState(todayTasks[0].time + ':00'); // Initialize with seconds
+    const [currentCountdown, setCurrentCountdown] = useState(todayTasks[0].time + ':00');
 
     const handleAddTask = (task) => {
         const newTask = {
           ...task,
-          id: Math.random().toString(36).substr(2, 9), // Ensure unique id
+          id: Math.random().toString(36).substr(2, 9),
         };
     
         const updatedLists = lists.map(list => {
@@ -44,6 +47,7 @@ const Timer = () => {
     };
 
     useEffect(() => {
+        if (focused) { return; }
         invoke('set_window_size', { size: 'small' });
     }, []);
     
@@ -118,6 +122,36 @@ const Timer = () => {
         setCurrentCountdown(todayTasks[index].time + ':00');
     }
 
+    const handleUnFocus = () => {
+        setFocused(false);
+        invoke('set_window_size', { size: 'small' });
+        setIsHovering(false);
+    }
+
+    if (focused) {
+        invoke('set_window_size', { size: 'focus' });
+
+        return (
+            <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="flex flex-col bg-background h-screen w-screen p-1">
+                {/* if hovered over display another div */}
+                <div className='border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4'>
+                    {!isHovering ? 
+                        <>
+                            <h3 className='text-white font-medium'>{currentTask.title}</h3>
+                            <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
+                        </>
+                    :
+                    <button onClick={() => handleUnFocus()} className='flex flex-row font-bold text-zinc-300 hover:text-zinc-200'>
+                        <ChevronLeft className='w-6 h-6' />
+                        BACK
+                    </button>
+                    }
+                </div>
+            </div>
+        );
+    }
+
+
     return (
         <div className="flex flex-col bg-background h-screen w-screen p-8">
             <div className="flex items-center justify-between mt-4">
@@ -158,7 +192,7 @@ const Timer = () => {
                 )}
             </div>
 
-            <button className='font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-indigo-500 to-secondary hover:-translate-y-1 duration-100'>
+            <button onClick={() => setFocused(true)} className='font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-indigo-500 to-secondary hover:-translate-y-1 duration-100'>
                 Focus
             </button>
         </div>

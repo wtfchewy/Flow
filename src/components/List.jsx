@@ -20,7 +20,7 @@ const List = ({ list, handleLoadList }) => {
                 <h1 className="font-semibold text-lg">{list.title}</h1>
 
                 <div className="w-full flex flex-col gap-2 mt-3 flex-grow">
-                    {list.columns.map(column => column.tasks.map((task, index) => (
+                    {list.columns.map(column => column.id !== 'done' && column.tasks.map((task, index) => (
                         <div className="w-full flex flex-row items-center gap-4 bg-task rounded-lg px-3 py-2">
                             <span className='text-sm text-zinc-600'>{index + 1}</span>
                             <h3 className="text-left text-md flex-grow font-medium text-white">{task.title}</h3>
@@ -30,8 +30,8 @@ const List = ({ list, handleLoadList }) => {
                 </div>
 
                 <div className="w-full flex flex-row items-center justify-between mt-3">
-                    <button className="text-zinc-600 font-semibold text-xs">{list.columns.reduce((total, column) => total + column.tasks.length, 0)} pending tasks</button>
-                    <button className="text-zinc-600 font-semibold text-xs">Est: {convertTime(estimatedTime(list.columns.flatMap(column => column.tasks)))}</button>
+                    <button className="text-zinc-600 font-semibold text-xs">{list.columns.reduce((total, column) => column.id !== 'done' ? total + column.tasks.length : total, 0)} pending tasks</button>
+                    <button className="text-zinc-600 font-semibold text-xs">Est: {convertTime(estimatedTime(list.columns.flatMap(column => column.id !== 'done' ? column.tasks : [])))}</button>
                 </div>
             </button>
         </>

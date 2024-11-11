@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useList } from '../../context/ListContext';
 import EditList from '../../components/EditList';
 import List from '../../components/List';
+import Flow from '../../components/Flow';
 
 const Home = () => {    
     const { lists, setCurrentList, createNewList } = useList();
@@ -23,7 +24,7 @@ const Home = () => {
         <>
             <div className="flex flex-col w-full h-screen bg-background px-10">
                 <div className="flex flex-row w-full items-center h-20">
-                    <h1 className="text-xl text-white font-black bg-zinc-800 py-1 px-7 rounded-lg tracking-wider">Flow.</h1>
+                    <Flow />
                 </div>
 
                 <div className="w-full flex-grow">

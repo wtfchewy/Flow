@@ -1,8 +1,11 @@
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { AlertCircle, AlertTriangle, AlertOctagon, XIcon } from 'lucide-react';
+import { AlertCircle, AlertTriangle, AlertOctagon, XIcon, Clock, Plus } from 'lucide-react';
 
 const TaskCard = ({ column, task, index, onDeleteTask }) => {
+  const [isSettingTime, setIsSettingTime] = React.useState(false);
+
+  
 
   const convertTime = (time) => {
     if (time == ('00:00')) return 'No time estimate';
@@ -11,7 +14,7 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
       }`;
   }
   return (
-    <Draggable draggableId={task.id} index={index}>
+    <Draggable draggableId={task.id} index={index} className=''>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
@@ -30,7 +33,17 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
               <XIcon className="w-4 h-4 text-red-500" />
             </button>
           </div>
-          <p className="text-sm text-gray-300">{convertTime(task.time)}</p>
+          {task.time == '00:00' ? (
+            <button className="flex items-center gap-1 text-gray-300">
+              <Plus className="w-4 h-4" />
+              <p className="text-sm">EST</p>
+            </button>
+          ) : (
+            <div className="flex items-center gap-1 text-gray-300">
+              <Clock className="w-4 h-4" />
+              <p className="text-sm">{convertTime(task.time)}</p>
+            </div>
+          )}
         </div>
       )}
     </Draggable>

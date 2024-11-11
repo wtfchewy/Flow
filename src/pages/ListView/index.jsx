@@ -5,6 +5,7 @@ import Column from '../../components/Column';
 import { ChevronDown, ChevronLeft, ChevronUp, Trash, Trash2, XIcon } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useList } from '../../context/ListContext';
+import Flow from '../../components/Flow';
 
 const ListView = () => {
     const { lists, setLists, currentList, setCurrentList, deleteList, updateTitle } = useList();
@@ -166,19 +167,19 @@ const ListView = () => {
           </NavLink>
 
           {!isEditing ? (
-            <button onClick={() => setIsEditing(true)} className='flex flex-row items-center bg-zinc-800 hover:bg-zinc-700 duration-75 rounded-lg px-5 py-1 gap-2'>
+            <button onClick={() => setIsEditing(true)} className='flex flex-row items-center bg-column hover:bg-zinc-800 duration-75 rounded-lg px-5 py-1 gap-2'>
               <h1 className='font-bold'>{title}</h1>
               <ChevronDown className='w-4 h-4' />
             </button>
           ) : (
-          <button onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-zinc-800 hover:bg-zinc-700 duration-75 rounded-lg px-5 py-1 gap-2'>
+          <button onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-column hover:bg-zinc-800 duration-75 rounded-lg px-5 py-1 gap-2'>
             <h1 className='font-bold'>{title}</h1>
             <ChevronUp className='w-4 h-4' />
           </button>
           )}
 
           {isEditing && (
-            <div className='absolute left-20 top-12 bg-zinc-800 rounded-lg ml-9 p-2 border border-zinc-600'>
+            <div className='absolute left-20 top-12 bg-column rounded-lg ml-9 p-2 border border-zinc-800'>
               <label className='flex flex-col'>
                 <span className='text-sm text-zinc-400'>Title</span>
                 <input
@@ -186,11 +187,11 @@ const ListView = () => {
                   value={title}
                   onChange={handleTitleChange}
                   onKeyPress={handleTitleKeyPress}
-                  className='text-sm bg-zinc-800 rounded-lg border border-zinc-600 px-2 py-1'
+                  className='text-sm bg-zinc-800 rounded-lg border border-zinc-700 px-2 py-1'
                 />
               </label>
 
-              <button onClick={handleDeleteList} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-lg w-full'>
+              <button onClick={handleDeleteList} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-white bg-red-500 hover:bg-red-500/70 rounded-lg w-full'>
                 <h1 className='font-semibold tracking-wide'>Delete List</h1>
               </button>
 
@@ -204,7 +205,7 @@ const ListView = () => {
           <span className='font-light text-sm text-zinc-500'>This list has {countTasks} pending tasks, Est: {convertTime(estTime)}</span>
         </div>
 
-        <h1 className="text-xl text-white font-black bg-zinc-800 py-1 px-7 rounded-lg tracking-wider">Flow.</h1>
+        <Flow />
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>

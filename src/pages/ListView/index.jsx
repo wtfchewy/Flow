@@ -11,10 +11,10 @@ const ListView = () => {
     const { lists, setLists, currentList, setCurrentList, deleteList, updateTitle } = useList();
     const navigate = useNavigate();
   
-    if (!currentList) {
-      navigate('/');
-      return null;
-    }
+    // if (!currentList) {
+    //   navigate('/');
+    //   return null;
+    // }
   
     const [columns, setColumns] = useState(currentList.columns);
     const [isEditing, setIsEditing] = useState(false);

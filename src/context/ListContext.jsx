@@ -35,12 +35,15 @@ export const ListProvider = ({ children }) => {
         const store = await load(storePath, { autoSave: true });
         await store.set('lists', lists);
         await store.save();
+        console.log('Lists saved:', lists);
       } catch (error) {
         console.error('Failed to save lists:', error);
       }
     };
-
-    saveLists();
+  
+    if (lists.length > 0) {
+      saveLists();
+    }
   }, [lists]);
 
   const createNewList = (title) => {

@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useList } from '../../context/ListContext';
 import { invoke } from '@tauri-apps/api/core';
 import AddTask from '../../components/AddTask';
-import { ChevronLeft, CircleCheck } from 'lucide-react';
+import { ChevronLeft, CircleCheck, PauseCircle, PlayCircle } from 'lucide-react';
 
 const Timer = () => {
     const navigate = useNavigate();
     const [focused, setFocused] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
 
     const { lists, setLists, currentList, setCurrentList } = useList();
     const todayTasks = currentList.columns.find(column => column.id === 'today').tasks;
@@ -57,6 +58,8 @@ const Timer = () => {
     }
 
     useEffect(() => {
+        if (isPaused) return;
+
         const timer = setInterval(() => {
             setCurrentCountdown(prevCountdown => {
                 const [hours, minutes, seconds] = prevCountdown.split(':').map(Number);
@@ -76,7 +79,7 @@ const Timer = () => {
         }, 1000); // Update every second
 
         return () => clearInterval(timer);
-    }, [currentTask]);
+    }, [currentTask, isPaused]);
 
     const handleNextTask = () => {
         const updatedLists = lists.map(list => {
@@ -145,7 +148,21 @@ const Timer = () => {
                             <ChevronLeft className='w-6 h-6' />
                             BACK
                         </button>
-                        <p data-tauri-drag-region className='text-gray-300 font-bold text-sm'>(ps. you can move me)</p>
+                        {/* <p data-tauri-drag-region className='text-gray-300 font-bold text-sm'>(ps. you can move me)</p> */}
+                        <div className='flex flex-row items-center text-gray-300 gap-2'>
+                            <button onClick={() => handleNextTask()}>
+                                <CircleCheck className='w-5 h-5 hover:text-primary duration-100' />
+                            </button>
+                            { !isPaused ? 
+                            <button onClick={() => setIsPaused(true)}>
+                                <PauseCircle className='w-5 h-5 hover:text-primary duration-100' />
+                            </button>
+                            :
+                            <button onClick={() => setIsPaused(false)}>
+                                <PlayCircle className='w-5 h-5 hover:text-primary duration-100' />
+                            </button>
+                            }
+                        </div>
                     </>
                     }
                 </div>
@@ -165,9 +182,32 @@ const Timer = () => {
             </div>
 
             <div className='flex flex-col flex-grow gap-3'>
-                <div className='border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7'>
-                    <h3 className='text-white font-medium'>{currentTask.title}</h3>
-                    <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
+                <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className='border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7'>
+                    {!isHovering ? 
+                        <>
+                            <h3 className='text-white font-medium'>{currentTask.title}</h3>
+                            <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
+                        </>
+                    :
+                    <>
+                        <h3 className='text-white font-medium'>{currentTask.title}</h3>
+                        {/* <p data-tauri-drag-region className='text-gray-300 font-bold text-sm'>(ps. you can move me)</p> */}
+                        <div className='flex flex-row items-center text-gray-300 gap-2 py-1'>
+                            <button onClick={() => handleNextTask()}>
+                                <CircleCheck className='w-5 h-5 hover:text-primary duration-100' />
+                            </button>
+                            { !isPaused ? 
+                            <button onClick={() => setIsPaused(true)}>
+                                <PauseCircle className='w-5 h-5 hover:text-primary duration-100' />
+                            </button>
+                            :
+                            <button onClick={() => setIsPaused(false)}>
+                                <PlayCircle className='w-5 h-5 hover:text-primary duration-100' />
+                            </button>
+                            }
+                        </div>
+                    </>
+                    }
                 </div>
 
                 {todayTasks.map((task, index) => (

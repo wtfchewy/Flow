@@ -167,12 +167,12 @@ const ListView = () => {
           </NavLink>
 
           {!isEditing ? (
-            <button onClick={() => setIsEditing(true)} className='flex flex-row items-center bg-column hover:bg-zinc-800 duration-75 rounded-lg px-5 py-1 gap-2'>
+            <button onClick={() => setIsEditing(true)} className='flex flex-row items-center bg-column hover:bg-zinc-800 duration-100 rounded-lg px-5 py-1 gap-2'>
               <h1 className='font-bold'>{title}</h1>
               <ChevronDown className='w-4 h-4' />
             </button>
           ) : (
-          <button onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-column hover:bg-zinc-800 duration-75 rounded-lg px-5 py-1 gap-2'>
+          <button onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-column hover:bg-zinc-800 duration-100 rounded-lg px-5 py-1 gap-2'>
             <h1 className='font-bold'>{title}</h1>
             <ChevronUp className='w-4 h-4' />
           </button>

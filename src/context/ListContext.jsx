@@ -9,7 +9,6 @@ export const ListProvider = ({ children }) => {
   const [lists, setLists] = useState([]);
   const [currentList, setCurrentList] = useState(null);
 
-
   useEffect(() => {
     const loadLists = async () => {
       try {

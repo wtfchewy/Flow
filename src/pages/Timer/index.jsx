@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useList } from '../../context/ListContext';
 import { invoke } from '@tauri-apps/api/core';
 import AddTask from '../../components/AddTask';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, CircleCheck } from 'lucide-react';
 
 const Timer = () => {
     const navigate = useNavigate();
     const { lists, setLists, currentList, setCurrentList } = useList();
     const todayTasks = currentList.columns.find(column => column.id === 'today').tasks;
+    const doneTasks = currentList.columns.find(column => column.id === 'done').tasks;
 
     const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
     const [currentTask, setCurrentTask] = useState(todayTasks[0]);
@@ -74,14 +75,40 @@ const Timer = () => {
     }, [currentTask]);
 
     const handleNextTask = () => {
+        const updatedLists = lists.map(list => {
+            if (list === currentList) {
+            return {
+                ...list,
+                columns: list.columns.map(column => {
+                if (column.id === 'today') {
+                    return {
+                    ...column,
+                    tasks: column.tasks.filter(task => task.id !== currentTask.id),
+                    };
+                }
+                if (column.id === 'done') {
+                    return {
+                    ...column,
+                    tasks: [...column.tasks, currentTask],
+                    };
+                }
+                return column;
+                }),
+            };
+            }
+            return list;
+        });
+
+        setLists(updatedLists);
+        setCurrentList(updatedLists.find(list => list.title === currentList.title));
+
         if (currentTaskIndex < todayTasks.length - 1) {
             const nextTaskIndex = currentTaskIndex + 1;
             setCurrentTaskIndex(nextTaskIndex);
             setCurrentTask(todayTasks[nextTaskIndex]);
             setCurrentCountdown(todayTasks[nextTaskIndex].time + ':00');
         } else {
-            navigate('/');
-            invoke('set_window_size', { size: 'normal' });
+            handleBack();
         }
     };
 
@@ -117,6 +144,18 @@ const Timer = () => {
                 ))}
 
                 <AddTask onAddTask={(task) => handleAddTask(task)}/>
+                
+                {doneTasks.length > 0 && (
+                    <>
+                        <h1 className='text-zinc-700 font-semibold text-md w-full border-t border-zinc-700 pt-4 -mb-1'>{doneTasks.length} Done</h1>
+                        {doneTasks.map((task, index) => (
+                            <div key={task.id} className="bg-task rounded-lg p-3 flex items-center gap-2 -mb-1">
+                                <CircleCheck className="w-4 h-4 text-indigo-500" />
+                                <h3 className="font-medium text-sm text-white line-through">{task.title}</h3>
+                            </div>
+                        ))}
+                    </>
+                )}
             </div>
 
             <button className='font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-indigo-500 to-secondary hover:-translate-y-1 duration-100'>

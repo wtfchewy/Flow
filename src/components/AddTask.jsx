@@ -38,6 +38,7 @@ const AddTask = ({ onAddTask }) => {
             <label className='flex flex-col gap-1'>
               <span className="text-xs text-zinc-500">Title</span>
               <input
+                autoCorrect='off'
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}

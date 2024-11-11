@@ -6,10 +6,7 @@ const ListContext = createContext();
 export const useList = () => useContext(ListContext);
 
 export const ListProvider = ({ children }) => {
-  const initialLists = [
-  ];
-
-  const [lists, setLists] = useState(initialLists);
+  const [lists, setLists] = useState([]);
   const [currentList, setCurrentList] = useState(null);
 
   useEffect(() => {

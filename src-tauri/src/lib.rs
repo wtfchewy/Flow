@@ -26,6 +26,7 @@ fn set_window_size(size: String, window: tauri::Window) {
             .set_position(Position::Logical(LogicalPosition { x: 0.0, y: 0.0 }))
             .unwrap();
         window.set_always_on_top(true).unwrap();
+        window.set_decorations(true).unwrap();
     } else if size == "normal" {
         window
             .set_size(Size::Logical(LogicalSize {
@@ -40,6 +41,7 @@ fn set_window_size(size: String, window: tauri::Window) {
             }))
             .unwrap();
         window.set_always_on_top(false).unwrap();
+        window.set_decorations(true).unwrap();
     } else if size == "focus" {
         window
             .set_size(Size::Logical(LogicalSize {
@@ -48,6 +50,7 @@ fn set_window_size(size: String, window: tauri::Window) {
             }))
             .unwrap();
         window.set_always_on_top(true).unwrap();
+        window.set_decorations(false).unwrap();
     }
 }
 

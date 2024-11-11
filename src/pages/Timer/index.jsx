@@ -132,19 +132,21 @@ const Timer = () => {
         invoke('set_window_size', { size: 'focus' });
 
         return (
-            <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="flex flex-col bg-background h-screen w-screen p-1">
-                {/* if hovered over display another div */}
-                <div className='border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4'>
+            <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="flex flex-col bg-background h-screen w-screen">
+                <div data-tauri-drag-region className='border border-secondary flex flex-row items-center justify-between bg-task p-4 h-screen'>
                     {!isHovering ? 
                         <>
                             <h3 className='text-white font-medium'>{currentTask.title}</h3>
                             <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
                         </>
                     :
-                    <button onClick={() => handleUnFocus()} className='flex flex-row font-bold text-zinc-300 hover:text-zinc-200'>
-                        <ChevronLeft className='w-6 h-6' />
-                        BACK
-                    </button>
+                    <>
+                        <button onClick={() => handleUnFocus()} className='flex flex-row font-bold text-zinc-300 hover:text-zinc-200'>
+                            <ChevronLeft className='w-6 h-6' />
+                            BACK
+                        </button>
+                        <p data-tauri-drag-region className='text-gray-300 font-bold text-sm'>(ps. you can move me)</p>
+                    </>
                     }
                 </div>
             </div>

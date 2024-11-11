@@ -182,32 +182,27 @@ const Timer = () => {
             </div>
 
             <div className='flex flex-col flex-grow gap-3'>
-                <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className='border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7'>
-                    {!isHovering ? 
-                        <>
-                            <h3 className='text-white font-medium'>{currentTask.title}</h3>
-                            <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
-                        </>
-                    :
-                    <>
-                        <h3 className='text-white font-medium'>{currentTask.title}</h3>
-                        {/* <p data-tauri-drag-region className='text-gray-300 font-bold text-sm'>(ps. you can move me)</p> */}
-                        <div className='flex flex-row items-center text-gray-300 gap-2 py-1'>
-                            <button onClick={() => handleNextTask()}>
-                                <CircleCheck className='w-5 h-5 hover:text-primary duration-100' />
-                            </button>
-                            { !isPaused ? 
-                            <button onClick={() => setIsPaused(true)}>
-                                <PauseCircle className='w-5 h-5 hover:text-primary duration-100' />
-                            </button>
-                            :
-                            <button onClick={() => setIsPaused(false)}>
-                                <PlayCircle className='w-5 h-5 hover:text-primary duration-100' />
-                            </button>
-                            }
-                        </div>
-                    </>
-                    }
+                <div 
+                    onMouseEnter={() => setIsHovering(true)} 
+                    onMouseLeave={() => setIsHovering(false)} 
+                    className={`border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7`}
+                >
+                    <h3 className='text-white font-medium'>{currentTask.title}</h3>
+                    <div className={`flex flex-row items-center text-gray-300 gap-2 py-1 transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
+                        <button onClick={() => handleNextTask()}>
+                            <CircleCheck className='w-5 h-5 hover:text-primary duration-100' />
+                        </button>
+                        { !isPaused ? 
+                        <button onClick={() => setIsPaused(true)}>
+                            <PauseCircle className='w-5 h-5 hover:text-primary duration-100' />
+                        </button>
+                        :
+                        <button onClick={() => setIsPaused(false)}>
+                            <PlayCircle className='w-5 h-5 hover:text-primary duration-100' />
+                        </button>
+                        }
+                    </div>
+                    <p className={`text-gray-300 font-bold text-lg transition-opacity duration-300`}>{currentCountdown}</p>
                 </div>
 
                 {todayTasks.map((task, index) => (

@@ -46,7 +46,7 @@ fn set_window_size(size: String, window: tauri::Window) {
         window
             .set_size(Size::Logical(LogicalSize {
                 width: window_width,
-                height: 65.4,
+                height: 55.4,
             }))
             .unwrap();
         window.set_always_on_top(true).unwrap();

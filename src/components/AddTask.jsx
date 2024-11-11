@@ -25,8 +25,8 @@ const AddTask = ({ onAddTask }) => {
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="w-full py-2 px-4 rounded-lg border-2 border-dashed border-gray-300 
-            text-gray-300 hover:border-primary hover:text-primary 
+          className="w-full py-2 px-4 rounded-lg border-2 border-dashed border-zinc-500 
+            text-zinc-500 hover:border-primary hover:text-primary 
             transition-colors duration-200 flex items-center justify-center gap-2"
         >
           <Plus className="w-5 h-5" />

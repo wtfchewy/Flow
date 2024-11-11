@@ -185,9 +185,9 @@ const Timer = () => {
                 <div 
                     onMouseEnter={() => setIsHovering(true)} 
                     onMouseLeave={() => setIsHovering(false)} 
-                    className={`border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7`}
+                    className={`border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7 gap-2`}
                 >
-                    <h3 className='text-white font-medium'>{currentTask.title}</h3>
+                    <h3 className='text-white font-medium overflow-hidden truncate text-ellipsis'>{currentTask.title}</h3>
                     <div className={`flex flex-row items-center text-gray-300 gap-2 py-1 transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
                         <button onClick={() => handleNextTask()}>
                             <CircleCheck className='w-5 h-5 hover:text-primary duration-100' />

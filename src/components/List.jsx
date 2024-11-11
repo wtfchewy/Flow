@@ -20,8 +20,8 @@ const List = ({ list, handleLoadList }) => {
                 <h1 className="font-semibold text-lg">{list.title}</h1>
 
                 <div className="w-full flex flex-col gap-2 mt-3 flex-grow">
-                    {list.columns.map(column => column.id !== 'done' && column.tasks.map((task, index) => (
-                        <div className="w-full flex flex-row items-center gap-4 bg-task rounded-lg px-3 py-2">
+                    {list.columns.map(column => column.id !== 'done' && column.tasks.slice(0, 4).map((task, index) => (
+                        <div className="w-full flex flex-row items-center gap-4 bg-task rounded-lg px-3 py-2" key={task.id}>
                             <span className='text-sm text-zinc-600'>{index + 1}</span>
                             <h3 className="text-left text-md flex-grow font-medium text-white text-nowrap overflow-hidden text-ellipsis">{task.title}</h3>
                             <span className="text-zinc-400 font-light text-sm">{task.time}</span>

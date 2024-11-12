@@ -150,40 +150,36 @@ const Timer = () => {
         invoke('set_window_size', { size: 'focus' });
 
         return (
-            <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="flex flex-col bg-background h-screen w-screen">
-                <div data-tauri-drag-region className='border border-secondary flex flex-row items-center justify-between bg-task p-4 h-screen'>
-                    {!isHovering ? 
-                        <>
-                            <h3 className='text-white font-medium'>{currentTask.title}</h3>
-                            { todayTasks[0].time !== '00:00' ?
-                                <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
-                            :
-                                <p className='text-gray-300 font-bold text-lg'>{timeTaken}</p>
-                            }
-                        </>
-                    :
-                    <>
-                        <button onClick={() => handleUnFocus()} className='flex flex-row font-bold text-zinc-300 hover:text-zinc-200'>
-                            <ChevronLeft className='w-6 h-6' />
-                            BACK
+            <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="flex flex-col bg-task h-screen w-screen">
+                <div data-tauri-drag-region className={`border border-secondary absolute w-full h-screen flex flex-row items-center justify-between p-4 `}>
+                        <h3 className='text-white font-medium'>{currentTask.title}</h3>
+                        { todayTasks[0].time !== '00:00' ?
+                            <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
+                        :
+                            <p className='text-gray-300 font-bold text-lg'>{timeTaken}</p>
+                        }
+                </div>
+                
+                <div data-tauri-drag-region className={`border bg-task border-primary absolute w-full h-screen flex flex-row items-center justify-between p-4 transition-opacity duration-200 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
+                    <button onClick={() => handleUnFocus()} className='flex flex-row font-bold text-zinc-300 hover:text-zinc-200'>
+                        <ChevronLeft className='w-6 h-6' />
+                        BACK
+                    </button>
+                    {/* <p data-tauri-drag-region className='text-gray-300 font-bold text-sm'>(ps. you can move me)</p> */}
+                    <div className='flex flex-row items-center text-gray-300 gap-2'>
+                        <button onClick={() => handleNextTask()}>
+                            <CircleCheck className='w-5 h-5 hover:text-primary duration-100' />
                         </button>
-                        {/* <p data-tauri-drag-region className='text-gray-300 font-bold text-sm'>(ps. you can move me)</p> */}
-                        <div className='flex flex-row items-center text-gray-300 gap-2'>
-                            <button onClick={() => handleNextTask()}>
-                                <CircleCheck className='w-5 h-5 hover:text-primary duration-100' />
-                            </button>
-                            { !isPaused ? 
-                            <button onClick={() => setIsPaused(true)}>
-                                <PauseCircle className='w-5 h-5 hover:text-primary duration-100' />
-                            </button>
-                            :
-                            <button onClick={() => setIsPaused(false)}>
-                                <PlayCircle className='w-5 h-5 hover:text-primary duration-100' />
-                            </button>
-                            }
-                        </div>
-                    </>
-                    }
+                        { !isPaused ? 
+                        <button onClick={() => setIsPaused(true)}>
+                            <PauseCircle className='w-5 h-5 hover:text-primary duration-100' />
+                        </button>
+                        :
+                        <button onClick={() => setIsPaused(false)}>
+                            <PlayCircle className='w-5 h-5 hover:text-primary duration-100' />
+                        </button>
+                        }
+                    </div>
                 </div>
             </div>
         );

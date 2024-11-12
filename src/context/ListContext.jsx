@@ -20,7 +20,6 @@ export const ListProvider = ({ children }) => {
           console.log('Lists loaded');
           setLists(savedLists);
         }
-        console.log(savedLists);
       } catch (error) {
         console.error('Failed to load lists:', error);
       }

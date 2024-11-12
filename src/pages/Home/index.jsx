@@ -59,7 +59,7 @@ const Home = () => {
                         </NavLink>
                     </div>
 
-                    <button className='bg-gradient-to-r from-primary to-secondary text-column rounded-lg font-bold px-6 py-2 hover:-translate-y-1 transition-transform duration-200'>
+                    <button className='bg-gradient-to-r from-primary to-secondary text-column rounded-md font-semibold px-6 py-2 hover:-translate-y-1 transition-transform duration-200'>
                         Create Quick List
                     </button>
                 </div>

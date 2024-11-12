@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useList } from '../../context/ListContext';
 import { invoke } from '@tauri-apps/api/core';
 import AddTask from '../../components/AddTask';
-import { ChevronLeft, CircleCheck, PauseCircle, PlayCircle } from 'lucide-react';
+import { ChevronLeft, CircleCheck, Expand, PauseCircle, PlayCircle } from 'lucide-react';
 
 const Timer = () => {
     const navigate = useNavigate();
@@ -154,32 +154,32 @@ const Timer = () => {
                 <div data-tauri-drag-region className={`border border-secondary absolute w-full h-screen flex flex-row items-center justify-between p-4 `}>
                         <h3 className='text-white font-medium'>{currentTask.title}</h3>
                         { todayTasks[0].time !== '00:00' ?
-                            <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
+                            <p className='text-zinc-300 font-bold text-lg'>{currentCountdown}</p>
                         :
-                            <p className='text-gray-300 font-bold text-lg'>{timeTaken}</p>
+                            <p className='text-zinc-300 font-bold text-lg'>{timeTaken}</p>
                         }
                 </div>
                 
-                <div data-tauri-drag-region className={`border bg-task border-primary absolute w-full h-screen flex flex-row items-center justify-between p-4 transition-opacity duration-200 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
-                    <button onClick={() => handleUnFocus()} className='flex flex-row font-bold text-zinc-300 hover:text-zinc-200'>
-                        <ChevronLeft className='w-6 h-6' />
-                        BACK
-                    </button>
-                    {/* <p data-tauri-drag-region className='text-gray-300 font-bold text-sm'>(ps. you can move me)</p> */}
-                    <div className='flex flex-row items-center text-gray-300 gap-2'>
+                <div data-tauri-drag-region className={`gap-2 border bg-task border-secondary absolute w-full h-screen flex flex-row items-center justify-between p-4 transition-opacity duration-200 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
+                    <div></div>
+                    <div className='flex flex-row items-center text-zinc-300 gap-2'>
                         <button onClick={() => handleNextTask()}>
-                            <CircleCheck className='w-5 h-5 hover:text-primary duration-100' />
+                            <CircleCheck className='w-5 h-5 hover:text-secondary duration-100' />
                         </button>
                         { !isPaused ? 
                         <button onClick={() => setIsPaused(true)}>
-                            <PauseCircle className='w-5 h-5 hover:text-primary duration-100' />
+                            <PauseCircle className='w-5 h-5 hover:text-secondary duration-100' />
                         </button>
                         :
                         <button onClick={() => setIsPaused(false)}>
-                            <PlayCircle className='w-5 h-5 hover:text-primary duration-100' />
+                            <PlayCircle className='w-5 h-5 hover:text-secondary duration-100' />
                         </button>
                         }
+                        <button onClick={() => handleUnFocus()}>
+                            <Expand className='w-5 h-5 hover:text-secondary duration-100' />
+                        </button>
                     </div>
+                    <div></div>
                 </div>
             </div>
         );
@@ -190,7 +190,7 @@ const Timer = () => {
         <div className="flex flex-col bg-background h-screen w-screen p-8">
             <div className="flex items-center justify-between mt-4">
                 <h1 className='text-3xl font-bold'>Today</h1>
-                <button onClick={() => handleBack()} className='flex flex-row font-bold text-zinc-600 hover:text-zinc-500'>
+                <button onClick={() => handleBack()} className='flex flex-row font-bold text-zinc-600 hover:text-white/70'>
                     <ChevronLeft className='w-6 h-6' />
                     BACK
                 </button>
@@ -200,35 +200,36 @@ const Timer = () => {
                 <div 
                     onMouseEnter={() => setIsHovering(true)} 
                     onMouseLeave={() => setIsHovering(false)} 
-                    className={`border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7 gap-2`}
+                    className={` border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7 gap-2`}
                 >
                     <h3 className='text-white font-medium overflow-hidden truncate text-ellipsis'>{currentTask.title}</h3>
-                    <div className={`flex flex-row items-center text-gray-300 gap-2 py-1 transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
+                    { todayTasks[0].time !== '00:00' ?
+                        <p className={`text-zinc-300 font-bold text-lg transition-opacity duration-300`}>{currentCountdown}</p>
+                    :
+                        <p className={`text-zinc-300 font-bold text-lg transition-opacity duration-300`}>{timeTaken}</p>
+                    }
+
+
+                    <div className={`left-12 right-12 justify-center absolute flex flex-row items-center bg-task text-zinc-300 gap-2 py-1 transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
                         <button onClick={() => handleNextTask()}>
-                            <CircleCheck className='w-5 h-5 hover:text-primary duration-100' />
+                            <CircleCheck className='w-5 h-5 hover:text-secondary duration-100' />
                         </button>
                         { !isPaused ? 
                         <button onClick={() => setIsPaused(true)}>
-                            <PauseCircle className='w-5 h-5 hover:text-primary duration-100' />
+                            <PauseCircle className='w-5 h-5 hover:text-secondary duration-100' />
                         </button>
                         :
                         <button onClick={() => setIsPaused(false)}>
-                            <PlayCircle className='w-5 h-5 hover:text-primary duration-100' />
+                            <PlayCircle className='w-5 h-5 hover:text-secondary duration-100' />
                         </button>
                         }
                     </div>
-                    { todayTasks[0].time !== '00:00' ?
-                        <p className={`text-gray-300 font-bold text-lg transition-opacity duration-300`}>{currentCountdown}</p>
-                    :
-                        <p className={`text-gray-300 font-bold text-lg transition-opacity duration-300`}>{timeTaken}</p>
-                    }
                 </div>
 
                 {todayTasks.map((task, index) => (
                     index !== currentTaskIndex && (
                         <button onClick={() => selectTask(index)} key={task.id} className={`w-full flex flex-row justify-between bg-task hover:bg-zinc-700 rounded-lg p-4`}>
                             <h3 className='text-white font-medium'>{task.title}</h3>
-                            {/* <p className='text-gray-300 text-sm'>{task.time}</p> */}
                         </button>
                     )
                 ))}

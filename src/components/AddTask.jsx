@@ -27,7 +27,7 @@ const AddTask = ({ onAddTask }) => {
         <button
           onClick={() => setIsOpen(true)}
           className="w-full py-2 px-4 rounded-lg border-2 border-dashed border-zinc-500 
-            text-zinc-500 hover:border-primary hover:text-primary 
+            text-white/70 hover:border-primary hover:text-primary 
             transition-colors duration-200 flex items-center justify-center gap-2"
         >
           <Plus className="w-5 h-5" />
@@ -37,25 +37,25 @@ const AddTask = ({ onAddTask }) => {
         <form onSubmit={handleSubmit} className="bg-task rounded-lg p-3 shadow-sm">
           <div className='flex flex-row gap-2'>
             <label className='flex flex-col gap-1'>
-              <span className="text-xs text-zinc-500">Title</span>
+              <span className="text-xs text-white/70">Title</span>
               <input
                 autoCorrect='off'
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter task title"
-                className="text-sm w-full mb-2 px-3 py-2 text-gray-300 bg-zinc-900 rounded-lg 
+                className="text-sm w-full mb-2 px-3 py-2 text-zinc-300 bg-zinc-900 rounded-lg 
                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 autoFocus
               />
             </label>
             <label className='flex flex-col w-2/6 gap-1'>
-              <span className="text-xs text-zinc-500">Est. Time</span>
+              <span className="text-xs text-white/70">Est. Time</span>
               <input
                 type="text"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="text-sm mb-2 px-3 py-2 text-gray-300 bg-zinc-900 rounded-lg 
+                className="text-sm mb-2 px-3 py-2 text-zinc-300 bg-zinc-900 rounded-lg 
                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </label>

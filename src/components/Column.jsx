@@ -25,7 +25,7 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
             className={`overflow-hidden transition-colors duration-200 flex-grow`}
           >
             {column.tasks.length === 0 && (
-              <div className="flex flex-col gap-3 flex-grow w-full h-full items-center justify-center text-zinc-500 font-medium">
+              <div className="flex flex-col gap-3 flex-grow w-full h-full items-center justify-center text-white/70 font-medium">
                 <CircleCheck className="w-10 h-10 text-primary" />
                 All Tasks Completed
               </div>

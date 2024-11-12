@@ -161,7 +161,7 @@ const ListView = () => {
     <div className="flex flex-col justify-between min-h-screen bg-background px-8 pb-8 py-1">
       <div className='mb-4 w-full h-10 flex flex-row justify-between items-center'>
         <div className='flex flex-row items-center gap-4'>
-          <NavLink to={'/'} className='flex flex-row font-bold text-zinc-600 hover:text-zinc-500'>
+          <NavLink to={'/'} className='flex flex-row font-bold text-zinc-600 hover:text-white/70'>
             <ChevronLeft className='w-6 h-6' />
             BACK
           </NavLink>
@@ -202,7 +202,7 @@ const ListView = () => {
           )}
 
 
-          <span className='font-light text-sm text-zinc-500'>This list has {countTasks} pending tasks, Est: {convertTime(estTime)}</span>
+          <span className='font-light text-sm text-white/70'>This list has {countTasks} pending tasks, Est: {convertTime(estTime)}</span>
         </div>
 
         <Flow />

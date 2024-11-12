@@ -30,7 +30,7 @@ const Home = () => {
                     <div className="w-full flex-grow">
                         <div className="flex flex-row items-center justify-between">
                             <h1 className="font-bold text-xl">Your Lists</h1>
-                            <p className="font-light text-zinc-400">Lists with your upcoming tasks</p>
+                            <p className="font-light text-white/70">Lists with your upcoming tasks</p>
                         </div>
 
                         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -39,7 +39,7 @@ const Home = () => {
                             ))}
 
                             <div className="flex flex-col items-center justify-center">
-                                <button onClick={handleCreateList} className="duration-200 text-zinc-500 hover:border-primary hover:text-primary items-center justify-center flex flex-col bg-column border-2 border-zinc-700 border-dashed rounded-lg w-full h-80 p-3">
+                                <button onClick={handleCreateList} className="duration-200 text-white/70 hover:border-primary hover:text-primary items-center justify-center flex flex-col bg-column border-2 border-zinc-700 border-dashed rounded-lg w-full h-80 p-3">
                                     <Plus className="w-8 h-8 mb-3" />
                                     <h1 className="text-xl font-bold">CREATE LIST</h1>
                                 </button>
@@ -49,11 +49,11 @@ const Home = () => {
                 </div>
                 <div className='flex flex-row justify-between bg-column items-center px-10 py-5'>
                     <div className='flex flex-row items-center gap-4'>
-                        <NavLink to="/" className="rounded-lg bg-task px-3 py-2 text-zinc-500 hover:text-primary duration-200 flex flex-row gap-1 items-center">
+                        <NavLink to="/" className="rounded-lg bg-task px-3 py-2 text-white/70 hover:text-primary duration-200 flex flex-row gap-1 items-center">
                             <HomeIcon className="w-5 h-5" />
                             <h1 className="text-m font-medium">Home</h1>
                         </NavLink>
-                        <NavLink to="/settings" className="rounded-lg bg-task px-3 py-2 text-zinc-500 hover:text-primary duration-200 flex flex-row gap-1 items-center">
+                        <NavLink to="/settings" className="rounded-lg bg-task px-3 py-2 text-white/70 hover:text-primary duration-200 flex flex-row gap-1 items-center">
                             <Settings className="w-5 h-5" />
                             <h1 className="text-m font-medium">Settings</h1>
                         </NavLink>

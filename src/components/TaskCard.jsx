@@ -32,12 +32,12 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
           </div>
           <div className='flex flex-row justify-between items-center'>
             {task.time === '00:00' ? (
-              <button className="flex items-center gap-1 text-gray-300">
+              <button className="flex items-center gap-1 text-zinc-300">
                 <Plus className="w-4 h-4" />
                 <p className="text-sm">EST</p>
               </button>
             ) : (
-              <div className="flex items-center gap-1 text-gray-300">
+              <div className="flex items-center gap-1 text-zinc-300">
                 <Clock className="w-4 h-4" />
                 <p className="text-sm">{convertTime(task.time)}</p>
               </div>

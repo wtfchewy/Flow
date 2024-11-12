@@ -1,6 +1,6 @@
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { AlertCircle, AlertTriangle, AlertOctagon, XIcon, Clock, Plus, CircleCheck } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
 
 const TaskCard = ({ column, task, index, onDeleteTask }) => {
   const convertTime = (time) => {
@@ -27,7 +27,7 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
                 <h3 className="font-medium text-sm text-white line-through">{task.title}</h3>
             </div>
 
-            <span className='text-sm text-zinc-400'>{task.time}</span>
+            <span className='text-sm text-zinc-400'>{task.timeTaken}</span>
           </div>
 
         </div>

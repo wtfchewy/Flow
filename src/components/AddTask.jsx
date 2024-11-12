@@ -13,6 +13,7 @@ const AddTask = ({ onAddTask }) => {
     onAddTask({
       title: title.trim(),
       time: time.trim(),
+      timeTaken: '00:00',
     });
 
     setTitle('');

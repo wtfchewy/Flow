@@ -18,6 +18,14 @@ const Timer = () => {
     const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
     const [currentTask, setCurrentTask] = useState(todayTasks[0]);
     const [currentCountdown, setCurrentCountdown] = useState(todayTasks[0].time + ':00');
+    const [timeTaken, setTimeTaken] = useState(todayTasks[0].timeTaken + ':00');
+
+    const formatTime = (totalSeconds) => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    };
 
     const handleAddTask = (task) => {
         const newTask = {
@@ -47,61 +55,67 @@ const Timer = () => {
         setCurrentList(updatedLists.find(list => list.title === currentList.title));
     };
 
-    useEffect(() => {
-        if (focused) { return; }
-        invoke('set_window_size', { size: 'small' });
-    }, []);
-    
     const handleBack = () => {
         navigate('/list');
         invoke('set_window_size', { size: 'normal' });
     }
 
     useEffect(() => {
-        if (isPaused) return;
-
-        const timer = setInterval(() => {
-            setCurrentCountdown(prevCountdown => {
-                const [hours, minutes, seconds] = prevCountdown.split(':').map(Number);
-                if (seconds === 0) {
-                    if (minutes === 0) {
-                        if (hours === 0) {
-                            clearInterval(timer);
-                            handleNextTask();
-                            return '00:00:00';
-                        }
-                        return `${String(hours - 1).padStart(2, '0')}:59:59`;
+        if (focused) { return; }
+        invoke('set_window_size', { size: 'small' });
+    }, []);
+    
+    useEffect(() => {
+        let timer;
+        if (!isPaused) {
+            timer = setInterval(() => {
+                if (todayTasks[0].time !== '00:00') {
+                    const [hours, minutes, seconds] = currentCountdown.split(':').map(Number);
+                    if (hours === 0 && minutes === 0 && seconds === 0) {
+                        clearInterval(timer);
+                        handleNextTask();
+                    } else {
+                        const newSeconds = seconds === 0 ? 59 : seconds - 1;
+                        const newMinutes = seconds === 0 ? (minutes === 0 ? 59 : minutes - 1) : minutes;
+                        const newHours = seconds === 0 && minutes === 0 ? hours - 1 : hours;
+                        setCurrentCountdown(`${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}:${String(newSeconds).padStart(2, '0')}`);
+                        setTimeTaken(prev => formatTime(parseInt(prev.split(':').reduce((acc, time) => (60 * acc) + +time)) + 1));
                     }
-                    return `${String(hours).padStart(2, '0')}:${String(minutes - 1).padStart(2, '0')}:59`;
+                } else {
+                    setTimeTaken(prev => formatTime(parseInt(prev.split(':').reduce((acc, time) => (60 * acc) + +time)) + 1));
                 }
-                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds - 1).padStart(2, '0')}`;
-            });
-        }, 1000); // Update every second
+            }, 1000);
+        }
 
         return () => clearInterval(timer);
-    }, [currentTask, isPaused]);
+    }, [currentTask, isPaused, currentCountdown]);
 
     const handleNextTask = () => {
+        const updatedCurrentTask = {
+            ...currentTask,
+            timeTaken: timeTaken,
+        };
+
         const updatedLists = lists.map(list => {
             if (list === currentList) {
-            return {
-                ...list,
-                columns: list.columns.map(column => {
-                if (column.id === 'today') {
-                    return {
-                    ...column,
-                    tasks: column.tasks.filter(task => task.id !== currentTask.id),
-                    };
-                }
-                if (column.id === 'done') {
-                    return {
-                    ...column,
-                    tasks: [...column.tasks, currentTask],
-                    };
-                }
-                return column;
-                }),
-            };
+                return {
+                    ...list,
+                    columns: list.columns.map(column => {
+                        if (column.id === 'today') {
+                            return {
+                                ...column,
+                                tasks: column.tasks.filter(task => task.id !== currentTask.id),
+                            };
+                        }
+                        if (column.id === 'done') {
+                            return {
+                                ...column,
+                                tasks: [...column.tasks, updatedCurrentTask],
+                            };
+                        }
+                        return column;
+                    }),
+                };
             }
             return list;
         });
@@ -113,7 +127,8 @@ const Timer = () => {
             const nextTaskIndex = currentTaskIndex + 1;
             setCurrentTaskIndex(nextTaskIndex);
             setCurrentTask(todayTasks[nextTaskIndex]);
-            setCurrentCountdown(todayTasks[nextTaskIndex].time + ':00');
+            setCurrentCountdown(todayTasks[nextTaskIndex].time + ':00:00');
+            setTimeTaken(todayTasks[nextTaskIndex].timeTaken + ':00');
         } else {
             handleBack();
         }
@@ -140,7 +155,11 @@ const Timer = () => {
                     {!isHovering ? 
                         <>
                             <h3 className='text-white font-medium'>{currentTask.title}</h3>
-                            <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
+                            { todayTasks[0].time !== '00:00' ?
+                                <p className='text-gray-300 font-bold text-lg'>{currentCountdown}</p>
+                            :
+                                <p className='text-gray-300 font-bold text-lg'>{timeTaken}</p>
+                            }
                         </>
                     :
                     <>
@@ -202,7 +221,11 @@ const Timer = () => {
                         </button>
                         }
                     </div>
-                    <p className={`text-gray-300 font-bold text-lg transition-opacity duration-300`}>{currentCountdown}</p>
+                    { todayTasks[0].time !== '00:00' ?
+                        <p className={`text-gray-300 font-bold text-lg transition-opacity duration-300`}>{currentCountdown}</p>
+                    :
+                        <p className={`text-gray-300 font-bold text-lg transition-opacity duration-300`}>{timeTaken}</p>
+                    }
                 </div>
 
                 {todayTasks.map((task, index) => (

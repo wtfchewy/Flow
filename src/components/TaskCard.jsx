@@ -18,7 +18,7 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`p-4 mb-3 rounded-lg shadow-sm hover:bg-zinc-700 bg-task 
+          className={`p-4 mb-3 rounded-lg shadow-sm hover:brightness-125 bg-task 
             ${snapshot.isDragging ? 'shadow-lg rotate-3' : ''}
             hover:shadow-md transition-all duration-200`}
           onMouseEnter={() => setHover(true)}

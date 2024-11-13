@@ -11,11 +11,6 @@ const ListView = () => {
     const { lists, setLists, currentList, setCurrentList, deleteList, updateTitle } = useList();
     const navigate = useNavigate();
   
-    // if (!currentList) {
-    //   navigate('/');
-    //   return null;
-    // }
-  
     const [columns, setColumns] = useState(currentList.columns);
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState(currentList.title);
@@ -167,19 +162,19 @@ const ListView = () => {
           </NavLink>
 
           {!isEditing ? (
-            <button onClick={() => setIsEditing(true)} className='flex flex-row items-center bg-column hover:bg-zinc-800 duration-100 rounded-lg px-5 py-1 gap-2'>
+            <button onClick={() => setIsEditing(true)} className='flex flex-row items-center bg-column hover:brightness-125 duration-100 rounded-lg px-5 py-1 gap-2'>
               <h1 className='font-bold'>{title}</h1>
               <ChevronDown className='w-4 h-4' />
             </button>
           ) : (
-          <button onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-column hover:bg-zinc-800 duration-100 rounded-lg px-5 py-1 gap-2'>
+          <button onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-column hover:brightness-125 duration-100 rounded-lg px-5 py-1 gap-2'>
             <h1 className='font-bold'>{title}</h1>
             <ChevronUp className='w-4 h-4' />
           </button>
           )}
 
           {isEditing && (
-            <div className='absolute left-20 top-12 bg-column rounded-lg ml-9 p-2 border border-zinc-800'>
+            <div className='absolute left-20 top-12 bg-column rounded-lg ml-9 py-4 px-3 border border-zinc-800'>
               <label className='flex flex-col'>
                 <span className='text-sm text-zinc-400'>Title</span>
                 <input
@@ -187,17 +182,13 @@ const ListView = () => {
                   value={title}
                   onChange={handleTitleChange}
                   onKeyPress={handleTitleKeyPress}
-                  className='text-sm bg-zinc-800 rounded-lg border border-zinc-700 px-2 py-1'
+                  className='text-sm bg-background rounded-lg border border-zinc-700 px-2 py-1 focus:outline-none'
                 />
               </label>
 
-              <button onClick={handleDeleteList} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-white bg-red-500 hover:bg-red-500/70 rounded-lg w-full'>
+              <button onClick={handleDeleteList} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-white bg-red-500 hover:brightness-110 duration-100 rounded-lg w-full'>
                 <h1 className='font-semibold tracking-wide'>Delete List</h1>
               </button>
-
-              {/* <button className='flex flex-row justify-center items-center px-2 py-1 mt-1 text-sm text-white bg-primary hover:bg-indigo-600 rounded-lg w-full'>
-                <h1 className='font-semibold tracking-wide'>Save</h1>
-              </button> */}
             </div>
           )}
 

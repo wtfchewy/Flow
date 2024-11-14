@@ -1,5 +1,5 @@
 import React from 'react';
-import { Droppable, Draggable } from '@hello-pangea/dnd';
+import { Droppable } from '@hello-pangea/dnd';
 import TaskCard from './TaskCard';
 import AddTask from './AddTask';
 import DoneTaskCard from './DoneTaskCard';
@@ -37,7 +37,7 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
               column.id !== 'done' ? 
                 <TaskCard key={task.id} column={column} task={task} index={index} onDeleteTask={onDeleteTask} />
                 :
-                <DoneTaskCard key={task.id} column={column} task={task} index={index} onDeleteTask={onDeleteTask} />
+                <DoneTaskCard key={task.id} task={task} index={index}/>
             ))}
             {provided.placeholder}
           </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { XIcon, Plus, Clock, Edit, Edit2Icon } from 'lucide-react';
+import { XIcon, Plus, Clock, Edit2Icon } from 'lucide-react';
 
 const TaskCard = ({ column, task, index, onDeleteTask }) => {
   const [isHovering, setHover] = React.useState(false);

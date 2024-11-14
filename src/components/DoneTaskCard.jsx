@@ -2,14 +2,7 @@ import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import { CircleCheck } from 'lucide-react';
 
-const TaskCard = ({ column, task, index, onDeleteTask }) => {
-  const convertTime = (time) => {
-    if (time == ('00:00')) return 'No time estimate';
-    const [hours, minutes] = time.split(':');
-    return `${parseInt(hours) > 0 ? `${hours}hr` : ''} ${parseInt(minutes) > 0 ? `${minutes}m` : ''
-      }`;
-  }
-
+const TaskCard = ({ task, index }) => {
   return (
     <Draggable draggableId={task.id} index={index} className=''>
       {(provided, snapshot) => (

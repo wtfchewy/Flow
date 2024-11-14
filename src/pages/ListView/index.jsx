@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DragDropContext } from '@hello-pangea/dnd';
 import Column from '../../components/Column';
-import { ChevronDown, ChevronLeft, ChevronUp, Trash, Trash2, XIcon } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronUp } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useList } from '../../context/ListContext';
 import Flow from '../../components/Flow';

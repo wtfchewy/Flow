@@ -17,17 +17,17 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`p-3 mb-3 rounded-lg shadow-sm hover:brightness-125 bg-task 
+          className={`p-3 mb-3 rounded-lg shadow-sm hover:brightness-105 bg-border 
             ${snapshot.isDragging ? 'shadow-lg rotate-3' : ''}
             hover:shadow-md transition-all duration-200`}
         >
           <div className="flex items-center justify-between">
             <div className='flex items-center gap-2'>
                 <CircleCheck className="w-4 h-4 text-primary" />
-                <h3 className="font-medium text-sm text-white line-through">{task.title}</h3>
+                <h3 className="font-medium text-sm line-through">{task.title}</h3>
             </div>
 
-            <span className='text-sm text-zinc-400'>{task.timeTaken}</span>
+            <span className='text-sm text-copy-light'>{task.timeTaken}</span>
           </div>
 
         </div>

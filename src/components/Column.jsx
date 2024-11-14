@@ -14,8 +14,8 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
   };
 
   return (
-    <div className={`w-1/4 bg-column rounded-lg border border-zinc-800 p-4 flex flex-col  ${column.id == 'today' ? 'border-secondary' : ''} `}>
-      <h2 className="text-lg font-semibold mb-4 text-white">{column.title} ({column.tasks.length})</h2>
+    <div className={`w-1/4 bg-foreground rounded-lg border border-border p-4 flex flex-col  ${column.id == 'today' ? 'border-secondary' : ''} `}>
+      <h2 className="text-lg font-semibold mb-4">{column.title} ({column.tasks.length})</h2>
       { column.id !== 'done' && <AddTask onAddTask={(task) => onAddTask(column.id, task)} /> }
       <Droppable droppableId={column.id}>
         {(provided, snapshot) => (
@@ -25,7 +25,7 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
             className={`overflow-hidden transition-colors duration-200 flex-grow`}
           >
             {column.tasks.length === 0 && (
-              <div className="flex flex-col gap-3 flex-grow w-full h-full items-center justify-center text-white/70 font-medium">
+              <div className="flex flex-col gap-3 flex-grow w-full h-full items-center justify-center text-copy-light font-medium">
                 <CircleCheck className="w-10 h-10 text-primary" />
                 All Tasks Completed
               </div>
@@ -40,7 +40,7 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
           </div>
         )}
       </Droppable>
-      { column.id === 'today' && <button onClick={() => openTimer()} className="mt-4 bg-gradient-to-r from-primary to-secondary text-background font-semibold py-2 rounded-lg hover:-translate-y-1 duration-100">Get into the Flow</button> }
+      { column.id === 'today' && <button onClick={() => openTimer()} className="mt-4 bg-gradient-to-r from-primary to-secondary text-foreground font-semibold py-2 rounded-lg hover:-translate-y-1 duration-100">Get into the Flow</button> }
     </div>
   );
 };

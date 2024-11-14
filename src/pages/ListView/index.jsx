@@ -134,7 +134,13 @@ const ListView = () => {
       setCurrentList(updatedLists.find(list => list.title === currentList.title));
     };
   
-    const countTasks = columns.reduce((acc, column) => acc + column.tasks.length, 0);
+    const countTasks = columns.reduce((acc, column) => { 
+      if (column.id !== 'done') {
+        return acc + column.tasks.length;
+      }
+      return acc;
+    }, 0);
+
     const estTime = columns.reduce((acc, column) => {
       if (column.id !== 'done') {
         column.tasks.forEach(task => {
@@ -153,36 +159,36 @@ const ListView = () => {
     };
 
   return (
-    <div className="flex flex-col justify-between min-h-screen bg-background px-8 pb-8 py-1">
+    <div className="flex flex-col justify-between min-h-screen px-8 pb-8 py-1">
       <div className='mb-4 w-full h-10 flex flex-row justify-between items-center'>
         <div className='flex flex-row items-center gap-4'>
-          <NavLink to={'/'} className='flex flex-row font-bold text-zinc-600 hover:text-white/70'>
+          <NavLink to={'/'} className='flex flex-row font-bold text-copy-lighter hover:text-copy-light duration-100'>
             <ChevronLeft className='w-6 h-6' />
             BACK
           </NavLink>
 
           {!isEditing ? (
-            <button onClick={() => setIsEditing(true)} className='flex flex-row items-center bg-column hover:brightness-125 duration-100 rounded-lg px-5 py-1 gap-2'>
+            <button onClick={() => setIsEditing(true)} className='flex flex-row items-center bg-foreground hover:bg-border duration-100 rounded-lg px-5 py-1 gap-2'>
               <h1 className='font-bold'>{title}</h1>
               <ChevronDown className='w-4 h-4' />
             </button>
           ) : (
-          <button onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-column hover:brightness-125 duration-100 rounded-lg px-5 py-1 gap-2'>
+          <button onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-foreground hover:bg-border duration-100 rounded-lg px-5 py-1 gap-2'>
             <h1 className='font-bold'>{title}</h1>
             <ChevronUp className='w-4 h-4' />
           </button>
           )}
 
           {isEditing && (
-            <div className='absolute left-20 top-12 bg-column rounded-lg ml-9 py-4 px-3 border border-zinc-800'>
+            <div className='absolute left-20 top-12 bg-foreground rounded-lg ml-9 py-4 px-3 border border-border'>
               <label className='flex flex-col'>
-                <span className='text-sm text-zinc-400'>Title</span>
+                <span className='text-sm text-copy-light'>Title</span>
                 <input
                   type='text'
                   value={title}
                   onChange={handleTitleChange}
                   onKeyPress={handleTitleKeyPress}
-                  className='text-sm bg-background rounded-lg border border-zinc-700 px-2 py-1 focus:outline-none'
+                  className='text-sm bg-background rounded-lg border border-border px-2 py-1 focus:outline-none'
                 />
               </label>
 
@@ -193,7 +199,7 @@ const ListView = () => {
           )}
 
 
-          <span className='font-light text-sm text-white/70'>This list has {countTasks} pending tasks, Est: {convertTime(estTime)}</span>
+          <span className='font-light text-sm text-copy-lighter'>This list has {countTasks} pending tasks, Est: {convertTime(estTime)}</span>
         </div>
 
         <Flow />

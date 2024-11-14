@@ -16,22 +16,36 @@ const List = ({ list, handleLoadList }) => {
 
     return (
         <>
-            <button onClick={() => handleLoadList(list)} className="duration-200 hover:border-primary flex flex-col bg-column border border-zinc-700 rounded-lg w-full h-80 p-3">
+            <button onClick={() => handleLoadList(list)} className="duration-200 hover:border-primary flex flex-col bg-foreground border border-border rounded-lg w-full h-80 p-3">
                 <h1 className="font-semibold text-lg">{list.title}</h1>
 
                 <div className="w-full flex flex-col gap-2 mt-3 flex-grow">
-                    {list.columns.map(column => column.id !== 'done' && column.id == 'today' && column.tasks.slice(0, 4).map((task, index) => (
-                        <div className="w-full flex flex-row items-center gap-4 bg-task rounded-lg px-3 py-2" key={task.id}>
-                            <span className='text-sm text-zinc-600'>{index + 1}</span>
-                            <h3 className="text-left text-md flex-grow font-medium text-white text-nowrap overflow-hidden text-ellipsis">{task.title}</h3>
-                            <span className="text-zinc-400 font-light text-sm">{task.time}</span>
-                        </div>
-                    )))}
+                    {list.columns.map(column => {
+                        if (column.id === 'today' && column.tasks.length === 0) {
+                            const weekColumn = list.columns.find(col => col.id === 'week');
+                            return weekColumn ? weekColumn.tasks.slice(0, 4).map((task, index) => (
+                                <div className="w-full flex flex-row items-center gap-4 bg-border rounded-lg px-3 py-2" key={task.id}>
+                                    <span className='text-sm text-copy-lighter'>{index + 1}</span>
+                                    <h3 className="text-left text-md flex-grow font-medium text-nowrap overflow-hidden text-ellipsis">{task.title}</h3>
+                                    <span className="text-copy-light font-medium text-sm">{task.time}</span>
+                                </div>
+                            )) : null;
+                        } else if (column.id === 'today') {
+                            return column.tasks.slice(0, 4).map((task, index) => (
+                                <div className="w-full flex flex-row items-center gap-4 bg-border rounded-lg px-3 py-2" key={task.id}>
+                                    <span className='text-sm text-copy-lighter'>{index + 1}</span>
+                                    <h3 className="text-left text-md flex-grow font-medium text-nowrap overflow-hidden text-ellipsis">{task.title}</h3>
+                                    <span className="text-copy-light font-medium text-sm">{task.time}</span>
+                                </div>
+                            ));
+                        }
+                        return null;
+                    })}
                 </div>
 
-                <div className="w-full flex flex-row items-center justify-between mt-3">
-                    <button className="text-zinc-600 font-semibold text-xs">{list.columns.reduce((total, column) => column.id !== 'done' ? total + column.tasks.length : total, 0)} pending tasks</button>
-                    <button className="text-zinc-600 font-semibold text-xs">Est: {convertTime(estimatedTime(list.columns.flatMap(column => column.id !== 'done' ? column.tasks : [])))}</button>
+                <div className="text-copy-light w-full flex flex-row items-center justify-between mt-3">
+                    <button className="font-semibold text-xs">{list.columns.reduce((total, column) => column.id !== 'done' ? total + column.tasks.length : total, 0)} pending tasks</button>
+                    <button className="font-semibold text-xs">Est: {convertTime(estimatedTime(list.columns.flatMap(column => column.id !== 'done' ? column.tasks : [])))}</button>
                 </div>
             </button>
         </>

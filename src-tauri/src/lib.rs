@@ -81,9 +81,9 @@ pub fn run() {
                 unsafe {
                     let bg_color = NSColor::colorWithRed_green_blue_alpha_(
                         nil,
-                        17.0 / 255.0,
-                        17.0 / 255.0,
-                        17.5 / 255.0,
+                        23.0 / 255.0,
+                        22.0 / 255.0,
+                        29.0 / 255.0,
                         1.0,
                     );
                     ns_window.setBackgroundColor_(bg_color);

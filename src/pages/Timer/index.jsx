@@ -150,19 +150,19 @@ const Timer = () => {
         invoke('set_window_size', { size: 'focus' });
 
         return (
-            <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="flex flex-col bg-task h-screen w-screen">
+            <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="flex flex-col bg-border h-screen w-screen">
                 <div data-tauri-drag-region className={`border border-secondary absolute w-full h-screen flex flex-row items-center justify-between p-4 `}>
-                        <h3 className='text-white font-medium'>{currentTask.title}</h3>
+                        <h3 className='font-medium'>{currentTask.title}</h3>
                         { todayTasks[0].time !== '00:00' ?
-                            <p className='text-zinc-300 font-bold text-lg'>{currentCountdown}</p>
+                            <p className='text-copy-light font-bold text-lg'>{currentCountdown}</p>
                         :
-                            <p className='text-zinc-300 font-bold text-lg'>{timeTaken}</p>
+                            <p className='text-copy-light font-bold text-lg'>{timeTaken}</p>
                         }
                 </div>
                 
-                <div data-tauri-drag-region className={`gap-2 border bg-task border-secondary absolute w-full h-screen flex flex-row items-center justify-between p-4 transition-opacity duration-200 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
+                <div data-tauri-drag-region className={`gap-2 border bg-border border-secondary absolute w-full h-screen flex flex-row items-center justify-between p-4 transition-opacity duration-200 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
                     <div></div>
-                    <div className='flex flex-row items-center text-zinc-300 gap-2'>
+                    <div className='flex flex-row items-center text-copy-light gap-2'>
                         <button onClick={() => handleNextTask()}>
                             <CircleCheck className='w-5 h-5 hover:text-secondary duration-100' />
                         </button>
@@ -187,10 +187,10 @@ const Timer = () => {
 
 
     return (
-        <div className="flex flex-col bg-background h-screen w-screen p-8">
+        <div className="flex flex-col h-screen w-screen p-8">
             <div className="flex items-center justify-between mt-4">
                 <h1 className='text-3xl font-bold'>Today</h1>
-                <button onClick={() => handleBack()} className='flex flex-row font-bold text-zinc-600 hover:text-white/70'>
+                <button onClick={() => handleBack()} className='flex flex-row font-bold text-copy-lighter hover:text-copy-light'>
                     <ChevronLeft className='w-6 h-6' />
                     BACK
                 </button>
@@ -200,17 +200,17 @@ const Timer = () => {
                 <div 
                     onMouseEnter={() => setIsHovering(true)} 
                     onMouseLeave={() => setIsHovering(false)} 
-                    className={` border border-secondary flex flex-row items-center justify-between bg-task rounded-lg p-4 mt-7 gap-2`}
+                    className={`border border-secondary flex flex-row items-center justify-between bg-border rounded-lg p-4 mt-7 gap-2`}
                 >
-                    <h3 className='text-white font-medium overflow-hidden truncate text-ellipsis'>{currentTask.title}</h3>
+                    <h3 className='font-medium overflow-hidden truncate text-ellipsis'>{currentTask.title}</h3>
                     { todayTasks[0].time !== '00:00' ?
-                        <p className={`text-zinc-300 font-bold text-lg transition-opacity duration-300`}>{currentCountdown}</p>
+                        <p className={`text-copy-light font-bold text-lg transition-opacity duration-300`}>{currentCountdown}</p>
                     :
-                        <p className={`text-zinc-300 font-bold text-lg transition-opacity duration-300`}>{timeTaken}</p>
+                        <p className={`text-copy-light font-bold text-lg transition-opacity duration-300`}>{timeTaken}</p>
                     }
 
 
-                    <div className={`left-12 right-12 justify-center absolute flex flex-row items-center bg-task text-zinc-300 gap-2 py-1 transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className={`left-12 right-12 justify-center absolute flex flex-row items-center bg-border text-copy-light gap-2 py-1 transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
                         <button onClick={() => handleNextTask()}>
                             <CircleCheck className='w-5 h-5 hover:text-secondary duration-100' />
                         </button>
@@ -228,8 +228,8 @@ const Timer = () => {
 
                 {todayTasks.map((task, index) => (
                     index !== currentTaskIndex && (
-                        <button onClick={() => selectTask(index)} key={task.id} className={`w-full flex flex-row justify-between bg-task hover:bg-zinc-700 rounded-lg p-4`}>
-                            <h3 className='text-white font-medium'>{task.title}</h3>
+                        <button onClick={() => selectTask(index)} key={task.id} className={`w-full flex flex-row justify-between bg-border rounded-lg p-4`}>
+                            <h3 className='font-medium'>{task.title}</h3>
                         </button>
                     )
                 ))}
@@ -238,11 +238,11 @@ const Timer = () => {
                 
                 {doneTasks.length > 0 && (
                     <>
-                        <h1 className='text-zinc-700 font-semibold text-md w-full border-t border-zinc-700 pt-4 -mb-1'>{doneTasks.length} Done</h1>
+                        <h1 className='font-semibold text-md w-full border-t border-border pt-4 -mb-1'>{doneTasks.length} Done</h1>
                         {doneTasks.map((task, index) => (
-                            <div key={task.id} className="bg-task rounded-lg p-3 flex items-center gap-2 -mb-1">
+                            <div key={task.id} className="bg-border rounded-lg p-3 flex items-center gap-2 -mb-1">
                                 <CircleCheck className="w-4 h-4 text-primary" />
-                                <h3 className="font-medium text-sm text-white line-through">{task.title}</h3>
+                                <h3 className="font-medium text-sm line-through">{task.title}</h3>
                             </div>
                         ))}
                     </>

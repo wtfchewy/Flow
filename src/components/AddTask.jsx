@@ -26,48 +26,42 @@ const AddTask = ({ onAddTask }) => {
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="w-full py-2 px-4 rounded-lg border-2 border-dashed border-copy
-            hover:border-primary hover:text-primary 
-            transition-colors duration-200 flex items-center justify-center gap-2"
-        >
+          className="font-semibold w-full py-2 border-b border-copy-lighter text-copy-lighter hover:border-copy-light hover:text-copy-light transition-colors duration-200 flex items-center gap-2">
           <Plus className="w-5 h-5" />
-          Add New Task
+          New Task
         </button>
       ) : (
-        <form onSubmit={handleSubmit} className="bg-border rounded-lg p-3 shadow-sm">
+        <form onSubmit={handleSubmit} className="py-2 ">
           <div className='flex flex-row items-center justify-between mb-2'>
-            <h1 className='font-bold text-lg'>New Task</h1>
-
             <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="text-copy-light hover:text-copy-lighter transition-colors duration-200"
-            >
-              <X className='w-5 h-5' />
+            onClick={() => setIsOpen(false)}
+            className="w-full pb-2 border-b font-semibold border-copy-lighter text-copy-lighter hover:border-copy-light hover:text-copy-light transition-colors duration-200 flex items-center gap-2">
+            <X className="w-5 h-5" />
+            Cancel
             </button>
           </div>
 
-          <div className='flex flex-row gap-2'>
+          <div className='pt-2 flex flex-row gap-2'>
             <label className='flex flex-col gap-1'>
-              <span className="text-xs text-copy-light">Title</span>
+              <span className="text-xs text-copy-lighter">Title</span>
               <input
                 autoCorrect='off'
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter task title"
-                className="text-sm w-full mb-2 px-3 py-2 bg-foreground rounded-lg 
+                className="text-sm w-full mb-2 px-3 py-2 bg-background rounded-lg 
                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 autoFocus
               />
             </label>
-            <label className='flex flex-col w-2/6 gap-1'>
-              <span className="text-xs text-copy-light">Est. Time</span>
+            <label className='flex flex-col w-3/12 gap-1'>
+              <span className="text-xs text-copy-lighter">Est. Time</span>
               <input
                 type="text"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="text-sm mb-2 px-3 py-2 bg-foreground rounded-lg 
+                className="text-sm mb-2 px-3 py-2 bg-background rounded-lg 
                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </label>

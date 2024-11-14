@@ -10,6 +10,9 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
   const navigate = useNavigate();
 
   const openTimer = () => {
+    if (column.tasks.length === 0) {
+      return;
+    }
     navigate('/timer');
   };
 

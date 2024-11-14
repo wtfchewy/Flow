@@ -206,7 +206,7 @@ const ListView = () => {
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="w-full flex flex-grow gap-6 overflow-x-auto">
+        <div className="w-full flex flex-grow gap-4 overflow-x-auto">
           {columns.map((column) => (
             <Column 
               key={column.id} 

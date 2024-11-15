@@ -49,6 +49,7 @@ const AddTask = ({ onAddTask }) => {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
                 placeholder="Enter task title"
                 className="text-sm w-full mb-2 px-3 py-2 bg-background rounded-lg 
                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"

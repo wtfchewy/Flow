@@ -2,8 +2,19 @@ import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import { XIcon, Plus, Clock, Edit2Icon } from 'lucide-react';
 
-const TaskCard = ({ column, task, index, onDeleteTask }) => {
+const TaskCard = ({ column, task, index, onDeleteTask, onEditTaskTime }) => {
   const [isHovering, setHover] = React.useState(false);
+  const [isEditingTitle, setEditingTitle] = React.useState(false);
+  const [isEditingTime, setEditingTime] = React.useState(false);
+
+  const [title, setTitle] = React.useState(task.title);
+  const [time, setTime] = React.useState(task.time);
+
+  const handleEditTaskTime = () => {
+    onEditTaskTime(column.id, task.id, time);
+    console.log('1,', task.id, time);
+    setEditingTime(false);
+  };
 
   const convertTime = (time) => {
     if (time === '00:00') return 'No time estimate';
@@ -31,17 +42,34 @@ const TaskCard = ({ column, task, index, onDeleteTask }) => {
             </div>
           </div>
           <div className='flex flex-row justify-between items-center'>
-            {task.time === '00:00' ? (
-              <button className="flex items-center gap-1 text-copy-light">
-                <Plus className="w-4 h-4" />
-                <p className="text-sm">EST</p>
-              </button>
-            ) : (
-              <div className="flex items-center gap-1 text-copy-light">
-                <Clock className="w-4 h-4" />
-                <p className="text-sm">{convertTime(task.time)}</p>
-              </div>
+            {isEditingTime && (
+              <input
+                type="text"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleEditTaskTime()}
+                onBlur={() => setEditingTime(false)}
+                className="text-sm w-16 px-2 py-1 bg-background rounded-lg
+                  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                autoFocus
+              />
             )}
+
+            {!isEditingTime &&
+              <>
+                {task.time === '00:00' ? (
+                  <button onClick={() => setEditingTime(true)} className="flex items-center gap-1 text-copy-light">
+                    <Plus className="w-4 h-4" />
+                    <p className="text-sm">EST</p>
+                  </button>
+                ) : (
+                  <div onClick={() => setEditingTime(true)} className="flex items-center gap-1 text-copy-light">
+                    <Clock className="w-4 h-4" />
+                    <p className="text-sm">{convertTime(task.time)}</p>
+                  </div>
+                )}
+              </>
+            }
             <div>
 
             </div>

@@ -6,7 +6,7 @@ import DoneTaskCard from './DoneTaskCard';
 import { useNavigate } from 'react-router-dom';
 import { CircleCheck } from 'lucide-react';
 
-const Column = ({ column, onAddTask, onDeleteTask }) => {
+const Column = ({ column, onAddTask, onDeleteTask, onEditTaskTime }) => {
   const navigate = useNavigate();
 
   const openTimer = () => {
@@ -35,7 +35,7 @@ const Column = ({ column, onAddTask, onDeleteTask }) => {
             )}
             {column.tasks.map((task, index) => (
               column.id !== 'done' ? 
-                <TaskCard key={task.id} column={column} task={task} index={index} onDeleteTask={onDeleteTask} />
+                <TaskCard key={task.id} column={column} task={task} index={index} onDeleteTask={onDeleteTask} onEditTaskTime={onEditTaskTime}/>
                 :
                 <DoneTaskCard key={task.id} task={task} index={index}/>
             ))}

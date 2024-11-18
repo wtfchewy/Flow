@@ -238,7 +238,7 @@ const Timer = () => {
                 
                 {doneTasks.length > 0 && (
                     <>
-                        <h1 className='font-semibold text-md w-full border-t border-border pt-4 -mb-1'>{doneTasks.length} Done</h1>
+                        <h1 className='font-semibold text-md w-full'>{doneTasks.length} Done</h1>
                         {doneTasks.map((task, index) => (
                             <div key={task.id} className="bg-border rounded-lg p-3 flex items-center gap-2 -mb-1">
                                 <CircleCheck className="w-4 h-4 text-primary" />

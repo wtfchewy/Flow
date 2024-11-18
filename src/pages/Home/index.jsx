@@ -21,8 +21,8 @@ const Home = () => {
 
     return (
         <>
-            <div className="flex flex-col w-full h-screen">
-                <div className='flex flex-col w-full h-full  px-10'>
+            <div className="flex flex-col w-full min-h-screen">
+                <div className='flex flex-col w-full h-full px-10 flex-grow'>
                     <div className="flex flex-row w-full items-center h-20">
                         <Flow />
                     </div>
@@ -47,7 +47,8 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-                <div className='flex flex-row justify-between bg-foreground items-center px-10 py-5 border-t border-border'>
+
+                <div className='w-screen flex flex-row justify-between bg-foreground items-center px-10 py-5 border-t border-border'>
                     <div className='flex flex-row items-center gap-4'>
                         <NavLink to="/" className="rounded-lg bg-border px-3 py-2 hover:text-primary duration-200 flex flex-row gap-1 items-center">
                             <HomeIcon className="w-5 h-5" />

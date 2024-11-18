@@ -66,6 +66,37 @@ const ListView = () => {
       setCurrentList(updatedLists.find(list => list.title === currentList.title));
     };
 
+    const updateTaskTitle = (columnId, taskId, title) => {
+      const updatedLists = lists.map(list => {
+        if (list === currentList) {
+          return {
+            ...list,
+            columns: list.columns.map(column => {
+              if (column.id === columnId) {
+                return {
+                  ...column,
+                  tasks: column.tasks.map(task => {
+                    if (task.id === taskId) {
+                      return {
+                        ...task,
+                        title,
+                      };
+                    }
+                    return task;
+                  }),
+                };
+              }
+              return column;
+            }),
+          };
+        }
+        return list;
+      });
+      
+      setLists(updatedLists);
+      setCurrentList(updatedLists.find(list => list.title === currentList.title));
+    };
+
     const handleAddTask = (columnId, task) => {
       const newTask = {
         ...task,
@@ -245,6 +276,7 @@ const ListView = () => {
               onAddTask={handleAddTask}
               onDeleteTask={handleDeleteTask}
               onEditTaskTime={updateTaskTime}
+              onEditTaskTitle={updateTaskTitle}
             />
           ))}
         </div>

@@ -1,6 +1,9 @@
 use tauri::{
-    LogicalPosition, LogicalSize, Position, Size, TitleBarStyle, WebviewUrl, WebviewWindowBuilder,
+    LogicalPosition, LogicalSize, Position, Size, WebviewUrl, WebviewWindowBuilder,
 };
+
+#[cfg(target_os = "macos")]
+use tauri::TitleBarStyle;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -40,17 +43,6 @@ fn set_window_size(size: String, window: tauri::Window) {
                 y: center_y,
             }))
             .unwrap();
-        window.set_always_on_top(false).unwrap();
-        window.set_decorations(true).unwrap();
-    } else if size == "focus" {
-        window
-            .set_size(Size::Logical(LogicalSize {
-                width: window_width,
-                height: 55.4,
-            }))
-            .unwrap();
-        window.set_always_on_top(true).unwrap();
-        window.set_decorations(false).unwrap();
     }
 }
 

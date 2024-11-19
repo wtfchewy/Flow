@@ -249,7 +249,7 @@ const Timer = () => {
                 )}
             </div>
 
-            <button onClick={() => setFocused(true)} className='font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-primary to-secondary hover:-translate-y-1 duration-100'>
+            <button onClick={() => setFocused(true)} className='my-4 font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-primary to-secondary hover:-translate-y-1 duration-100'>
                 Focus
             </button>
         </div>

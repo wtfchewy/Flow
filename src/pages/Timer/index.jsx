@@ -196,7 +196,7 @@ const Timer = () => {
                 </button>
             </div>
 
-            <div className='flex flex-col flex-grow gap-3'>
+            <div className='flex flex-col flex-grow gap-2'>
                 <div 
                     onMouseEnter={() => setIsHovering(true)} 
                     onMouseLeave={() => setIsHovering(false)} 
@@ -228,7 +228,7 @@ const Timer = () => {
 
                 {todayTasks.map((task, index) => (
                     index !== currentTaskIndex && (
-                        <button onClick={() => selectTask(index)} key={task.id} className={`w-full flex flex-row justify-between bg-border rounded-lg p-4`}>
+                        <button onClick={() => selectTask(index)} key={task.id} className={`w-full flex flex-row justify-between bg-border rounded-lg px-4 py-3`}>
                             <h3 className='font-medium'>{task.title}</h3>
                         </button>
                     )
@@ -239,7 +239,7 @@ const Timer = () => {
                 {doneTasks.length > 0 && (
                     <>
                         <h1 className='font-semibold text-md w-full'>{doneTasks.length} Done</h1>
-                        {doneTasks.map((task, index) => (
+                        {doneTasks.slice(0,5).map((task, index) => (
                             <div key={task.id} className="bg-border rounded-lg p-3 flex items-center gap-2 -mb-1">
                                 <CircleCheck className="w-4 h-4 text-primary" />
                                 <h3 className="font-medium text-sm line-through">{task.title}</h3>

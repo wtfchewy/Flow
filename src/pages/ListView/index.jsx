@@ -221,7 +221,7 @@ const ListView = () => {
     };
 
   return (
-    <div className="flex flex-col justify-between min-h-screen px-8 pb-8 py-1">
+    <div className="flex flex-col justify-between h-screen px-8 pb-8 py-1">
       <div className='mb-4 w-full h-10 flex flex-row justify-between items-center'>
         <div className='flex flex-row items-center gap-4'>
           <NavLink to={'/'} className='flex flex-row font-bold text-copy-lighter hover:text-copy-light duration-100'>

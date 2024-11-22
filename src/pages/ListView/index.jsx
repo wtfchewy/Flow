@@ -167,33 +167,51 @@ const ListView = () => {
       const destColumn = columns[destColumnIndex];
   
       const sourceTasks = Array.from(sourceColumn.tasks);
-      const destTasks = Array.from(destColumn.tasks);
   
-      const [movedTask] = sourceTasks.splice(source.index, 1);
-      destTasks.splice(destination.index, 0, movedTask);
-  
-      const newColumns = Array.from(columns);
-      newColumns[sourceColumnIndex] = {
-        ...sourceColumn,
-        tasks: sourceTasks,
-      };
-      newColumns[destColumnIndex] = {
-        ...destColumn,
-        tasks: destTasks,
-      };
-  
-      const updatedLists = lists.map(list => {
-        if (list === currentList) {
-          return {
-            ...list,
-            columns: newColumns,
-          };
-        }
-        return list;
-      });
-  
-      setLists(updatedLists);
-      setCurrentList(updatedLists.find(list => list.title === currentList.title));
+      if (sourceColumn === destColumn) {
+        const [movedTask] = sourceTasks.splice(source.index, 1);
+        sourceTasks.splice(destination.index, 0, movedTask);
+        const newColumns = Array.from(columns);
+        newColumns[sourceColumnIndex] = {
+          ...sourceColumn,
+          tasks: sourceTasks,
+        };
+        const updatedLists = lists.map(list => {
+          if (list === currentList) {
+            return {
+              ...list,
+              columns: newColumns,
+            };
+          }
+          return list;
+        });
+        setLists(updatedLists);
+        setCurrentList(updatedLists.find(list => list.title === currentList.title));
+      } else {
+        const destTasks = Array.from(destColumn.tasks);
+        const [movedTask] = sourceTasks.splice(source.index, 1);
+        destTasks.splice(destination.index, 0, movedTask);
+        const newColumns = Array.from(columns);
+        newColumns[sourceColumnIndex] = {
+          ...sourceColumn,
+          tasks: sourceTasks,
+        };
+        newColumns[destColumnIndex] = {
+          ...destColumn,
+          tasks: destTasks,
+        };
+        const updatedLists = lists.map(list => {
+          if (list === currentList) {
+            return {
+              ...list,
+              columns: newColumns,
+            };
+          }
+          return list;
+        });
+        setLists(updatedLists);
+        setCurrentList(updatedLists.find(list => list.title === currentList.title));
+      }
     };
   
     const countTasks = columns.reduce((acc, column) => { 

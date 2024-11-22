@@ -3,7 +3,7 @@
 
 Flow is a productivity application that combines a to-do list with a timer system, designed to help users stay organized and focused.
 
-![screenshot](https://i.ibb.co/pPV6gxg/Screenshot-2024-11-22-at-11-48-26-AM.png)
+![screenshot](https://i.imgur.com/NKpJD3H.jpeg)
 
 ### Features
 - Kanboard System

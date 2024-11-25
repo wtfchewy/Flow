@@ -17,4 +17,4 @@ Flow is a productivity application that combines a to-do list with a timer syste
 - [Vite](https://vite.dev/)
 - [TailwindCSS](https://tailwindcss.com/)
 
-MIT LICENSE
+GNU GENERAL PUBLIC LICENSE Version 3

@@ -47,7 +47,7 @@ const Settings = ({ setTheme }) => {
         <Flow />
       </div>
 
-      <div className="mx-10 flex flex-row items-center justify-between border-b border-border pb-3">
+      <div className="mx-10 flex flex-row items-center justify-between border-b border-border pb-3 duration-200">
         <h1 className="font-bold text-xl">Settings</h1>
         <p className="font-light text-copy-light">Personalize your experience and manage your preferences</p>
       </div>

@@ -6,6 +6,7 @@ Flow is a productivity application that combines a to-do list with a timer syste
 ![screenshot](https://i.imgur.com/NKpJD3H.jpeg)
 
 ### Features
+- Custom & Community Themes
 - Kanboard System
 - Quick Lists
 - Flow mode

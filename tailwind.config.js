@@ -7,32 +7,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#6b56ff",
-        "primary-content": "#ffffff",
-        "primary-dark": "#3e23ff",
-        "primary-light": "#9889ff",
-
-        secondary: "#bf56ff",
-        "secondary-content": "#350056",
-        "secondary-dark": "#ac23ff",
-        "secondary-light": "#d289ff",
-
-        background: "#17161d",
-        foreground: "#22212c",
-        border: "#393649",
-
-        copy: "#fbfbfc",
-        "copy-light": "#d4d3de",
-        "copy-lighter": "#9c98b3",
-
-        success: "#56ff56",
-        warning: "#ffff56",
-        error: "#ff5656",
-
-        "success-content": "#005600",
-        "warning-content": "#565600",
-        "error-content": "#560000"
-    },
+        primary: 'var(--color-primary)',
+        'primary-content': 'var(--color-primary-content)',
+        'primary-dark': 'var(--color-primary-dark)',
+        'primary-light': 'var(--color-primary-light)',
+        secondary: 'var(--color-secondary)',
+        'secondary-content': 'var(--color-secondary-content)',
+        'secondary-dark': 'var(--color-secondary-dark)',
+        'secondary-light': 'var(--color-secondary-light)',
+        background: 'var(--color-background)',
+        foreground: 'var(--color-foreground)',
+        border: 'var(--color-border)',
+        copy: 'var(--color-copy)',
+        'copy-light': 'var(--color-copy-light)',
+        'copy-lighter': 'var(--color-copy-lighter)',
+        success: 'var(--color-success)',
+        warning: 'var(--color-warning)',
+        error: 'var(--color-error)',
+        'success-content': 'var(--color-success-content)',
+        'warning-content': 'var(--color-warning-content)',
+        'error-content': 'var(--color-error-content)',
+      },
       animation: {
 				fade: 'fadeIn .5s ease-in-out',
         fadeOut: 'fadeOut .5s ease-in-out',

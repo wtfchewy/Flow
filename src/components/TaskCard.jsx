@@ -47,7 +47,10 @@ const TaskCard = ({ column, task, index, onDeleteTask, onEditTaskTime, onEditTas
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleEditTaskTitle()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleEditTaskTitle();
+                    if (e.key === 'Escape') setEditingTitle(false);
+                  }}
                   onBlur={() => setEditingTitle(false)}
                   className="text-sm w-32 px-2 py-1 bg-background rounded-lg focus:outline-none"
                   autoFocus
@@ -63,7 +66,10 @@ const TaskCard = ({ column, task, index, onDeleteTask, onEditTaskTime, onEditTas
                 type="text"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleEditTaskTime()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleEditTaskTime();
+                  if (e.key === 'Escape') setEditingTime(false);
+                }}
                 onBlur={() => setEditingTime(false)}
                 className="text-sm w-16 px-2 py-1 bg-background rounded-lg
                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"

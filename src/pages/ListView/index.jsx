@@ -19,6 +19,19 @@ const ListView = () => {
       setColumns(currentList.columns);
     }, [currentList]);
 
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (isEditing && !event.target.closest('#editing-container')) {
+          setIsEditing(false);
+        }
+      };
+  
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isEditing]);
+
     const handleDeleteList = () => { 
       deleteList(currentList);
       navigate('/');
@@ -253,14 +266,14 @@ const ListView = () => {
               <ChevronDown className='w-4 h-4' />
             </button>
           ) : (
-          <button onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-foreground hover:bg-border duration-100 rounded-lg px-5 py-1 gap-2'>
-            <h1 className='font-bold'>{title}</h1>
-            <ChevronUp className='w-4 h-4' />
-          </button>
+            <button id='editing-container' onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-foreground hover:bg-border duration-100 rounded-lg px-5 py-1 gap-2'>
+              <h1 className='font-bold'>{title}</h1>
+              <ChevronUp className='w-4 h-4' />
+            </button>
           )}
 
           {isEditing && (
-            <div className='absolute left-20 top-12 bg-foreground rounded-lg ml-9 py-4 px-3 border border-border'>
+            <div id='editing-container' className='absolute left-20 top-12 bg-foreground rounded-lg ml-9 py-4 px-3 border border-border'>
               <label className='flex flex-col'>
                 <span className='text-sm text-copy-light'>Title</span>
                 <input
@@ -272,7 +285,7 @@ const ListView = () => {
                 />
               </label>
 
-              <button onClick={handleDeleteList} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-white bg-red-500 hover:brightness-110 duration-100 rounded-lg w-full'>
+              <button onClick={handleDeleteList} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-copy bg-error hover:brightness-110 duration-100 rounded-lg w-full'>
                 <h1 className='font-semibold tracking-wide'>Delete List</h1>
               </button>
             </div>

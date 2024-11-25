@@ -1,6 +1,7 @@
 import React from 'react';
 import Flow from '../../components/Flow';
 import Navbar from '../../components/Navbar';
+import { dark, light, discordish } from '../../utils/themes';
 
 const Settings = () => {
 
@@ -10,8 +11,21 @@ const Settings = () => {
     };
 
     async function setTheme(themeName) {
-        const response = await fetch(`./themes/${themeName}.json`);
-        const theme = await response.json();
+        let theme;
+        switch (themeName) {
+          case 'dark':
+            theme = dark;
+            break;
+          case 'light':
+            theme = light;
+            break;
+          case 'discordish':
+            theme = discordish;
+            break;
+          default:
+            console.error(`Theme ${themeName} not found`);
+            return;
+        }
       
         Object.keys(theme).forEach(key => {
           document.documentElement.style.setProperty(`--color-${key}`, theme[key]);

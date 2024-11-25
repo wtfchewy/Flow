@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ListView, Home, Timer, Settings } from './pages';
 import { ListProvider } from './context/ListContext';
+import { dark } from './utils/themes';
 
 function App() {
-  async function setTheme(themeName) {
-    const response = await fetch(`./themes/${themeName}.json`);
-    const theme = await response.json();
-  
-    Object.keys(theme).forEach(key => {
-      document.documentElement.style.setProperty(`--color-${key}`, theme[key]);
-    });
-  }
-  
-  setTheme('dark');
+  useEffect(() => {
+      Object.keys(dark).forEach(key => { 
+          document.documentElement.style.setProperty(`--color-${key}`, dark[key]);
+      });
+  }, []);
 
   return (
     <ListProvider>

@@ -1,9 +1,18 @@
 use tauri::{
     LogicalPosition, LogicalSize, Position, Size, WebviewUrl, WebviewWindowBuilder,
 };
+use tauri_plugin_store::StoreExt;
 
 #[cfg(target_os = "macos")]
 use tauri::TitleBarStyle;
+
+fn hex_to_rgb(hex: &str) -> (f64, f64, f64) {
+    let hex = hex.trim_start_matches('#');
+    let r = u8::from_str_radix(&hex[0..2], 16).unwrap() as f64 / 255.0;
+    let g = u8::from_str_radix(&hex[2..4], 16).unwrap() as f64 / 255.0;
+    let b = u8::from_str_radix(&hex[4..6], 16).unwrap() as f64 / 255.0;
+    (r, g, b)
+}
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -60,10 +69,14 @@ fn set_window_size(size: String, window: tauri::Window) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![set_window_size])
         .setup(|app| {
+            let store = app.store("settings.json")?;
+            let theme = store.get("theme").expect("Failed to get theme from store");
+            let bg_color_hex = theme["background"].as_str().expect("Failed to get background color");
+
             let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
                 .title("")
                 .inner_size(1250.0, 750.0);
@@ -82,11 +95,12 @@ pub fn run() {
 
                 let ns_window = window.ns_window().unwrap() as id;
                 unsafe {
+                    let (r, g, b) = hex_to_rgb(bg_color_hex);
                     let bg_color = NSColor::colorWithRed_green_blue_alpha_(
                         nil,
-                        23.0 / 255.0,
-                        22.0 / 255.0,
-                        29.0 / 255.0,
+                        r,
+                        g,
+                        b,
                         1.0,
                     );
                     ns_window.setBackgroundColor_(bg_color);

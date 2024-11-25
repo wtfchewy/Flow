@@ -66,3 +66,49 @@ export const discordish = {
     "warning-content": "#464605",
     "error-content": "#460505"
 }
+
+export const bluey = {
+    "primary": "#02abf5",
+    "primary-content": "#000000",
+    "primary-dark": "#0288c2",
+    "primary-light": "#2dbefd",
+    "secondary": "#025af5",
+    "secondary-content": "#f7faff",
+    "secondary-dark": "#0247c2",
+    "secondary-light": "#2d78fd",
+    "background": "#111d22",
+    "foreground": "#192b34",
+    "border": "#294856",
+    "copy": "#fafcfd",
+    "copy-light": "#cbdee6",
+    "copy-lighter": "#87b2c5",
+    "success": "#02f502",
+    "warning": "#f5f502",
+    "error": "#f50202",
+    "success-content": "#000000",
+    "warning-content": "#000000",
+    "error-content": "#fff7f7"
+}
+
+export const reptile = {
+    "primary": "#21d760",
+    "primary-content": "#000000",
+    "primary-dark": "#1aab4c",
+    "primary-light": "#48e37e",
+    "secondary": "#21d79d",
+    "secondary-content": "#000000",
+    "secondary-dark": "#1aab7d",
+    "secondary-light": "#48e3b2",
+    "background": "#141f18",
+    "foreground": "#1e2f24",
+    "border": "#314e3b",
+    "copy": "#fafcfb",
+    "copy-light": "#d0e1d6",
+    "copy-lighter": "#92baa0",
+    "success": "#21d721",
+    "warning": "#d7d721",
+    "error": "#d72121",
+    "success-content": "#000000",
+    "warning-content": "#000000",
+    "error-content": "#fef9f9"
+}

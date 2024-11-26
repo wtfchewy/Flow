@@ -6,6 +6,15 @@ import { dark, light, discordish, bluey, reptile } from '../../utils/themes';
 
 const Settings = ({ setTheme }) => {
 
+  const handleDeleteData = async () => {
+    const settings = await load('settings.json');
+    const lists = await load('store.json');
+    await settings.clear();
+    await lists.clear();
+    await settings.save();
+    await lists.save();
+  };
+
   const handleCreateList = () => {
     createNewList('Untitled');
     navigate('/list');
@@ -52,11 +61,24 @@ const Settings = ({ setTheme }) => {
         <p className="font-light text-copy-light">Personalize your experience and manage your preferences</p>
       </div>
 
-      <div className="px-10 mt-8 flex flex-col">
-        <h1 className="font-bold text-2xl">Appearance</h1>
-        <p className="font-light text-copy-light mb-2">Change the appearance of the app</p>
+      
+      <div className='px-10 mt-8 w-full flex flex-row gap-3'>
+        <div className="flex flex-col w-1/3">
+          <h1 className="font-bold text-2xl">Data</h1>
+          <p className="font-light text-copy-light mb-2">Manage your data and settings</p>
 
-        <div className='flex flex-col w-1/3 mt-3'>
+          <div className='flex flex-col bg-foreground p-3 rounded-lg'>
+            <h1 className="font-bold text-lg">Delete All Data</h1>
+            <button onClick={() => handleDeleteData()} className='mt-2 bg-error rounded-lg py-2'>
+              <p className="font-semibold text-error-content">Delete all data and settings</p>
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col w-1/3">
+          <h1 className="font-bold text-2xl">Appearance</h1>
+          <p className="font-light text-copy-light mb-2">Change the appearance of the app</p>
+
           <div className='flex flex-col bg-foreground p-3 rounded-lg'>
             <h1 className="font-bold text-lg">Themes</h1>
             <div className="flex flex-row mt-2 gap-3">
@@ -82,10 +104,7 @@ const Settings = ({ setTheme }) => {
               </button>
             </div>
           </div>
-
-
         </div>
-
       </div>
 
       <Navbar handleCreateList={handleCreateList}/>

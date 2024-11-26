@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 const Navbar = ({ handleCreateList }) => {
     return (
-    <div id='nav' className='absolute bottom-0 w-screen flex flex-row justify-between bg-foreground items-center px-10 py-5 border-t border-border duration-200'>
+    <div id='nav' className='absolute bottom-0 w-screen flex flex-row justify-between bg-foreground items-center px-10 py-5 border-t border-border transition-colors duration-200'>
         <div className='flex flex-row items-center gap-4'>
             <NavLink to="/" className={({ isActive }) => isActive ? 'rounded-lg bg-border px-3 py-2 text-primary duration-200 flex flex-row gap-1 items-center' : 'rounded-lg bg-border px-3 py-2 hover:text-primary duration-200 flex flex-row gap-1 items-center'}>
                 <HomeIcon className="w-5 h-5" />

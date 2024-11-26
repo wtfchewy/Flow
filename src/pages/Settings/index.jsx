@@ -52,16 +52,40 @@ const Settings = ({ setTheme }) => {
         <p className="font-light text-copy-light">Personalize your experience and manage your preferences</p>
       </div>
 
-      <div className="px-10 mt-8 flex flex-col w-1/3">
+      <div className="px-10 mt-8 flex flex-col">
         <h1 className="font-bold text-2xl">Appearance</h1>
         <p className="font-light text-copy-light mb-2">Change the appearance of the app</p>
-        <div className="flex flex-row mt-3 bg-foreground p-3 rounded-lg gap-3">
-          <button onClick={() => handleSetTheme('light')} className="w-8 h-8 rounded-full bg-[#edecf3] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
-          <button onClick={() => handleSetTheme('dark')} className="w-8 h-8 rounded-full bg-[#17161d] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
-          <button onClick={() => handleSetTheme('discordish')} className="w-8 h-8 rounded-full bg-[#131420] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
-          <button onClick={() => handleSetTheme('bluey')} className="w-8 h-8 rounded-full bg-[#111d22] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
-          <button onClick={() => handleSetTheme('reptile')} className="w-8 h-8 rounded-full bg-[#141f18] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+
+        <div className='flex flex-col w-1/3 mt-3'>
+          <div className='flex flex-col bg-foreground p-3 rounded-lg'>
+            <h1 className="font-bold text-lg">Themes</h1>
+            <div className="flex flex-row mt-2 gap-3">
+              <button onClick={() => handleSetTheme('light')} className="w-8 h-8 rounded-full bg-[#edecf3] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+              <button onClick={() => handleSetTheme('dark')} className="w-8 h-8 rounded-full bg-[#17161d] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+              <button onClick={() => handleSetTheme('discordish')} className="w-8 h-8 rounded-full bg-[#131420] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+              <button onClick={() => handleSetTheme('bluey')} className="w-8 h-8 rounded-full bg-[#111d22] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+              <button onClick={() => handleSetTheme('reptile')} className="w-8 h-8 rounded-full bg-[#141f18] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+            </div>
+          </div>
+
+          <div className='flex flex-col bg-foreground p-3 rounded-lg mt-3'>
+            <h1 className="font-bold text-lg">Layout</h1>
+            <div className="flex flex-row mt-2 gap-1 bg-border rounded-lg p-1">
+              <button className='rounded-lg bg-primary text-primary-content px-3 py-2 text-copy font-bold'>
+                Default
+              </button>
+              <button className='px-3 py-2 font-bold hover:bg-foreground duration-200 rounded-lg'>
+                Compact
+              </button>
+              <button className='px-3 py-2 font-bold hover:bg-foreground duration-200 rounded-lg'>
+                Cozy
+              </button>
+            </div>
+          </div>
+
+
         </div>
+
       </div>
 
       <Navbar handleCreateList={handleCreateList}/>

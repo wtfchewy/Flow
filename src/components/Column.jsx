@@ -25,7 +25,7 @@ const Column = ({ column, onAddTask, onDeleteTask, onEditTaskTime, onEditTaskTit
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`overflow-y-auto transition-colors duration-200 flex-grow`}
+            className={`overflow-y-auto transition-colors duration-200 flex-grow no-scrollbar`}
           >
             {column.tasks.length === 0 && (
               <div className="flex flex-col gap-3 flex-grow w-full h-full items-center justify-center text-copy-light font-medium">

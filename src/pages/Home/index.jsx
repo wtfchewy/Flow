@@ -30,7 +30,7 @@ const Home = () => {
                 <p className="font-light text-copy-light">Lists with your upcoming tasks</p>
             </div>
             
-            <div className="px-10 mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-scroll">
+            <div className="px-10 mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-scroll no-scrollbar">
                 {lists.map((list) => (
                     <List key={list.id} list={list} handleLoadList={handleLoadList} />
                 ))}

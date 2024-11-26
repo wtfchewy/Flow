@@ -71,7 +71,7 @@ const Settings = ({ setTheme }) => {
           <div className='flex flex-col bg-foreground p-3 rounded-lg mt-3'>
             <h1 className="font-bold text-lg">Layout</h1>
             <div className="flex flex-row mt-2 gap-1 bg-border rounded-lg p-1">
-              <button className='rounded-lg bg-primary text-primary-content px-3 py-2 text-copy font-bold'>
+              <button className='rounded-lg bg-primary text-primary-content px-3 py-2 font-bold'>
                 Default
               </button>
               <button className='px-3 py-2 font-bold hover:bg-foreground duration-200 rounded-lg'>

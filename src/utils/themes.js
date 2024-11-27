@@ -112,3 +112,49 @@ export const reptile = {
     "warning-content": "#000000",
     "error-content": "#fef9f9"
 }
+
+export const lofi_light = {
+    "primary": "#000000",
+    "primary-content": "#808080",
+    "primary-dark": "#000000",
+    "primary-light": "#1a1a1a",
+    "secondary": "#000000",
+    "secondary-content": "#808080",
+    "secondary-dark": "#000000",
+    "secondary-light": "#1a1a1a",
+    "background": "#f0f0f0",
+    "foreground": "#fbfbfb",
+    "border": "#dfdfdf",
+    "copy": "#262626",
+    "copy-light": "#666666",
+    "copy-lighter": "#8c8c8c",
+    "success": "#000000",
+    "warning": "#000000",
+    "error": "#000000",
+    "success-content": "#808080",
+    "warning-content": "#808080",
+    "error-content": "#808080"
+}
+
+export const lofi_dark = {
+    "primary": "#ffffff",
+    "primary-content": "#808080",
+    "primary-dark": "#e6e6e6",
+    "primary-light": "#ffffff",
+    "secondary": "#ffffff",
+    "secondary-content": "#808080",
+    "secondary-dark": "#e6e6e6",
+    "secondary-light": "#ffffff",
+    "background": "#1a1a1a",
+    "foreground": "#262626",
+    "border": "#404040",
+    "copy": "#fbfbfb",
+    "copy-light": "#d9d9d9",
+    "copy-lighter": "#a6a6a6",
+    "success": "#ffffff",
+    "warning": "#ffffff",
+    "error": "#ffffff",
+    "success-content": "#808080",
+    "warning-content": "#808080",
+    "error-content": "#808080"
+}

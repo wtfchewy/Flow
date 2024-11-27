@@ -2,7 +2,7 @@ import React from 'react';
 import { load } from '@tauri-apps/plugin-store';
 import Flow from '../../components/Flow';
 import Navbar from '../../components/Navbar';
-import { dark, light, discordish, bluey, reptile } from '../../utils/themes';
+import { dark, light, discordish, bluey, reptile, lofi_light, lofi_dark } from '../../utils/themes';
 
 const Settings = ({ setTheme }) => {
 
@@ -37,6 +37,12 @@ const Settings = ({ setTheme }) => {
         break;
       case 'reptile':
         theme = reptile;
+        break;
+      case 'lofi_light':
+        theme = lofi_light;
+        break;
+      case 'lofi_dark':
+        theme = lofi_dark;
         break;
       default:
         console.error(`Theme ${themeName} not found`);
@@ -82,7 +88,8 @@ const Settings = ({ setTheme }) => {
           <div className='flex flex-col bg-foreground p-3 rounded-lg'>
             <h1 className="font-bold text-lg">Themes</h1>
             <div className="flex flex-row mt-2 gap-3">
-              <button onClick={() => handleSetTheme('light')} className="w-8 h-8 rounded-full bg-[#edecf3] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+              <button onClick={() => handleSetTheme('lofi_light')} className="w-8 h-8 rounded-full bg-[#edecf3] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+              <button onClick={() => handleSetTheme('lofi_dark')} className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
               <button onClick={() => handleSetTheme('dark')} className="w-8 h-8 rounded-full bg-[#17161d] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
               <button onClick={() => handleSetTheme('discordish')} className="w-8 h-8 rounded-full bg-[#131420] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
               <button onClick={() => handleSetTheme('bluey')} className="w-8 h-8 rounded-full bg-[#111d22] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>

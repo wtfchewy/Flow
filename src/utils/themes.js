@@ -158,3 +158,49 @@ export const lofi_dark = {
     "warning-content": "#808080",
     "error-content": "#808080"
 }
+
+export const codesandbox = {
+    "primary": "#dcff51",
+    "primary-content": "#415100",
+    "primary-dark": "#d2ff1e",
+    "primary-light": "#e6ff84",
+    "secondary": "#d3ff51",
+    "secondary-content": "#3d5100",
+    "secondary-dark": "#c6ff1e",
+    "secondary-light": "#e0ff84",
+    "background": "#1a1a1a",
+    "foreground": "#262626",
+    "border": "#404040",
+    "copy": "#fbfbfb",
+    "copy-light": "#d9d9d9",
+    "copy-lighter": "#a6a6a6",
+    "success": "#51ff51",
+    "warning": "#ffff51",
+    "error": "#ff5151",
+    "success-content": "#005100",
+    "warning-content": "#515100",
+    "error-content": "#510000"
+}
+
+export const bolt = {
+    "primary": "#1488fc",
+    "primary-content": "#ffffff",
+    "primary-dark": "#006ade",
+    "primary-light": "#32a6ff",
+    "secondary": "#46baff",
+    "secondary-content": "#000000",
+    "secondary-dark": "#289cff",
+    "secondary-light": "#64d8ff",
+    "background": "#121221",
+    "foreground": "#181a35",
+    "border": "#24285b",
+    "copy": "#fbfbfc",
+    "copy-light": "#d4d3de",
+    "copy-lighter": "#9c98b3",
+    "success": "#56ff56",
+    "warning": "#ffff56",
+    "error": "#ff5656",
+    "success-content": "#005600",
+    "warning-content": "#565600",
+    "error-content": "#560000"
+}

@@ -2,7 +2,8 @@ import React from 'react';
 import { load } from '@tauri-apps/plugin-store';
 import Flow from '../../components/Flow';
 import Navbar from '../../components/Navbar';
-import { dark, light, discordish, bluey, reptile, lofi_light, lofi_dark } from '../../utils/themes';
+import { dark, light, discordish, bluey, reptile, lofi_light, lofi_dark, codesandbox, bolt } from '../../utils/themes';
+import { readText } from '@tauri-apps/plugin-clipboard-manager';
 
 const Settings = ({ setTheme }) => {
 
@@ -15,10 +16,34 @@ const Settings = ({ setTheme }) => {
     await lists.save();
   };
 
+  const downloadData = async () => {
+    const store = await load('store.json');
+    const settings = await load('settings.json');
+    const storeData = await store.get();
+    const settingsData = await settings.get();
+    const data = {
+      store: storeData,
+      settings: settingsData
+    };
+    
+
+  };
+
   const handleCreateList = () => {
     createNewList('Untitled');
     navigate('/list');
   };
+
+  const requiredKeys = [
+      "primary", "primary-content", "primary-dark", "primary-light",
+      "secondary", "secondary-content", "secondary-dark", "secondary-light",
+      "background", "foreground", "border", "copy", "copy-light", "copy-lighter",
+      "success", "warning", "error", "success-content", "warning-content", "error-content"
+  ];
+
+  const validateTheme = (theme) => {
+      return requiredKeys.every(key => key in theme);
+  }
 
   async function handleSetTheme(themeName) {
     let theme;
@@ -44,6 +69,12 @@ const Settings = ({ setTheme }) => {
       case 'lofi_dark':
         theme = lofi_dark;
         break;
+      case 'codesandbox':
+        theme = codesandbox
+        break;
+      case 'bolt':
+        theme =bolt;
+        break;
       default:
         console.error(`Theme ${themeName} not found`);
         return;
@@ -55,6 +86,22 @@ const Settings = ({ setTheme }) => {
 
     setTheme(theme);
   }
+
+  const applyThemeFromClipboard = async () => {
+    const clipboard = await readText();
+    const theme = JSON.parse(clipboard);
+
+    if (!validateTheme(theme)) {
+      console.error('Invalid theme');
+      return;
+    }
+
+    const store = await load('settings.json');
+    await store.set('theme', theme);
+    await store.save();
+
+    setTheme(theme);
+  };
 
   return (
     <div className="flex flex-col w-full h-screen">
@@ -72,6 +119,20 @@ const Settings = ({ setTheme }) => {
         <div className="flex flex-col w-1/3">
           <h1 className="font-bold text-2xl">Data</h1>
           <p className="font-light text-copy-light mb-2">Manage your data and settings</p>
+
+          <div className='mb-3 flex flex-col bg-foreground p-3 rounded-lg'>
+            <h1 className="font-bold text-lg">Upload Data</h1>
+            <button className='mt-2 bg-primary rounded-lg py-2'>
+              <p className="font-semibold text-primary-content">Upload data from a file</p>
+            </button>
+          </div>
+
+          <div className='mb-3 flex flex-col bg-foreground p-3 rounded-lg'>
+            <h1 className="font-bold text-lg">Download Data</h1>
+            <button onClick={() => downloadData()} className='mt-2 bg-secondary rounded-lg py-2'>
+              <p className="font-semibold text-secondary-content">Download your data to your Desktop</p>
+            </button>
+          </div>
 
           <div className='flex flex-col bg-foreground p-3 rounded-lg'>
             <h1 className="font-bold text-lg">Delete All Data</h1>
@@ -94,7 +155,16 @@ const Settings = ({ setTheme }) => {
               <button onClick={() => handleSetTheme('discordish')} className="w-8 h-8 rounded-full bg-[#131420] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
               <button onClick={() => handleSetTheme('bluey')} className="w-8 h-8 rounded-full bg-[#111d22] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
               <button onClick={() => handleSetTheme('reptile')} className="w-8 h-8 rounded-full bg-[#141f18] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+              <button onClick={() => handleSetTheme('codesandbox')} className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+              <button onClick={() => handleSetTheme('bolt')} className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
             </div>
+          </div>
+
+          <div className='flex flex-col bg-foreground p-3 rounded-lg mt-3'>
+            <h1 className="font-bold text-lg">Custom Theme</h1>
+            <button onClick={() => applyThemeFromClipboard()} className='mt-2 bg-primary rounded-lg py-2'>
+              <p className="font-semibold text-primary-content">Apply theme from clipboard</p>
+            </button>
           </div>
 
           <div className='flex flex-col bg-foreground p-3 rounded-lg mt-3'>

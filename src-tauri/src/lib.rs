@@ -1,6 +1,4 @@
-use tauri::{
-    LogicalPosition, LogicalSize, Position, Size, WebviewUrl, WebviewWindowBuilder,
-};
+use tauri::{LogicalPosition, LogicalSize, Position, Size, WebviewUrl, WebviewWindowBuilder};
 use tauri_plugin_store::StoreExt;
 
 #[cfg(target_os = "macos")]
@@ -69,13 +67,16 @@ fn set_window_size(size: String, window: tauri::Window) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![set_window_size])
         .setup(|app| {
             let store = app.store("settings.json")?;
             let theme = store.get("theme").expect("Failed to get theme from store");
-            let bg_color_hex = theme["background"].as_str().expect("Failed to get background color");
+            let bg_color_hex = theme["background"]
+                .as_str()
+                .expect("Failed to get background color");
 
             let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
                 .title("")
@@ -96,13 +97,7 @@ pub fn run() {
                 let ns_window = window.ns_window().unwrap() as id;
                 unsafe {
                     let (r, g, b) = hex_to_rgb(bg_color_hex);
-                    let bg_color = NSColor::colorWithRed_green_blue_alpha_(
-                        nil,
-                        r,
-                        g,
-                        b,
-                        1.0,
-                    );
+                    let bg_color = NSColor::colorWithRed_green_blue_alpha_(nil, r, g, b, 1.0);
                     ns_window.setBackgroundColor_(bg_color);
                 }
             }

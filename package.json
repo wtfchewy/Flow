@@ -12,6 +12,7 @@
   "dependencies": {
     "@hello-pangea/dnd": "^17.0.0",
     "@tauri-apps/api": "^2.1.0",
+    "@tauri-apps/plugin-clipboard-manager": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.0.1",
     "@tauri-apps/plugin-store": "~2",
     "lucide-react": "^0.456.0",

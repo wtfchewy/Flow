@@ -1,6 +1,8 @@
 # Flow
 > :warning: **WORK IN PROGRESS**
 
+[flowflowflowflow.com](https://flowflowflowflow.com/)
+
 Flow is a productivity application that combines a to-do list with a timer system, designed to help users stay organized and focused.
 
 ![screenshot](https://i.imgur.com/NKpJD3H.jpeg)
@@ -17,4 +19,4 @@ Flow is a productivity application that combines a to-do list with a timer syste
 - [Vite](https://vite.dev/)
 - [TailwindCSS](https://tailwindcss.com/)
 
-GNU GENERAL PUBLIC LICENSE Version 3
+GPL-3.0 license

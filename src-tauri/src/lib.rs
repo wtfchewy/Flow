@@ -1,4 +1,5 @@
 use tauri::{LogicalPosition, LogicalSize, Position, Size, WebviewUrl, WebviewWindowBuilder};
+use serde_json::json;
 use tauri_plugin_store::StoreExt;
 
 #[cfg(target_os = "macos")]
@@ -72,8 +73,31 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![set_window_size])
         .setup(|app| {
+            let default = json!({
+                "primary": "#6b56ff",
+                "primary-content": "#ffffff",
+                "primary-dark": "#3e23ff",
+                "primary-light": "#9889ff",
+                "secondary": "#bf56ff",
+                "secondary-content": "#350056",
+                "secondary-dark": "#ac23ff",
+                "secondary-light": "#d289ff",
+                "background": "#17161d",
+                "foreground": "#22212c",
+                "border": "#393649",
+                "copy": "#fbfbfc",
+                "copy-light": "#d4d3de",
+                "copy-lighter": "#9c98b3",
+                "success": "#56ff56",
+                "warning": "#ffff56",
+                "error": "#ff5656",
+                "success-content": "#005600",
+                "warning-content": "#565600",
+                "error-content": "#560000"
+            });
+            // set default for first launches
             let store = app.store("settings.json")?;
-            let theme = store.get("theme").expect("Failed to get theme from store");
+            let theme = store.get("theme").unwrap_or(default);
             let bg_color_hex = theme["background"]
                 .as_str()
                 .expect("Failed to get background color");

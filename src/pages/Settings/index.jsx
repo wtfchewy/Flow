@@ -4,8 +4,12 @@ import Flow from '../../components/Flow';
 import Navbar from '../../components/Navbar';
 import { dark, light, discordish, bluey, reptile, lofi_light, lofi_dark, codesandbox, bolt } from '../../utils/themes';
 import { readText } from '@tauri-apps/plugin-clipboard-manager';
+import { useNavigate } from 'react-router-dom';
+import { useList } from '../../context/ListContext';
 
 const Settings = ({ setTheme }) => {
+  const { createNewList } = useList();
+  const navigate = useNavigate();
 
   const handleDeleteData = async () => {
     const settings = await load('settings.json');

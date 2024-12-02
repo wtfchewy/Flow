@@ -9,8 +9,6 @@ const Home = () => {
     const { lists, setCurrentList, createNewList } = useList();
     const navigate = useNavigate();
 
-    
-
     const handleLoadList = (list) => {
         setCurrentList(list);
         navigate('/list');

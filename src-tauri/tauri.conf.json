@@ -10,8 +10,6 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "windows": [
-    ],
     "security": {
       "csp": null
     }

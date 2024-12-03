@@ -140,6 +140,11 @@ const Timer = () => {
         setCurrentCountdown(todayTasks[index].time + ':00');
     }
 
+    const handleFocus = () => {
+        setFocused(true);
+        invoke('set_window_size', { size: 'focus' });
+    }
+
     const handleUnFocus = () => {
         setFocused(false);
         invoke('set_window_size', { size: 'small' });
@@ -147,8 +152,6 @@ const Timer = () => {
     }
 
     if (focused) {
-        invoke('set_window_size', { size: 'focus' });
-
         return (
             <div onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} className="flex flex-col bg-border h-screen w-screen">
                 <div data-tauri-drag-region className={`border border-secondary absolute w-full h-screen flex flex-row items-center justify-between p-4 `}>
@@ -249,7 +252,7 @@ const Timer = () => {
                 )}
             </div>
 
-            <button onClick={() => setFocused(true)} className='my-4 font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-primary to-secondary hover:-translate-y-1 duration-100'>
+            <button onClick={() => handleFocus()} className='my-4 font-bold tracking-wider text-background rounded-lg py-2 w-full bg-gradient-to-r from-primary to-secondary hover:-translate-y-1 duration-100'>
                 Focus
             </button>
         </div>

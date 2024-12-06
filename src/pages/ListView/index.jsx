@@ -285,7 +285,7 @@ const ListView = () => {
                 />
               </label>
 
-              <button onClick={handleDeleteList} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-copy bg-error hover:brightness-110 duration-100 rounded-lg w-full'>
+              <button onClick={handleDeleteList} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-error-content bg-error hover:brightness-125 rounded-lg w-full'>
                 <h1 className='font-semibold tracking-wide'>Delete List</h1>
               </button>
             </div>

@@ -89,28 +89,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![set_window_size, set_background_color])
         .setup(|app| {
             let default = json!({
-                "primary": "#6b56ff",
-                "primary-content": "#ffffff",
-                "primary-dark": "#3e23ff",
-                "primary-light": "#9889ff",
-                "secondary": "#bf56ff",
-                "secondary-content": "#350056",
-                "secondary-dark": "#ac23ff",
-                "secondary-light": "#d289ff",
-                "background": "#17161d",
-                "foreground": "#22212c",
-                "border": "#393649",
-                "copy": "#fbfbfc",
-                "copy-light": "#d4d3de",
-                "copy-lighter": "#9c98b3",
-                "success": "#56ff56",
-                "warning": "#ffff56",
-                "error": "#ff5656",
-                "success-content": "#005600",
-                "warning-content": "#565600",
-                "error-content": "#560000"
+                "background": "#17161d"
             });
-            // set default for first launches
+
             let store = app.store("settings.json")?;
             let theme = store.get("theme").unwrap_or(default);
             let bg_color_hex = theme["background"]
@@ -121,13 +102,11 @@ pub fn run() {
                 .title("")
                 .inner_size(1250.0, 750.0);
 
-            // set transparent title bar only when building for macOS
             #[cfg(target_os = "macos")]
             let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
 
             let window = win_builder.build().unwrap();
 
-            // set background color only when building for macOS
             #[cfg(target_os = "macos")]
             {
                 use cocoa::appkit::{NSColor, NSWindow};

@@ -49,7 +49,7 @@ const TaskCard = ({ column, task, index, onDeleteTask, onEditTaskTime, onEditTas
                   onChange={(e) => setTitle(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleEditTaskTitle();
-                    if (e.key === 'Escape') setEditingTitle(false);
+                    if (e.key === 'Escape') handleEditTaskTitle();
                   }}
                   onBlur={() => setEditingTitle(false)}
                   className="text-sm w-32 px-2 py-1 bg-background rounded-lg focus:outline-none"
@@ -68,7 +68,7 @@ const TaskCard = ({ column, task, index, onDeleteTask, onEditTaskTime, onEditTas
                 onChange={(e) => setTime(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleEditTaskTime();
-                  if (e.key === 'Escape') setEditingTime(false);
+                  if (e.key === 'Escape') handleEditTaskTime();
                 }}
                 onBlur={() => setEditingTime(false)}
                 className="text-sm w-16 px-2 py-1 bg-background rounded-lg

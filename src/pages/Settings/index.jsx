@@ -6,6 +6,7 @@ import { dark, light, discordish, bluey, reptile, lofi_light, lofi_dark, codesan
 import { readText } from '@tauri-apps/plugin-clipboard-manager';
 import { useNavigate } from 'react-router-dom';
 import { useList } from '../../context/ListContext';
+import { invoke } from '@tauri-apps/api/core';
 
 const Settings = ({ setTheme }) => {
   const { createNewList } = useList();
@@ -89,6 +90,7 @@ const Settings = ({ setTheme }) => {
     await store.save();
 
     setTheme(theme);
+    invoke('set_background_color', { color: theme.background });
   }
 
   const applyThemeFromClipboard = async () => {
@@ -105,6 +107,7 @@ const Settings = ({ setTheme }) => {
     await store.save();
 
     setTheme(theme);
+    invoke('set_background_color', { color: theme.background });
   };
 
   return (

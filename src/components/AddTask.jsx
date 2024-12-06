@@ -69,7 +69,7 @@ const AddTask = ({ onAddTask }) => {
           </div>
           <button
             type="submit"
-            className="w-full mt-1 px-4 py-2 text-sm bg-primary font-semibold tracking-wide rounded-lg 
+            className="w-full mt-1 px-4 py-2 text-sm text-primary-content bg-primary font-semibold tracking-wide rounded-lg 
               hover:bg-primary/80 transition-colors duration-200"
           >
             Add Task

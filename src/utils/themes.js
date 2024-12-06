@@ -204,3 +204,26 @@ export const bolt = {
     "warning-content": "#565600",
     "error-content": "#560000"
 }
+
+export const tokyoNight = {
+    "primary": "#b595ef",
+    "primary-content": "#341174",
+    "primary-dark": "#9669e8",
+    "primary-light": "#d4c1f6",
+    "secondary": "#8b6ebf", 
+    "secondary-content": "#ffffff",
+    "secondary-dark": "#6f4dad",
+    "secondary-light": "#a791cf",
+    "background": "#16161e",
+    "foreground": "#1a1b26",
+    "border": "#232433",
+    "copy": "#a8b1d6",
+    "copy-light": "#515670",
+    "copy-lighter": "#52597d",
+    "success": "#56ff56",
+    "warning": "#ffff56",
+    "error": "#ff5656",
+    "success-content": "#005600",
+    "warning-content": "#565600",
+    "error-content": "#560000"
+}

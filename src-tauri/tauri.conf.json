@@ -45,5 +45,12 @@
       "minimumSystemVersion": "10.13",
       "signingIdentity": null
     }
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": ["flow"]
+      }
+    }
   }
 }

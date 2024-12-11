@@ -1,5 +1,8 @@
-use tauri::{Window, LogicalPosition, PhysicalPosition, PhysicalSize, Position, Size, WebviewUrl, WebviewWindowBuilder};
 use serde_json::json;
+use tauri::{
+    LogicalPosition, PhysicalPosition, PhysicalSize, Position, Size, WebviewUrl,
+    WebviewWindowBuilder, Window
+};
 use tauri_plugin_store::StoreExt;
 
 #[cfg(target_os = "macos")]
@@ -27,7 +30,7 @@ fn set_window_size(size: String, window: Window) {
     let screen_height = monitor_size.height as f64;
 
     let (width, height) = match size.as_str() {
-        "small" => (screen_width * 0.21, screen_height), 
+        "small" => (screen_width * 0.21, screen_height),
         "normal" => (screen_width * 0.75, screen_height * 0.73),
         "focus" => (screen_width * 0.2, screen_height * 0.05),
         _ => (screen_width * 0.5, screen_height * 0.7),
@@ -40,25 +43,29 @@ fn set_window_size(size: String, window: Window) {
 
     let window_position = PhysicalPosition::new(position_x as i32, position_y as i32);
 
-    window
-        .set_size(Size::Physical(window_size))
-        .unwrap();
+    window.set_size(Size::Physical(window_size)).unwrap();
 
     match size.as_str() {
         "small" => {
             window.set_always_on_top(true).unwrap();
             window.set_decorations(true).unwrap();
-            window.set_position(Position::Logical(LogicalPosition { x: 0.0, y: 0.0 })).unwrap();
+            window
+                .set_position(Position::Logical(LogicalPosition { x: 0.0, y: 0.0 }))
+                .unwrap();
         }
         "normal" => {
             window.set_always_on_top(false).unwrap();
             window.set_decorations(true).unwrap();
-            window.set_position(Position::Physical(window_position)).unwrap();
+            window
+                .set_position(Position::Physical(window_position))
+                .unwrap();
         }
-        "focus" => { 
+        "focus" => {
             window.set_always_on_top(true).unwrap();
-            window.set_decorations(false).unwrap(); 
-            window.set_position(Position::Logical(LogicalPosition { x: 0.0, y: 0.0 })).unwrap();
+            window.set_decorations(false).unwrap();
+            window
+                .set_position(Position::Logical(LogicalPosition { x: 0.0, y: 0.0 }))
+                .unwrap();
         }
         _ => {}
     }
@@ -82,11 +89,20 @@ fn set_background_color(color: String, window: Window) {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
+            println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
+            // app.emit("deeplink", json!({ "data": argv })).unwrap();
+        }))
+        .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![set_window_size, set_background_color])
+        .invoke_handler(tauri::generate_handler![
+            set_window_size,
+            set_background_color
+        ])
         .setup(|app| {
             let default = json!({
                 "background": "#17161d"
@@ -119,7 +135,6 @@ pub fn run() {
                     ns_window.setBackgroundColor_(bg_color);
                 }
             }
-
             Ok(())
         })
         .run(tauri::generate_context!())

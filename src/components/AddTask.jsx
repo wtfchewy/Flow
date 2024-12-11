@@ -10,6 +10,11 @@ const AddTask = ({ onAddTask }) => {
     e.preventDefault();
     if (!title.trim()) return;
 
+    if (!time.trim().match(/^([0-9]{2}):([0-9]{2})$/)) {
+      setTime('00:00');
+      return;
+    }
+
     onAddTask({
       title: title.trim(),
       time: time.trim(),
@@ -62,6 +67,7 @@ const AddTask = ({ onAddTask }) => {
                 type="text"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
                 className="text-sm mb-2 px-3 py-2 bg-background rounded-lg 
                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />

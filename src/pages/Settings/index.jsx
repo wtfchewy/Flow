@@ -102,9 +102,9 @@ const Settings = ({ setTheme }) => {
       return;
     }
 
-    const store = await load('settings.json');
-    await store.set('theme', theme);
-    await store.save();
+    const settings = await load('settings.json');
+    await settings.set('theme', theme);
+    await settings.save();
 
     setTheme(theme);
     invoke('set_background_color', { color: theme.background });

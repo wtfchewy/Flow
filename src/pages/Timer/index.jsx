@@ -123,12 +123,18 @@ const Timer = () => {
         setLists(updatedLists);
         setCurrentList(updatedLists.find(list => list.title === currentList.title));
 
-        if (currentTaskIndex < todayTasks.length - 1) {
-            const nextTaskIndex = currentTaskIndex + 1;
-            setCurrentTaskIndex(nextTaskIndex);
-            setCurrentTask(todayTasks[nextTaskIndex]);
-            setCurrentCountdown(todayTasks[nextTaskIndex].time + ':00:00');
-            setTimeTaken(todayTasks[nextTaskIndex].timeTaken + ':00');
+        const todayTasks = updatedLists.find(list => list.title === currentList.title).columns.find(column => column.id === 'today').tasks;
+
+        if (todayTasks.length > 0) {
+            const nextTaskIndex = todayTasks.findIndex(task => task.id === currentTask.id) + 1;
+            if (nextTaskIndex < todayTasks.length) {
+                setCurrentTaskIndex(nextTaskIndex);
+                setCurrentTask(todayTasks[nextTaskIndex]);
+                setCurrentCountdown(todayTasks[nextTaskIndex].time + ':00:00');
+                setTimeTaken(todayTasks[nextTaskIndex].timeTaken + ':00');
+            } else {
+                handleBack();
+            }
         } else {
             handleBack();
         }

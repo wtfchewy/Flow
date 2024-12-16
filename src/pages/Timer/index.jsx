@@ -10,6 +10,7 @@ const Timer = () => {
     const [focused, setFocused] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
+    const [isOvertime, setIsOvertime] = useState(false);
 
     const { lists, setLists, currentList, setCurrentList } = useList();
     const todayTasks = currentList.columns.find(column => column.id === 'today').tasks;
@@ -73,7 +74,8 @@ const Timer = () => {
                     const [hours, minutes, seconds] = currentCountdown.split(':').map(Number);
                     if (hours === 0 && minutes === 0 && seconds === 0) {
                         clearInterval(timer);
-                        handleNextTask();
+                        // handleNextTask();
+                        setIsOvertime(true);
                     } else {
                         const newSeconds = seconds === 0 ? 59 : seconds - 1;
                         const newMinutes = seconds === 0 ? (minutes === 0 ? 59 : minutes - 1) : minutes;
@@ -89,6 +91,21 @@ const Timer = () => {
 
         return () => clearInterval(timer);
     }, [currentTask, isPaused, currentCountdown]);
+
+    useEffect(() => {
+        let overtimeTimer;
+        if (isOvertime) {
+          overtimeTimer = setInterval(() => {
+            const [hours, minutes, seconds] = currentCountdown.split(':').map(Number);
+            const newSeconds = seconds + 1 === 60 ? 0 : seconds + 1;
+            const newMinutes = seconds + 1 === 60 ? (minutes + 1 === 60 ? 0 : minutes + 1) : minutes;
+            const newHours = seconds + 1 === 60 && minutes + 1 === 60 ? hours + 1 : hours;
+            setCurrentCountdown(`${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}:${String(newSeconds).padStart(2, '0')}`);
+          }, 1000);
+        }
+    
+        return () => clearInterval(overtimeTimer);
+    }, [isOvertime, currentCountdown]);
 
     const handleNextTask = () => {
         const updatedCurrentTask = {

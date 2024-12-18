@@ -157,6 +157,7 @@ const Settings = ({ setTheme }) => {
             <h1 className="font-bold text-lg">Themes</h1>
             <div className="flex flex-row mt-2 gap-3">
               <button onClick={() => handleSetTheme('lofi_light')} className="w-8 h-8 rounded-full bg-[#edecf3] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
+              <button onClick={() => handleSetTheme('light')} className="w-8 h-8 rounded-full bg-[#edecf3] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
               <button onClick={() => handleSetTheme('lofi_dark')} className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
               <button onClick={() => handleSetTheme('dark')} className="w-8 h-8 rounded-full bg-[#17161d] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
               <button onClick={() => handleSetTheme('discordish')} className="w-8 h-8 rounded-full bg-[#131420] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>

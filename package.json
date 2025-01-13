@@ -11,22 +11,22 @@
   },
   "dependencies": {
     "@hello-pangea/dnd": "^17.0.0",
-    "@tauri-apps/api": "^2.1.1",
-    "@tauri-apps/plugin-clipboard-manager": "^2.0.1",
-    "@tauri-apps/plugin-deep-link": "~2",
-    "@tauri-apps/plugin-shell": "^2.0.1",
+    "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/plugin-clipboard-manager": "^2.2.0",
+    "@tauri-apps/plugin-deep-link": "~2.2.0",
+    "@tauri-apps/plugin-shell": "^2.2.0",
     "@tauri-apps/plugin-store": "~2.1.0",
     "lucide-react": "^0.456.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.1"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.1.0",
+    "@tauri-apps/cli": "^2.2.4",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.15",
+    "tailwindcss": "^3.4.17",
     "vite": "^5.4.11"
   }
 }

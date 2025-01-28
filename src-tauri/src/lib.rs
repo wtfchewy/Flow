@@ -1,7 +1,7 @@
 use serde_json::json;
 use tauri::{
     LogicalPosition, PhysicalPosition, PhysicalSize, Position, Size, WebviewUrl,
-    WebviewWindowBuilder, Window
+    WebviewWindowBuilder, Window,
 };
 use tauri_plugin_store::StoreExt;
 
@@ -89,8 +89,8 @@ fn set_background_color(color: String, window: Window) {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-
     tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
             println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
             // app.emit("deeplink", json!({ "data": argv })).unwrap();

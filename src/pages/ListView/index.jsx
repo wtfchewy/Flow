@@ -6,6 +6,8 @@ import { ChevronDown, ChevronLeft, ChevronUp } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useList } from '../../context/ListContext';
 import Flow from '../../components/Flow';
+import { openUrl } from '@tauri-apps/plugin-opener';
+import { compressToEncodedURIComponent } from 'lz-string';
 
 const ListView = () => {
     const { lists, setLists, currentList, setCurrentList, deleteList, updateTitle } = useList();
@@ -51,6 +53,16 @@ const ListView = () => {
         setIsEditing(false);
       }
     };
+
+    const serializeList = () => {
+      const jsonAsString = JSON.stringify(currentList);
+      return compressToEncodedURIComponent(jsonAsString);
+    }
+
+    const openListOnWebsite = async () => {
+      const url = `https://flowflowflowflow.com/list?list=${serializeList()}`;
+      await openUrl(url);
+    }
 
     const updateTaskTime = (columnId, taskId, time) => {
       const updatedLists = lists.map(list => {
@@ -288,12 +300,15 @@ const ListView = () => {
                 />
               </label>
 
+              <button onClick={() => openListOnWebsite()} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-error-content bg-success hover:brightness-125 rounded-lg w-full'>
+                <h1 className='font-semibold tracking-wide'>Share Web Version</h1>
+              </button>
+
               <button onClick={handleDeleteList} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-error-content bg-error hover:brightness-125 rounded-lg w-full'>
                 <h1 className='font-semibold tracking-wide'>Delete List</h1>
               </button>
             </div>
           )}
-
 
           <span className='font-light text-sm text-copy-lighter'>This list has {countTasks} pending tasks, Est: {convertTime(estTime)}</span>
         </div>

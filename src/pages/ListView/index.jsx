@@ -12,6 +12,18 @@ import { compressToEncodedURIComponent } from 'lz-string';
 const ListView = () => {
     const { lists, setLists, currentList, setCurrentList, deleteList, updateTitle } = useList();
     const navigate = useNavigate();
+
+    if (!currentList) {
+      return (
+        <div className='flex flex-col items-center justify-center h-screen'>
+          <h1 className='font-bold text-2xl text-copy-light'>Error</h1>
+          <NavLink to={'/'} className='mt-2 flex flex-row items-center font-bold text-copy-lighter hover:text-copy-light duration-100'>
+            <ChevronLeft className='w-6 h-6 -ml-2' />
+            BACK TO HOME
+          </NavLink>
+        </div>
+      );
+    }
   
     const [columns, setColumns] = useState(currentList.columns);
     const [isEditing, setIsEditing] = useState(false);

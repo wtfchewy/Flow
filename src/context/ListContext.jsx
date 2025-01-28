@@ -95,6 +95,7 @@ export const ListProvider = ({ children }) => {
     });
 
     setLists(updatedLists);
+    setCurrentList({ ...list, title });
   }
 
   return (

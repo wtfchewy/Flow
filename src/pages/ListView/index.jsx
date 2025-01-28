@@ -32,6 +32,10 @@ const ListView = () => {
       };
     }, [isEditing]);
 
+    useEffect(() => {
+      setCurrentList(lists.find(list => list.title === currentList.title));
+    }, [lists]);
+
     const handleDeleteList = () => { 
       deleteList(currentList);
       navigate('/');
@@ -135,7 +139,6 @@ const ListView = () => {
       });
   
       setLists(updatedLists);
-      setCurrentList(updatedLists.find(list => list.title === currentList.title));
     };
   
     const handleDeleteTask = (columnId, taskId) => {

@@ -127,21 +127,21 @@ const Settings = ({ setTheme }) => {
           <h1 className="font-bold text-2xl">Data</h1>
           <p className="font-light text-copy-light mb-2">Manage your data and settings</p>
 
-          <div className='mb-3 flex flex-col bg-foreground p-3 rounded-lg'>
+          <div className='mb-3 flex flex-col bg-foreground p-3 rounded-lg border border-border drop-shadow-sm'>
             <h1 className="font-bold text-lg">Upload Data</h1>
             <button className='mt-2 bg-primary rounded-lg py-2'>
               <p className="font-semibold text-primary-content">Upload data from a file</p>
             </button>
           </div>
 
-          <div className='mb-3 flex flex-col bg-foreground p-3 rounded-lg'>
+          <div className='mb-3 flex flex-col bg-foreground p-3 rounded-lg border border-border drop-shadow-sm'>
             <h1 className="font-bold text-lg">Download Data</h1>
             <button onClick={() => downloadData()} className='mt-2 bg-secondary rounded-lg py-2'>
               <p className="font-semibold text-secondary-content">Download your data to your Desktop</p>
             </button>
           </div>
 
-          <div className='flex flex-col bg-foreground p-3 rounded-lg'>
+          <div className='flex flex-col bg-foreground p-3 rounded-lg border border-border drop-shadow-sm'>
             <h1 className="font-bold text-lg">Delete All Data</h1>
             <button onClick={() => handleDeleteData()} className='mt-2 bg-error rounded-lg py-2'>
               <p className="font-semibold text-error-content">Delete all data and settings</p>
@@ -153,7 +153,7 @@ const Settings = ({ setTheme }) => {
           <h1 className="font-bold text-2xl">Appearance</h1>
           <p className="font-light text-copy-light mb-2">Change the appearance of the app</p>
 
-          <div className='flex flex-col bg-foreground p-3 rounded-lg'>
+          <div className='flex flex-col bg-foreground p-3 rounded-lg border border-border drop-shadow-sm'>
             <h1 className="font-bold text-lg">Themes</h1>
             <div className="flex flex-row mt-2 gap-3">
               <button onClick={() => handleSetTheme('lofi_light')} className="w-8 h-8 rounded-full bg-[#edecf3] border border-border hover:border-primary hover:border-2 hover:-translate-y-1 transition-transform duration-200"/>
@@ -168,14 +168,14 @@ const Settings = ({ setTheme }) => {
             </div>
           </div>
 
-          <div className='flex flex-col bg-foreground p-3 rounded-lg mt-3'>
+          <div className='flex flex-col bg-foreground p-3 rounded-lg mt-3 border border-border drop-shadow-sm'>
             <h1 className="font-bold text-lg">Custom Theme</h1>
             <button onClick={() => applyThemeFromClipboard()} className='mt-2 bg-primary rounded-lg py-2'>
               <p className="font-semibold text-primary-content">Apply theme from clipboard</p>
             </button>
           </div>
 
-          <div className='flex flex-col bg-foreground p-3 rounded-lg mt-3'>
+          <div className='flex flex-col bg-foreground p-3 rounded-lg mt-3 border border-border drop-shadow-sm'>
             <h1 className="font-bold text-lg">Layout</h1>
             <div className="flex flex-row mt-2 gap-1 bg-border rounded-lg p-1">
               <button className='rounded-lg bg-primary text-primary-content px-3 py-2 font-bold'>

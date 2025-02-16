@@ -15,7 +15,7 @@ const List = ({ list, handleLoadList }) => {
     }
 
     return (
-        <div onClick={() => handleLoadList(list)} className="duration-200 hover:border-primary flex flex-col bg-foreground border border-border rounded-lg w-full h-80 p-3 cursor-pointer">
+        <div onClick={() => handleLoadList(list)} className="drop-shadow-sm duration-200 hover:border-primary flex flex-col bg-foreground border border-border rounded-lg w-full h-80 p-3 cursor-pointer">
             <h1 className="font-semibold text-lg">{list.title}</h1>
 
             <div className="w-full flex flex-col gap-2 mt-3 flex-grow">

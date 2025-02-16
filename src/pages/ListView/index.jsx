@@ -312,7 +312,7 @@ const ListView = () => {
                 />
               </label>
 
-              <button onClick={() => openListOnWebsite()} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-error-content bg-success hover:brightness-125 rounded-lg w-full'>
+              <button onClick={() => openListOnWebsite()} className='flex flex-row justify-center items-center px-2 py-1 mt-2 text-sm text-secondary-content bg-secondary hover:brightness-125 rounded-lg w-full'>
                 <h1 className='font-semibold tracking-wide'>Share Web Version</h1>
               </button>
 

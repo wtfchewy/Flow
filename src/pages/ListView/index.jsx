@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext } from '@hello-pangea/dnd';
 import Column from '../../components/Column';
-import { ChevronDown, ChevronLeft, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronLeft } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useList } from '../../context/ListContext';
 import Flow from '../../components/Flow';
@@ -287,17 +287,10 @@ const ListView = () => {
             BACK
           </NavLink>
 
-          {!isEditing ? (
-            <button onClick={() => setIsEditing(true)} className='flex flex-row items-center bg-foreground hover:bg-border duration-100 rounded-lg px-5 py-1 gap-2'>
-              <h1 className='font-bold'>{title}</h1>
-              <ChevronDown className='w-4 h-4' />
-            </button>
-          ) : (
-            <button id='editing-container' onClick={() => setIsEditing(false)} className='flex flex-row items-center bg-foreground hover:bg-border duration-100 rounded-lg px-5 py-1 gap-2'>
-              <h1 className='font-bold'>{title}</h1>
-              <ChevronUp className='w-4 h-4' />
-            </button>
-          )}
+          <button id={`${isEditing && 'editing-container'}`} onClick={() => setIsEditing(!isEditing)} className='flex flex-row items-center bg-foreground hover:bg-border duration-100 rounded-lg px-5 py-1 gap-2'>
+            <h1 className='font-bold'>{title}</h1>
+            <ChevronDown className={`w-4 h-4 ${isEditing && 'rotate-180'} transition duration-300 ease-in-out`} />
+          </button>
 
           {isEditing && (
             <div id='editing-container' className='absolute left-20 top-12 bg-foreground rounded-lg ml-9 py-4 px-3 border border-border'>

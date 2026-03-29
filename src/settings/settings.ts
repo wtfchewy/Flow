@@ -69,7 +69,17 @@ export async function openSettings() {
   // Header
   const header = document.createElement('div');
   header.className = 'flow-settings-header';
-  header.textContent = 'Settings';
+
+  const headerText = document.createElement('span');
+  headerText.textContent = 'Settings';
+  header.appendChild(headerText);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'flow-settings-close';
+  closeBtn.textContent = '✕';
+  closeBtn.addEventListener('click', closeSettings);
+  header.appendChild(closeBtn);
+
   panel.appendChild(header);
 
   // Theme setting

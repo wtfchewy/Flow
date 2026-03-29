@@ -524,10 +524,32 @@ html.vibrancy .flow-editor-drag-wrap {
 }
 
 .flow-settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 18px;
   font-weight: 700;
   color: var(--affine-text-primary-color);
   margin-bottom: 20px;
+}
+
+.flow-settings-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--affine-text-secondary-color);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.flow-settings-close:hover {
+  background: var(--affine-hover-color);
+  color: var(--affine-text-primary-color);
 }
 
 .flow-settings-row {

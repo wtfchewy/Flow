@@ -12,6 +12,7 @@ import { createSidebar } from './sidebar/sidebar';
 import * as noteStore from './storage/note-store';
 import { effect } from '@preact/signals-core';
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { loadSettings, applySettings } from './settings/settings'; // also registers window.__openSettings
 
 function makeDraggable(el: HTMLElement) {
   el.addEventListener('mousedown', (e) => {
@@ -25,8 +26,9 @@ function makeDraggable(el: HTMLElement) {
 }
 
 async function main() {
-  // Set dark theme
-  document.documentElement.setAttribute('data-theme', 'dark');
+  // Load and apply saved settings (theme, vibrancy)
+  const settings = await loadSettings();
+  applySettings(settings);
 
   // Initialize BlockSuite (register custom elements)
   initBlockSuite();

@@ -314,6 +314,10 @@ body {
   color: #ff5f57;
 }
 
+.flow-context-menu-item.danger:hover {
+  background: rgba(255, 95, 87, 0.15);
+}
+
 .flow-context-menu-icon {
   display: flex;
   align-items: center;

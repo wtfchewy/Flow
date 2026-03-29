@@ -15,7 +15,7 @@ body {
   background: var(--affine-background-secondary-color);
   color: var(--affine-text-primary-color);
   font-family: var(--affine-font-family);
-  border-radius: 10px;
+  border-radius: 14px;
   overflow: hidden;
 }
 
@@ -34,7 +34,6 @@ body {
 }
 
 .flow-sidebar.collapsed {
-  margin-left: -340px;
   opacity: 0;
   pointer-events: none;
 }
@@ -285,11 +284,11 @@ body {
 .flow-context-menu {
   position: fixed;
   z-index: 100;
-  min-width: 200px;
+  min-width: 220px;
   background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
   border: 0.5px solid var(--affine-border-color);
-  border-radius: 8px;
-  padding: 4px;
+  border-radius: 10px;
+  padding: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   font-family: var(--affine-font-family);
 }
@@ -297,10 +296,10 @@ body {
 .flow-context-menu-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 28px;
+  gap: 10px;
+  height: 30px;
   padding: 0 8px;
-  border-radius: 6px;
+  border-radius: 7px;
   font-size: 13px;
   color: var(--affine-text-primary-color);
   cursor: pointer;
@@ -319,8 +318,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }
 

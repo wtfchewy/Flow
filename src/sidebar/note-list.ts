@@ -120,7 +120,7 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
 
     const iconEl = document.createElement('span');
     iconEl.className = 'flow-context-menu-icon';
-    render(iconFn({ width: '16', height: '16' }), iconEl);
+    render(iconFn({ width: '18', height: '18' }), iconEl);
 
     const labelEl = document.createElement('span');
     labelEl.textContent = label;

@@ -1,10 +1,13 @@
 import { invoke } from '@tauri-apps/api/core';
+import { render } from 'lit';
+import { CloseIcon } from '@blocksuite/icons/lit';
 
-interface AppSettings {
+export interface AppSettings {
   theme: string;
   vibrancy: boolean;
   vibrancyOpacity: number;
   vibrancyBlur: number;
+  onboarded: boolean;
 }
 
 const defaults: AppSettings = {
@@ -12,6 +15,7 @@ const defaults: AppSettings = {
   vibrancy: true,
   vibrancyOpacity: 0.15,
   vibrancyBlur: 40,
+  onboarded: false,
 };
 
 let overlay: HTMLElement | null = null;
@@ -30,7 +34,7 @@ function saveSettingsDebounced(settings: AppSettings) {
   }, 300);
 }
 
-async function saveSettingsImmediate(settings: AppSettings) {
+export async function saveSettingsImmediate(settings: AppSettings) {
   if (saveTimer) clearTimeout(saveTimer);
   await invoke('save_settings', { settings });
 }
@@ -76,7 +80,7 @@ export async function openSettings() {
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'flow-settings-close';
-  closeBtn.textContent = '✕';
+  render(CloseIcon({ width: '20', height: '20' }), closeBtn);
   closeBtn.addEventListener('click', closeSettings);
   header.appendChild(closeBtn);
 

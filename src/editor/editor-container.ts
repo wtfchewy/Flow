@@ -162,15 +162,30 @@ export class FlowEditorContainer extends SignalWatcher(
   }
 
   override firstUpdated() {
-    if (this.mode === 'page') {
-      setTimeout(() => {
-        if (this.autofocus && this.mode === 'page') {
-          const richText = this.querySelector('rich-text');
-          const inlineEditor = (richText as any)?.inlineEditor;
-          inlineEditor?.focusEnd();
+    this._tryAutofocus();
+  }
+
+  override updated() {
+    this._tryAutofocus();
+  }
+
+  private _tryAutofocus() {
+    if (!this.autofocus || this.mode !== 'page') return;
+    this.autofocus = false;
+    setTimeout(() => {
+      const docTitle = this.querySelector('doc-title');
+      if (docTitle) {
+        const richText = docTitle.querySelector('rich-text') as any;
+        const inlineEditor = richText?.inlineEditor;
+        if (inlineEditor) {
+          inlineEditor.focusEnd();
+          return;
         }
-      });
-    }
+      }
+      // Fallback to first rich-text
+      const richText = this.querySelector('rich-text') as any;
+      richText?.inlineEditor?.focusEnd();
+    }, 50);
   }
 
   override render() {

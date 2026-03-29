@@ -13,6 +13,7 @@ import * as noteStore from './storage/note-store';
 import { effect } from '@preact/signals-core';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { loadSettings, applySettings } from './settings/settings'; // also registers window.__openSettings
+import { showWelcome } from './welcome/welcome';
 
 function makeDraggable(el: HTMLElement) {
   el.addEventListener('mousedown', (e) => {
@@ -29,6 +30,12 @@ async function main() {
   // Load and apply saved settings (theme, vibrancy)
   const settings = await loadSettings();
   applySettings(settings);
+
+  // Show welcome screen on first launch
+  const isFirstLaunch = !settings.onboarded;
+  if (isFirstLaunch) {
+    await showWelcome(settings);
+  }
 
   // Initialize BlockSuite (register custom elements)
   initBlockSuite();
@@ -199,15 +206,21 @@ async function main() {
   // Load existing notes
   await noteStore.loadNoteList();
 
-  // Select the target note (priority: URL param > last opened > first note)
-  const lastNoteId = localStorage.getItem('flow-last-note');
-  const noteToOpen = openNoteId
-    || (lastNoteId && noteStore.notes.value.find(n => n.id === lastNoteId) ? lastNoteId : null)
-    || (noteStore.notes.value.length > 0 ? noteStore.notes.value[0].id : null);
-
-  if (noteToOpen) {
-    await noteStore.selectNote(noteToOpen);
+  // On first launch, create the first note automatically
+  if (isFirstLaunch && noteStore.notes.value.length === 0) {
+    await noteStore.createNote();
     mountEditor(editorWrapper, editor);
+  } else {
+    // Select the target note (priority: URL param > last opened > first note)
+    const lastNoteId = localStorage.getItem('flow-last-note');
+    const noteToOpen = openNoteId
+      || (lastNoteId && noteStore.notes.value.find(n => n.id === lastNoteId) ? lastNoteId : null)
+      || (noteStore.notes.value.length > 0 ? noteStore.notes.value[0].id : null);
+
+    if (noteToOpen) {
+      await noteStore.selectNote(noteToOpen);
+      mountEditor(editorWrapper, editor);
+    }
   }
 
   // Wire up linked doc navigation

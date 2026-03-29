@@ -33,6 +33,8 @@ pub struct AppSettings {
     pub vibrancy_opacity: f64,
     #[serde(default = "default_vibrancy_blur")]
     pub vibrancy_blur: f64,
+    #[serde(default)]
+    pub onboarded: bool,
 }
 
 fn default_theme() -> String {
@@ -58,6 +60,7 @@ impl Default for AppSettings {
             vibrancy: default_vibrancy(),
             vibrancy_opacity: default_vibrancy_opacity(),
             vibrancy_blur: default_vibrancy_blur(),
+            onboarded: false,
         }
     }
 }

@@ -48,11 +48,14 @@ export function createSidebar(): HTMLElement {
 
   const sidebarBtn = document.createElement('button');
   sidebarBtn.className = 'flow-sidebar-toggle-btn';
-  sidebarBtn.title = 'Hide Sidebar';
   const sidebarIconSpan = document.createElement('span');
   sidebarIconSpan.className = 'flow-new-note-icon';
   render(SidebarIcon({ width: '20', height: '20' }), sidebarIconSpan);
   sidebarBtn.appendChild(sidebarIconSpan);
+  const sidebarTooltip = document.createElement('affine-tooltip');
+  sidebarTooltip.setAttribute('tip-position', 'bottom');
+  sidebarTooltip.textContent = 'Hide Sidebar';
+  sidebarBtn.appendChild(sidebarTooltip);
   sidebarBtn.addEventListener('click', () => toggleSidebar());
 
   leftGroup.appendChild(sidebarBtn);
@@ -61,11 +64,14 @@ export function createSidebar(): HTMLElement {
   // Right: new note button
   const newNoteBtn = document.createElement('button');
   newNoteBtn.className = 'flow-new-note-btn';
-  newNoteBtn.title = 'New Note';
   const iconSpan = document.createElement('span');
   iconSpan.className = 'flow-new-note-icon';
   render(NewPageIcon({ width: '20', height: '20' }), iconSpan);
   newNoteBtn.appendChild(iconSpan);
+  const newNoteTooltip = document.createElement('affine-tooltip');
+  newNoteTooltip.setAttribute('tip-position', 'bottom');
+  newNoteTooltip.textContent = 'New Note';
+  newNoteBtn.appendChild(newNoteTooltip);
   newNoteBtn.addEventListener('click', () => createNote());
 
   topBar.appendChild(newNoteBtn);

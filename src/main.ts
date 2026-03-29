@@ -104,7 +104,6 @@ async function main() {
 
   const sidebarBtn = document.createElement('button');
   sidebarBtn.className = 'flow-mode-btn sidebar-btn';
-  sidebarBtn.title = 'Toggle Sidebar';
   render(SidebarIcon({ width: '20', height: '20' }), sidebarBtn);
   sidebarBtn.addEventListener('click', () => noteStore.toggleSidebar());
 

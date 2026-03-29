@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicehash/tauri/refs/heads/main/crates/tauri-config-schema/schema.json",
+  "productName": "Flow",
+  "version": "0.1.0",
+  "identifier": "com.flow.app",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "title": "",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "decorations": false,
+        "transparent": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "plugins": {
+    "fs": {}
+  }
+}

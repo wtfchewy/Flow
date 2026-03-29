@@ -1,0 +1,160 @@
+import { AffineSchemas } from '@blocksuite/affine/schemas';
+import type { DocMode } from '@blocksuite/affine/model';
+import {
+  CommunityCanvasTextFonts,
+  DocModeProvider,
+  EditorSettingExtension,
+  type EditorSetting,
+  FeatureFlagService,
+  FontConfigExtension,
+  GeneralSettingSchema,
+  ParseDocUrlExtension,
+  type ParseDocUrlService,
+} from '@blocksuite/affine/shared/services';
+import {
+  type ExtensionType,
+  type Store,
+  type Workspace,
+  Schema,
+  Text,
+} from '@blocksuite/affine/store';
+import {
+  type DocCollectionOptions,
+  TestWorkspace,
+} from '@blocksuite/affine/store/test';
+import { MemoryBlobSource } from '@blocksuite/affine/sync';
+import { effects as itEffects } from '@blocksuite/integration-test/effects';
+import { getTestStoreManager } from '@blocksuite/integration-test/store';
+import { getTestViewManager } from '@blocksuite/integration-test/view';
+import { Signal } from '@preact/signals-core';
+import { Subject } from 'rxjs';
+import * as Y from 'yjs';
+
+import type { FlowEditorContainer } from './editor-container';
+
+// Register all BlockSuite custom elements
+let initialized = false;
+export function initBlockSuite() {
+  if (initialized) return;
+  initialized = true;
+  itEffects();
+}
+
+// Extension managers
+const storeManager = getTestStoreManager();
+const viewManager = getTestViewManager();
+
+// Create a workspace (doc collection)
+export function createWorkspace(): TestWorkspace {
+  const options: DocCollectionOptions = {
+    id: 'flow-workspace',
+    blobSources: {
+      main: new MemoryBlobSource(),
+      shadows: [],
+    },
+  };
+
+  const collection = new TestWorkspace(options);
+  collection.storeExtensions = storeManager.get('store');
+  collection.meta.initialize();
+  collection.start();
+
+  return collection;
+}
+
+// Create a new empty doc with initial block structure
+export function createNewDoc(
+  collection: TestWorkspace,
+  docId: string
+): Store {
+  const doc = collection.getDoc(docId) ?? collection.createDoc(docId);
+  const store = doc.getStore({ id: docId });
+
+  doc.load(() => {
+    const rootId = store.addBlock('affine:page', { title: new Text() });
+    store.addBlock('affine:surface', {}, rootId);
+    const noteId = store.addBlock('affine:note', {}, rootId);
+    store.addBlock('affine:paragraph', {}, noteId);
+  });
+
+  return store;
+}
+
+// Load an existing doc from Yjs binary
+export function loadExistingDoc(
+  collection: TestWorkspace,
+  docId: string,
+  data: Uint8Array
+): Store {
+  const doc = collection.getDoc(docId) ?? collection.createDoc(docId);
+  const store = doc.getStore({ id: docId });
+
+  // Apply the saved Yjs state before loading
+  Y.applyUpdate(doc.spaceDoc, data);
+  doc.load();
+
+  return store;
+}
+
+// Get the underlying Yjs doc for serialization
+export function getYDoc(store: Store): Y.Doc {
+  return store.spaceDoc;
+}
+
+// Build common extensions for the editor
+function mockDocModeService(editor: FlowEditorContainer) {
+  const docModeService: DocModeProvider = {
+    getPrimaryMode: () => 'page' as DocMode,
+    onPrimaryModeChange: () => new Subject<DocMode>().subscribe(),
+    getEditorMode: () => editor.mode,
+    setEditorMode: (mode: DocMode) => editor.switchEditor(mode),
+    setPrimaryMode: () => {},
+    togglePrimaryMode: () => {
+      const mode = editor.mode === 'page' ? 'edgeless' : 'page';
+      editor.switchEditor(mode);
+      return mode;
+    },
+  };
+  return docModeService;
+}
+
+function mockParseDocUrl(): ParseDocUrlService {
+  return {
+    parseDocUrl: () => undefined,
+  };
+}
+
+function mockEditorSetting() {
+  const initialVal = Object.entries(GeneralSettingSchema.shape).reduce(
+    (pre: EditorSetting, [key, schema]) => {
+      // @ts-expect-error key is EditorSetting field
+      pre[key as keyof EditorSetting] = schema.parse(undefined);
+      return pre;
+    },
+    {} as EditorSetting
+  );
+  return new Signal<EditorSetting>(initialVal);
+}
+
+export function getCommonExtensions(
+  editor: FlowEditorContainer
+): ExtensionType[] {
+  return [
+    FontConfigExtension(CommunityCanvasTextFonts),
+    EditorSettingExtension({ setting$: mockEditorSetting() }),
+    ParseDocUrlExtension(mockParseDocUrl()),
+    {
+      setup: di => {
+        di.override(DocModeProvider, mockDocModeService(editor));
+      },
+    },
+  ];
+}
+
+export function getPageSpecs(editor: FlowEditorContainer): ExtensionType[] {
+  return [...viewManager.get('page'), ...getCommonExtensions(editor)];
+}
+
+export function getEdgelessSpecs(editor: FlowEditorContainer): ExtensionType[] {
+  return [...viewManager.get('edgeless'), ...getCommonExtensions(editor)];
+}

@@ -1,0 +1,490 @@
+@import '@toeverything/theme/style.css';
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+  background: var(--affine-background-secondary-color);
+  color: var(--affine-text-primary-color);
+  font-family: var(--affine-font-family);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ===== Sidebar ===== */
+
+.flow-sidebar {
+  width: 340px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+  -webkit-app-region: drag;
+  transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.1s ease;
+}
+
+.flow-sidebar.collapsed {
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flow-sidebar-topbar {
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 8px 12px;
+}
+
+.flow-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+/* ===== Custom Traffic Lights ===== */
+
+.flow-traffic-lights {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flow-traffic-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  transition: filter 0.1s ease;
+  -webkit-app-region: no-drag;
+}
+
+.flow-traffic-btn:active {
+  filter: brightness(0.8);
+}
+
+.flow-traffic-close {
+  background: #ff5f57;
+}
+
+.flow-traffic-minimize {
+  background: #febc2e;
+}
+
+.flow-traffic-fullscreen {
+  background: #28c840;
+}
+
+/* Hover icons inside traffic lights */
+.flow-traffic-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+  pointer-events: none;
+}
+
+.flow-traffic-lights:hover .flow-traffic-close::after {
+  content: '✕';
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.flow-traffic-lights:hover .flow-traffic-minimize::after {
+  content: '−';
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.flow-traffic-lights:hover .flow-traffic-fullscreen::after {
+  content: '';
+  opacity: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 6 6'%3E%3Cpath d='M0 1.5L1.5 0H4.5L0 4.5V1.5Z' fill='rgba(0,0,0,0.5)'/%3E%3Cpath d='M6 4.5L4.5 6H1.5L6 1.5V4.5Z' fill='rgba(0,0,0,0.5)'/%3E%3C/svg%3E") center no-repeat;
+}
+
+.flow-sidebar-toggle-btn,
+.flow-new-note-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--affine-icon-color, var(--affine-text-secondary-color));
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.flow-sidebar-toggle-btn:hover,
+.flow-new-note-btn:hover {
+  background: var(--affine-hover-color);
+}
+
+.flow-new-note-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== Sidebar Resize Handle ===== */
+
+.flow-sidebar-resize {
+  width: 4px;
+  cursor: col-resize;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 30;
+  -webkit-app-region: no-drag;
+  transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.1s ease;
+}
+
+.flow-sidebar-resize.collapsed {
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flow-sidebar-resize::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -2px;
+  right: -2px;
+  bottom: 0;
+}
+
+/* ===== Note List ===== */
+
+.flow-note-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+}
+
+.flow-note-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.flow-note-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.flow-note-list::-webkit-scrollbar-thumb {
+  background: var(--affine-black-30, rgba(255, 255, 255, 0.15));
+  border-radius: 3px;
+}
+
+.flow-note-group {
+  margin-bottom: 4px;
+}
+
+.flow-note-group-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--affine-text-primary-color);
+  padding: 12px 8px 6px;
+}
+
+.flow-note-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1px;
+}
+
+.flow-note-item.active {
+  background: var(--affine-primary-color, #1e6fff);
+}
+
+.flow-note-item.active .flow-note-item-title,
+.flow-note-item.active .flow-note-item-date,
+.flow-note-item.active .flow-note-item-preview,
+.flow-note-item.active .flow-note-item-folder {
+  color: #fff;
+}
+
+.flow-note-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--affine-text-primary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.flow-note-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--affine-text-secondary-color);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.flow-note-item-date {
+  flex-shrink: 0;
+}
+
+.flow-note-item-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.7;
+}
+
+.flow-note-item-folder {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--affine-text-secondary-color);
+  margin-top: 3px;
+  opacity: 0.6;
+}
+
+.flow-note-item-folder svg {
+  flex-shrink: 0;
+}
+
+.flow-empty-state {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--affine-text-secondary-color);
+  font-size: 14px;
+}
+
+/* ===== Context Menu ===== */
+
+.flow-context-menu {
+  position: fixed;
+  z-index: 100;
+  min-width: 200px;
+  background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-family: var(--affine-font-family);
+}
+
+.flow-context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--affine-text-primary-color);
+  cursor: pointer;
+  user-select: none;
+}
+
+.flow-context-menu-item:hover {
+  background: var(--affine-hover-color);
+}
+
+.flow-context-menu-item.danger {
+  color: #ff5f57;
+}
+
+.flow-context-menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.flow-context-menu-separator {
+  height: 0;
+  border-top: 0.5px solid var(--affine-border-color);
+  margin: 4px 0;
+}
+
+/* ===== Editor Area ===== */
+
+.flow-editor-drag-wrap {
+  flex: 1;
+  display: flex;
+  padding: 8px 8px 8px 0;
+  -webkit-app-region: drag;
+  transition: padding 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flow-editor-drag-wrap:has(.flow-editor-area.sidebar-hidden) {
+  padding-left: 8px;
+}
+
+.flow-editor-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  background: var(--affine-background-primary-color);
+  border-radius: 12px;
+  -webkit-app-region: no-drag;
+}
+
+.flow-editor-drag-region {
+  display: none;
+}
+
+/* Top-left toolbar pill (sidebar icon + saving text) */
+.flow-editor-toolbar-left {
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+  -webkit-app-region: no-drag;
+}
+
+.flow-editor-toolbar-left .flow-mode-btn.sidebar-btn {
+  display: none;
+}
+
+.flow-editor-toolbar-left.sidebar-hidden {
+  background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
+  border: 0.5px solid var(--affine-border-color);
+  padding: 2px;
+}
+
+.flow-editor-toolbar-left.sidebar-hidden .flow-mode-btn.sidebar-btn {
+  display: flex;
+}
+
+.flow-saving-text {
+  font-size: 12px;
+  color: var(--affine-text-secondary-color);
+  opacity: 0;
+  max-width: 0;
+  padding: 0;
+  overflow: hidden;
+  transition: opacity 0.15s ease, max-width 0.2s ease, padding 0.2s ease;
+  white-space: nowrap;
+}
+
+.flow-saving-text.visible {
+  opacity: 1;
+  max-width: 60px;
+  padding: 0 6px;
+}
+
+/* Floating mode toggle - top right overlay */
+.flow-mode-toggle {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  z-index: 20;
+  display: flex;
+  gap: 2px;
+  background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 8px;
+  padding: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.flow-mode-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 32px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--affine-hover-color);
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.flow-mode-toggle.edgeless .flow-mode-slider {
+  left: 36px;
+}
+
+.flow-mode-btn {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--affine-icon-color, var(--affine-text-secondary-color));
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.flow-mode-btn:hover {
+  color: var(--affine-text-primary-color);
+}
+
+.flow-mode-btn.active {
+  color: var(--affine-primary-color, #1e6fff);
+}
+
+.flow-editor-container {
+  flex: 1;
+  overflow: auto;
+  height: 100%;
+}
+
+.flow-editor-container flow-editor-container {
+  height: 100%;
+}
+
+.flow-editor-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--affine-text-secondary-color);
+  font-size: 16px;
+}

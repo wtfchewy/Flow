@@ -200,12 +200,14 @@ async function main() {
   // Load existing notes
   await noteStore.loadNoteList();
 
-  // Select the target note
-  if (openNoteId) {
-    await noteStore.selectNote(openNoteId);
-    mountEditor(editorWrapper, editor);
-  } else if (noteStore.notes.value.length > 0) {
-    await noteStore.selectNote(noteStore.notes.value[0].id);
+  // Select the target note (priority: URL param > last opened > first note)
+  const lastNoteId = localStorage.getItem('flow-last-note');
+  const noteToOpen = openNoteId
+    || (lastNoteId && noteStore.notes.value.find(n => n.id === lastNoteId) ? lastNoteId : null)
+    || (noteStore.notes.value.length > 0 ? noteStore.notes.value[0].id : null);
+
+  if (noteToOpen) {
+    await noteStore.selectNote(noteToOpen);
     mountEditor(editorWrapper, editor);
   }
 

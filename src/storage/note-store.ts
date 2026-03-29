@@ -142,6 +142,7 @@ export async function selectNote(id: string) {
   await saveCurrentNote();
 
   activeNoteId.value = id;
+  localStorage.setItem('flow-last-note', id);
 
   // Remove old doc if it exists
   try {

@@ -121,7 +121,12 @@ async function main() {
   // React to sidebar visibility
   effect(() => {
     const visible = noteStore.sidebarVisible.value;
-    sidebar.classList.toggle('collapsed', !visible);
+    if (!visible) {
+      const width = sidebar.getBoundingClientRect().width;
+      sidebar.style.marginLeft = `-${width}px`;
+    } else {
+      sidebar.style.marginLeft = '';
+    }
     resizeHandle.classList.toggle('collapsed', !visible);
     editorArea.classList.toggle('sidebar-hidden', !visible);
     leftToolbar.classList.toggle('sidebar-hidden', !visible);

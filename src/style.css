@@ -30,12 +30,12 @@ body {
   overflow: hidden;
   user-select: none;
   -webkit-app-region: drag;
-  transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.1s ease;
+  transition: margin-left 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.08s ease;
 }
 
 .flow-sidebar.collapsed {
-  width: 0;
+  margin-left: -340px;
   opacity: 0;
   pointer-events: none;
 }
@@ -167,13 +167,11 @@ body {
   position: relative;
   z-index: 30;
   -webkit-app-region: no-drag;
-  transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.1s ease;
+  transition: width 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .flow-sidebar-resize.collapsed {
   width: 0;
-  opacity: 0;
   pointer-events: none;
 }
 
@@ -346,7 +344,7 @@ body {
   display: flex;
   padding: 8px 8px 8px 0;
   -webkit-app-region: drag;
-  transition: padding 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: padding 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .flow-editor-drag-wrap:has(.flow-editor-area.sidebar-hidden) {

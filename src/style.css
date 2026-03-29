@@ -9,6 +9,10 @@ body {
   background: transparent;
 }
 
+*::-webkit-scrollbar {
+  display: none;
+}
+
 #app {
   display: flex;
   height: 100vh;

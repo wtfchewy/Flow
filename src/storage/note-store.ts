@@ -10,6 +10,7 @@ import {
   getYDoc,
   getPageSpecs,
   getEdgelessSpecs,
+  RefNodeSlotsProvider,
 } from '../editor/setup';
 import type { FlowEditorContainer } from '../editor/editor-container';
 import {
@@ -297,6 +298,58 @@ export async function togglePinNote(id: string) {
       await saveNote(id, note.title, note.preview, note.mode || 'page', tmpDoc, note.pinned || false);
       tmpDoc.destroy();
     }
+  }
+}
+
+export function setupLinkedDocNavigation() {
+  // Subscribe to linked doc clicks from BlockSuite
+  const trySubscribe = () => {
+    try {
+      const slots = editorEl.std?.getOptional(RefNodeSlotsProvider);
+      if (slots) {
+        slots.docLinkClicked.subscribe(async ({ pageId }) => {
+          if (!pageId) return;
+
+          // Check if this note exists in our list
+          const existing = notes.value.find(n => n.id === pageId);
+          if (existing) {
+            await selectNote(pageId);
+          } else {
+            // New doc created by @ menu — create a note entry for it
+            const doc = workspace.getDoc(pageId);
+            if (doc) {
+              const store = doc.getStore();
+              doc.load();
+              const now = Date.now();
+              const meta: NoteMeta = {
+                id: pageId,
+                title: 'Untitled',
+                createdAt: now,
+                updatedAt: now,
+                preview: '',
+              };
+              notes.value = [meta, ...notes.value];
+
+              // Save initial state
+              const ydoc = getYDoc(store);
+              await saveNote(pageId, 'Untitled', '', 'page', ydoc, false);
+            }
+            await selectNote(pageId);
+          }
+        });
+        return true;
+      }
+    } catch {
+      // std not ready yet
+    }
+    return false;
+  };
+
+  // Retry until editor std is available
+  if (!trySubscribe()) {
+    const interval = setInterval(() => {
+      if (trySubscribe()) clearInterval(interval);
+    }, 200);
   }
 }
 

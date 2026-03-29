@@ -209,6 +209,9 @@ async function main() {
     mountEditor(editorWrapper, editor);
   }
 
+  // Wire up linked doc navigation
+  noteStore.setupLinkedDocNavigation();
+
   // Watch for active note changes to mount/unmount editor
   let editorMounted = noteStore.notes.value.length > 0;
 

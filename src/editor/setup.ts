@@ -12,6 +12,11 @@ import {
   type ParseDocUrlService,
 } from '@blocksuite/affine/shared/services';
 import {
+  RefNodeSlotsProvider,
+} from '@blocksuite/affine/inlines/reference';
+
+export { RefNodeSlotsProvider };
+import {
   type ExtensionType,
   type Store,
   type Workspace,

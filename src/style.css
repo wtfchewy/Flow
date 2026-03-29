@@ -17,6 +17,13 @@ body {
   font-family: var(--affine-font-family);
   border-radius: 14px;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.flow-editor-container {
+  user-select: auto;
+  -webkit-user-select: auto;
 }
 
 /* ===== Sidebar ===== */

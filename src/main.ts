@@ -11,6 +11,18 @@ import { FlowEditorContainer } from './editor/editor-container';
 import { createSidebar } from './sidebar/sidebar';
 import * as noteStore from './storage/note-store';
 import { effect } from '@preact/signals-core';
+import { getCurrentWindow } from '@tauri-apps/api/window';
+
+function makeDraggable(el: HTMLElement) {
+  el.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    // Don't drag if clicking on an interactive element
+    const target = e.target as HTMLElement;
+    if (target.closest('button, input, textarea, select, a, [contenteditable], .flow-note-item, .flow-editor-area, .flow-sidebar-resize, .flow-traffic-lights')) return;
+    e.preventDefault();
+    getCurrentWindow().startDragging();
+  });
+}
 
 async function main() {
   // Set dark theme
@@ -39,6 +51,7 @@ async function main() {
 
   // Sidebar
   const sidebar = createSidebar();
+  makeDraggable(sidebar);
   app.appendChild(sidebar);
 
   // Resize handle between sidebar and editor
@@ -172,6 +185,7 @@ async function main() {
   // Wrap editor area in a draggable region (the margin/border area)
   const editorDragWrap = document.createElement('div');
   editorDragWrap.className = 'flow-editor-drag-wrap';
+  makeDraggable(editorDragWrap);
   editorDragWrap.appendChild(editorArea);
   app.appendChild(editorDragWrap);
 

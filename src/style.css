@@ -224,6 +224,10 @@ body {
   margin-bottom: 1px;
 }
 
+.flow-note-item.context-target:not(.active) {
+  background: var(--affine-hover-color);
+}
+
 .flow-note-item.active {
   background: var(--affine-primary-color, #1e6fff);
 }

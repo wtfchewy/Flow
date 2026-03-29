@@ -91,11 +91,16 @@ function formatDate(timestamp: number): string {
 
 // Context menu management
 let activeMenu: HTMLElement | null = null;
+let contextTargetItem: HTMLElement | null = null;
 
 function dismissMenu() {
   if (activeMenu) {
     activeMenu.remove();
     activeMenu = null;
+  }
+  if (contextTargetItem) {
+    contextTargetItem.classList.remove('context-target');
+    contextTargetItem = null;
   }
   document.removeEventListener('click', dismissMenu);
 }
@@ -103,6 +108,13 @@ function dismissMenu() {
 function showContextMenu(e: MouseEvent, note: NoteMeta) {
   e.preventDefault();
   dismissMenu();
+
+  // Highlight the right-clicked note
+  const noteItem = (e.target as HTMLElement).closest('.flow-note-item') as HTMLElement | null;
+  if (noteItem) {
+    noteItem.classList.add('context-target');
+    contextTargetItem = noteItem;
+  }
 
   const menu = document.createElement('div');
   menu.className = 'flow-context-menu';

@@ -218,6 +218,17 @@ export async function createNote() {
 }
 
 export async function deleteNote(id: string) {
+  // Detach auto-save observer before anything else
+  if (ydocObserver) {
+    ydocObserver();
+    ydocObserver = null;
+  }
+  if (autoSaveTimer) {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = null;
+  }
+  saving.value = false;
+
   await deleteNoteFromDisk(id);
 
   try {

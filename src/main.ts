@@ -98,9 +98,9 @@ async function main() {
   dragRegion.className = 'flow-editor-drag-region';
   editorArea.appendChild(dragRegion);
 
-  // Top-left toolbar pill (sidebar icon + saving text)
-  const leftToolbar = document.createElement('div');
-  leftToolbar.className = 'flow-editor-toolbar-left';
+  // Sidebar toggle button (top-left, only when sidebar hidden)
+  const sidebarPill = document.createElement('div');
+  sidebarPill.className = 'flow-editor-sidebar-pill';
 
   const sidebarBtn = document.createElement('button');
   sidebarBtn.className = 'flow-mode-btn sidebar-btn';
@@ -108,13 +108,14 @@ async function main() {
   render(SidebarIcon({ width: '20', height: '20' }), sidebarBtn);
   sidebarBtn.addEventListener('click', () => noteStore.toggleSidebar());
 
+  sidebarPill.appendChild(sidebarBtn);
+  editorArea.appendChild(sidebarPill);
+
+  // Saving indicator (top-left, next to sidebar pill or standalone)
   const savingText = document.createElement('span');
   savingText.className = 'flow-saving-text';
   savingText.textContent = 'Saving';
-
-  leftToolbar.appendChild(sidebarBtn);
-  leftToolbar.appendChild(savingText);
-  editorArea.appendChild(leftToolbar);
+  editorArea.appendChild(savingText);
 
   effect(() => {
     savingText.classList.toggle('visible', noteStore.saving.value);
@@ -131,7 +132,7 @@ async function main() {
     }
     resizeHandle.classList.toggle('collapsed', !visible);
     editorArea.classList.toggle('sidebar-hidden', !visible);
-    leftToolbar.classList.toggle('sidebar-hidden', !visible);
+    sidebarPill.classList.toggle('visible', !visible);
   });
 
   // Floating mode toggle (top-right overlay)

@@ -375,49 +375,44 @@ html[data-theme='light'] .flow-note-item-folder {
   display: none;
 }
 
-/* Top-left toolbar pill (sidebar icon + saving text) */
-.flow-editor-toolbar-left {
+/* Sidebar toggle pill (top-left, hidden when sidebar open) */
+.flow-editor-sidebar-pill {
   position: absolute;
   top: 10px;
   left: 16px;
   z-index: 20;
-  display: flex;
-  align-items: center;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  padding: 0;
-}
-
-.flow-editor-toolbar-left .flow-mode-btn.sidebar-btn {
   display: none;
-}
-
-.flow-editor-toolbar-left.sidebar-hidden {
   background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
   border: 0.5px solid var(--affine-border-color);
+  border-radius: 8px;
   padding: 2px;
 }
 
-.flow-editor-toolbar-left.sidebar-hidden .flow-mode-btn.sidebar-btn {
+.flow-editor-sidebar-pill.visible {
   display: flex;
 }
 
+/* Saving indicator (top-left, independent) */
 .flow-saving-text {
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  z-index: 20;
   font-size: 12px;
   color: var(--affine-text-secondary-color);
   opacity: 0;
-  max-width: 0;
-  padding: 0;
-  overflow: hidden;
-  transition: opacity 0.15s ease, max-width 0.2s ease, padding 0.2s ease;
+  transition: opacity 0.15s ease;
   white-space: nowrap;
+  line-height: 32px;
+  pointer-events: none;
+}
+
+.flow-editor-area.sidebar-hidden .flow-saving-text {
+  left: 60px;
 }
 
 .flow-saving-text.visible {
   opacity: 1;
-  max-width: 60px;
-  padding: 0 6px;
 }
 
 /* Floating mode toggle - top right overlay */

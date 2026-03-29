@@ -118,7 +118,7 @@ function scheduleAutoSave() {
       notes.value = updated;
     }
     saving.value = false;
-  }, 2000);
+  }, 500);
 }
 
 let ydocObserver: (() => void) | null = null;

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
+use std::sync::Mutex;
 use tauri::Manager;
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
 
@@ -65,6 +66,18 @@ impl Default for AppSettings {
     }
 }
 
+/// In-memory cache for the notes index to avoid re-reading from disk on every save.
+struct IndexCache {
+    notes: Vec<NoteMeta>,
+    loaded: bool,
+}
+
+impl IndexCache {
+    fn new() -> Self {
+        Self { notes: vec![], loaded: false }
+    }
+}
+
 fn get_settings_path(app: &tauri::AppHandle) -> PathBuf {
     let app_data = app.path().app_data_dir().expect("failed to get app data dir");
     fs::create_dir_all(&app_data).ok();
@@ -102,47 +115,54 @@ fn get_index_path(app: &tauri::AppHandle) -> PathBuf {
     app_data.join("notes-index.json")
 }
 
-fn read_index(app: &tauri::AppHandle) -> Vec<NoteMeta> {
-    let path = get_index_path(app);
-    if path.exists() {
-        let data = fs::read_to_string(&path).unwrap_or_default();
-        serde_json::from_str(&data).unwrap_or_default()
-    } else {
-        vec![]
+fn ensure_cache(app: &tauri::AppHandle, cache: &mut IndexCache) {
+    if !cache.loaded {
+        let path = get_index_path(app);
+        if path.exists() {
+            let data = fs::read_to_string(&path).unwrap_or_default();
+            cache.notes = serde_json::from_str(&data).unwrap_or_default();
+        }
+        cache.loaded = true;
     }
 }
 
-fn write_index(app: &tauri::AppHandle, notes: &[NoteMeta]) {
+fn flush_index(app: &tauri::AppHandle, notes: &[NoteMeta]) {
     let path = get_index_path(app);
-    let data = serde_json::to_string_pretty(notes).unwrap_or_default();
+    let data = serde_json::to_string(notes).unwrap_or_default();
     fs::write(path, data).ok();
 }
 
 #[tauri::command]
-fn list_notes(app: tauri::AppHandle) -> Vec<NoteMeta> {
-    read_index(&app)
+fn list_notes(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>) -> Vec<NoteMeta> {
+    let mut cache = state.lock().unwrap();
+    ensure_cache(&app, &mut cache);
+    cache.notes.clone()
 }
 
 #[tauri::command]
-fn save_note(app: tauri::AppHandle, id: String, title: String, preview: String, mode: String, pinned: bool, data: Vec<u8>) {
+fn save_note(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>, id: String, title: String, preview: String, mode: String, pinned: bool, data: Vec<u8>) {
+    // Write binary data to disk
     let notes_dir = get_notes_dir(&app);
     let note_path = notes_dir.join(format!("{}.bin", id));
     fs::write(note_path, &data).ok();
 
-    let mut notes = read_index(&app);
+    // Update in-memory index
+    let mut cache = state.lock().unwrap();
+    ensure_cache(&app, &mut cache);
+
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
         .as_millis() as u64;
 
-    if let Some(existing) = notes.iter_mut().find(|n| n.id == id) {
+    if let Some(existing) = cache.notes.iter_mut().find(|n| n.id == id) {
         existing.title = title;
         existing.preview = preview;
         existing.mode = mode;
         existing.pinned = pinned;
         existing.updated_at = now;
     } else {
-        notes.push(NoteMeta {
+        cache.notes.push(NoteMeta {
             id,
             title,
             preview,
@@ -153,7 +173,8 @@ fn save_note(app: tauri::AppHandle, id: String, title: String, preview: String, 
         });
     }
 
-    write_index(&app, &notes);
+    // Flush index to disk
+    flush_index(&app, &cache.notes);
 }
 
 #[tauri::command]
@@ -164,20 +185,22 @@ fn load_note(app: tauri::AppHandle, id: String) -> Option<Vec<u8>> {
 }
 
 #[tauri::command]
-fn delete_note(app: tauri::AppHandle, id: String) {
+fn delete_note(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>, id: String) {
     let notes_dir = get_notes_dir(&app);
     let note_path = notes_dir.join(format!("{}.bin", id));
     fs::remove_file(note_path).ok();
 
-    let mut notes = read_index(&app);
-    notes.retain(|n| n.id != id);
-    write_index(&app, &notes);
+    let mut cache = state.lock().unwrap();
+    ensure_cache(&app, &mut cache);
+    cache.notes.retain(|n| n.id != id);
+    flush_index(&app, &cache.notes);
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
+        .manage(Mutex::new(IndexCache::new()))
         .setup(|app| {
             // Build macOS-style app menu
             let settings_item = MenuItem::with_id(app, "settings", "Settings…", true, Some("CmdOrCtrl+,"))?;

@@ -140,24 +140,36 @@ function createSegmentedControl(
   const control = document.createElement('div');
   control.className = 'flow-segmented-control';
 
-  const slider = document.createElement('div');
-  slider.className = 'flow-segmented-slider';
-  slider.style.width = `${100 / labels.length}%`;
-  slider.style.left = `${(activeIndex * 100) / labels.length}%`;
-  control.appendChild(slider);
+  const buttons: HTMLButtonElement[] = [];
 
   labels.forEach((label, i) => {
     const btn = document.createElement('button');
     btn.className = `flow-segmented-btn${i === activeIndex ? ' active' : ''}`;
     btn.textContent = label;
     btn.addEventListener('click', () => {
-      control.querySelectorAll('.flow-segmented-btn').forEach((b) => b.classList.remove('active'));
+      buttons.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
-      slider.style.left = `${(i * 100) / labels.length}%`;
+      updateSliderPos();
       onChange(i);
     });
+    buttons.push(btn);
     control.appendChild(btn);
   });
+
+  const slider = document.createElement('div');
+  slider.className = 'flow-segmented-slider';
+  control.appendChild(slider);
+
+  function updateSliderPos() {
+    const activeBtn = buttons.find(b => b.classList.contains('active'));
+    if (activeBtn) {
+      slider.style.width = `${activeBtn.offsetWidth}px`;
+      slider.style.left = `${activeBtn.offsetLeft}px`;
+    }
+  }
+
+  // Position after render
+  requestAnimationFrame(() => updateSliderPos());
 
   return control;
 }

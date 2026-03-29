@@ -533,23 +533,26 @@ html.vibrancy .flow-editor-drag-wrap {
 .flow-settings-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   padding: 12px 0;
+}
+
+.flow-settings-label {
+  flex: 1;
+  font-size: 14px;
+  color: var(--affine-text-primary-color);
 }
 
 .flow-settings-row + .flow-settings-row {
   border-top: 0.5px solid var(--affine-border-color);
 }
 
-.flow-settings-label {
-  font-size: 14px;
-  color: var(--affine-text-primary-color);
-}
 
 /* Segmented control */
 .flow-segmented-control {
   position: relative;
-  display: flex;
+  display: inline-flex;
+  flex: none;
   background: var(--affine-hover-color);
   border-radius: 8px;
   padding: 2px;
@@ -559,11 +562,11 @@ html.vibrancy .flow-editor-drag-wrap {
 .flow-segmented-slider {
   position: absolute;
   top: 2px;
-  bottom: 2px;
+  height: calc(100% - 4px);
   border-radius: 6px;
   background: var(--affine-background-primary-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  transition: left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left 0.2s cubic-bezier(0.4, 0, 0.2, 1), width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
   z-index: 0;
 }
@@ -573,7 +576,7 @@ html.vibrancy .flow-editor-drag-wrap {
   z-index: 1;
   border: none;
   background: transparent;
-  padding: 6px 16px;
+  padding: 6px 14px;
   font-size: 13px;
   font-family: var(--affine-font-family);
   color: var(--affine-text-secondary-color);

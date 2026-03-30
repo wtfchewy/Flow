@@ -345,6 +345,38 @@ html[data-theme='light'] .peak-note-item-folder {
   margin: 4px 0;
 }
 
+.peak-context-submenu-wrapper {
+  position: relative;
+}
+
+.peak-context-submenu-trigger {
+  justify-content: flex-start;
+}
+
+.peak-context-submenu-arrow {
+  margin-left: auto;
+  font-size: 16px;
+  opacity: 0.5;
+}
+
+.peak-context-submenu {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: -8px;
+  min-width: 160px;
+  background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 10px;
+  padding: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-family: var(--affine-font-family);
+}
+
+.peak-context-submenu-wrapper:hover > .peak-context-submenu {
+  display: block;
+}
+
 /* ===== Editor Area ===== */
 
 .peak-editor-drag-wrap {

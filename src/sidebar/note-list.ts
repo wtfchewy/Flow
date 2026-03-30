@@ -6,6 +6,10 @@ import {
   PinedIcon,
   DuplicateIcon,
   DeleteIcon,
+  ExportIcon,
+  ExportToMarkdownIcon,
+  ExportToHtmlIcon,
+  ExportToPdfIcon,
 } from '@blocksuite/icons/lit';
 
 import type { NoteMeta } from '../types';
@@ -17,6 +21,9 @@ import {
   duplicateNote,
   togglePinNote,
   openNoteInNewWindow,
+  exportNoteAsMarkdown,
+  exportNoteAsHtml,
+  exportNoteAsPdf,
 } from '../storage/note-store';
 
 interface NoteGroup {
@@ -147,6 +154,61 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
     menu.appendChild(item);
   }
 
+  function addSubmenu(
+    iconFn: (opts: any) => any,
+    label: string,
+    items: { icon: (opts: any) => any; label: string; onClick: () => void }[]
+  ) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'peak-context-submenu-wrapper';
+
+    const trigger = document.createElement('div');
+    trigger.className = 'peak-context-menu-item peak-context-submenu-trigger';
+
+    const iconEl = document.createElement('span');
+    iconEl.className = 'peak-context-menu-icon';
+    render(iconFn({ width: '18', height: '18' }), iconEl);
+
+    const labelEl = document.createElement('span');
+    labelEl.textContent = label;
+
+    const arrow = document.createElement('span');
+    arrow.className = 'peak-context-submenu-arrow';
+    arrow.textContent = '\u203A'; // ›
+
+    trigger.appendChild(iconEl);
+    trigger.appendChild(labelEl);
+    trigger.appendChild(arrow);
+
+    const sub = document.createElement('div');
+    sub.className = 'peak-context-submenu';
+
+    for (const item of items) {
+      const subItem = document.createElement('div');
+      subItem.className = 'peak-context-menu-item';
+
+      const subIcon = document.createElement('span');
+      subIcon.className = 'peak-context-menu-icon';
+      render(item.icon({ width: '18', height: '18' }), subIcon);
+
+      const subLabel = document.createElement('span');
+      subLabel.textContent = item.label;
+
+      subItem.appendChild(subIcon);
+      subItem.appendChild(subLabel);
+      subItem.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        dismissMenu();
+        item.onClick();
+      });
+      sub.appendChild(subItem);
+    }
+
+    wrapper.appendChild(trigger);
+    wrapper.appendChild(sub);
+    menu.appendChild(wrapper);
+  }
+
   function addSeparator() {
     const sep = document.createElement('div');
     sep.className = 'peak-context-menu-separator';
@@ -160,6 +222,12 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
     () => togglePinNote(note.id)
   );
   addItem(DuplicateIcon, 'Duplicate Note', () => duplicateNote(note.id));
+  addSeparator();
+  addSubmenu(ExportIcon, 'Export', [
+    { icon: ExportToMarkdownIcon, label: 'Markdown', onClick: () => exportNoteAsMarkdown(note.id) },
+    { icon: ExportToHtmlIcon, label: 'HTML', onClick: () => exportNoteAsHtml(note.id) },
+    { icon: ExportToPdfIcon, label: 'PDF', onClick: () => exportNoteAsPdf(note.id) },
+  ]);
   addSeparator();
   addItem(DeleteIcon, 'Delete Note', () => deleteNote(note.id), true);
 

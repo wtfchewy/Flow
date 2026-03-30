@@ -20,6 +20,11 @@ import {
   deleteNoteFromDisk,
 } from './persistence';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+import {
+  MarkdownTransformer,
+  HtmlTransformer,
+} from '@blocksuite/affine/widgets/linked-doc';
+import { ExportManager } from '@blocksuite/affine/blocks/surface';
 
 export const notes = signal<NoteMeta[]>([]);
 export const activeNoteId = signal<string | null>(null);
@@ -364,4 +369,57 @@ export function openNoteInNewWindow(id: string) {
     decorations: false,
     transparent: true,
   });
+}
+
+/**
+ * Get a Store for the given note id.
+ * Returns the active store if it matches, otherwise loads a temporary one.
+ */
+async function getStoreForNote(id: string): Promise<{ store: Store; temporary: boolean }> {
+  if (activeNoteId.value === id && activeStore) {
+    return { store: activeStore, temporary: false };
+  }
+  const data = await loadNote(id);
+  if (!data) throw new Error('Note not found');
+  const store = loadExistingDoc(workspace, `export-${id}`, data);
+  return { store, temporary: true };
+}
+
+function cleanupTemporaryStore(id: string) {
+  try {
+    workspace.removeDoc(`export-${id}`);
+  } catch {
+    // ignore
+  }
+}
+
+export async function exportNoteAsMarkdown(id: string) {
+  const { store, temporary } = await getStoreForNote(id);
+  try {
+    await MarkdownTransformer.exportDoc(store);
+  } finally {
+    if (temporary) cleanupTemporaryStore(id);
+  }
+}
+
+export async function exportNoteAsHtml(id: string) {
+  const { store, temporary } = await getStoreForNote(id);
+  try {
+    await HtmlTransformer.exportDoc(store);
+  } finally {
+    if (temporary) cleanupTemporaryStore(id);
+  }
+}
+
+export async function exportNoteAsPdf(id: string) {
+  // PDF export uses html2canvas on the live editor, so the note must be active
+  if (activeNoteId.value !== id) {
+    await selectNote(id);
+    // Wait for the editor to render
+    await new Promise(r => setTimeout(r, 300));
+  }
+  const exportManager = editorEl.std?.get(ExportManager);
+  if (exportManager) {
+    await exportManager.exportPdf();
+  }
 }

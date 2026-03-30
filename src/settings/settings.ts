@@ -8,6 +8,7 @@ export interface AppSettings {
   vibrancyOpacity: number;
   vibrancyBlur: number;
   onboarded: boolean;
+  notchEnabled: boolean;
 }
 
 const defaults: AppSettings = {
@@ -16,6 +17,7 @@ const defaults: AppSettings = {
   vibrancyOpacity: 0.15,
   vibrancyBlur: 40,
   onboarded: false,
+  notchEnabled: true,
 };
 
 let overlay: HTMLElement | null = null;
@@ -129,6 +131,16 @@ export async function openSettings() {
   }, 0.01);
   opacityRow.appendChild(opacitySlider);
   panel.appendChild(opacityRow);
+
+  // Notch widget toggle
+  const notchRow = createSettingRow('Notch Widget');
+  const notchToggle = createSwitch(settings.notchEnabled, async (on) => {
+    settings.notchEnabled = on;
+    await saveSettingsImmediate(settings);
+    invoke('set_notch_visible', { visible: on });
+  });
+  notchRow.appendChild(notchToggle);
+  panel.appendChild(notchRow);
 
   overlay.appendChild(panel);
   document.body.appendChild(overlay);

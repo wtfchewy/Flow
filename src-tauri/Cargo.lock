@@ -2126,6 +2126,7 @@ dependencies = [
 name = "peak"
 version = "0.1.0"
 dependencies = [
+ "raw-window-handle",
  "serde",
  "serde_json",
  "tauri",

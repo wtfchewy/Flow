@@ -12,6 +12,7 @@ import { createSidebar } from './sidebar/sidebar';
 import * as noteStore from './storage/note-store';
 import { effect } from '@preact/signals-core';
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { listen } from '@tauri-apps/api/event';
 import { loadSettings, applySettings } from './settings/settings'; // also registers window.__openSettings
 import { showWelcome } from './welcome/welcome';
 
@@ -225,6 +226,11 @@ async function main() {
 
   // Wire up linked doc navigation
   noteStore.setupLinkedDocNavigation();
+
+  // Listen for "create note" from the notch widget (same app, direct event)
+  listen('create-note-from-notch', async () => {
+    await noteStore.createNote();
+  });
 
   // Watch for active note changes to mount/unmount editor
   let editorMounted = noteStore.notes.value.length > 0;

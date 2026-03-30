@@ -19,7 +19,7 @@ export default defineConfig({
     target: 'es2022',
   },
   optimizeDeps: {
-    entries: ['index.html'],
+    entries: ['index.html', 'notch.html'],
   },
   resolve: {
     extensions: ['.ts', '.js'],
@@ -34,6 +34,10 @@ export default defineConfig({
     target: 'es2022',
     sourcemap: true,
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        notch: resolve(__dirname, 'notch.html'),
+      },
       onwarn(warning, defaultHandler) {
         if (
           warning.code &&

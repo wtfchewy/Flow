@@ -227,6 +227,8 @@ pub struct AppSettings {
     pub onboarded: bool,
     #[serde(default = "default_notch_enabled")]
     pub notch_enabled: bool,
+    #[serde(default)]
+    pub icloud_sync: bool,
 }
 
 fn default_theme() -> String {
@@ -258,6 +260,7 @@ impl Default for AppSettings {
             vibrancy_blur: default_vibrancy_blur(),
             onboarded: false,
             notch_enabled: default_notch_enabled(),
+            icloud_sync: false,
         }
     }
 }
@@ -298,17 +301,64 @@ fn save_settings(app: tauri::AppHandle, settings: AppSettings) {
     fs::write(path, data).ok();
 }
 
-fn get_notes_dir(app: &tauri::AppHandle) -> PathBuf {
+/// Returns the iCloud Drive base directory for Peak, if available.
+#[cfg(target_os = "macos")]
+fn get_icloud_base() -> Option<PathBuf> {
+    let home = std::env::var("HOME").ok()?;
+    let icloud = PathBuf::from(home)
+        .join("Library/Mobile Documents/com~apple~CloudDocs/Peak");
+    Some(icloud)
+}
+
+#[cfg(not(target_os = "macos"))]
+fn get_icloud_base() -> Option<PathBuf> {
+    None
+}
+
+fn is_icloud_enabled(app: &tauri::AppHandle) -> bool {
+    let path = get_settings_path(app);
+    if path.exists() {
+        let data = fs::read_to_string(&path).unwrap_or_default();
+        serde_json::from_str::<AppSettings>(&data)
+            .map(|s| s.icloud_sync)
+            .unwrap_or(false)
+    } else {
+        false
+    }
+}
+
+fn get_local_notes_dir(app: &tauri::AppHandle) -> PathBuf {
     let app_data = app.path().app_data_dir().expect("failed to get app data dir");
     let notes_dir = app_data.join("notes");
     fs::create_dir_all(&notes_dir).ok();
     notes_dir
 }
 
-fn get_index_path(app: &tauri::AppHandle) -> PathBuf {
+fn get_local_index_path(app: &tauri::AppHandle) -> PathBuf {
     let app_data = app.path().app_data_dir().expect("failed to get app data dir");
     fs::create_dir_all(&app_data).ok();
     app_data.join("notes-index.json")
+}
+
+fn get_notes_dir(app: &tauri::AppHandle) -> PathBuf {
+    if is_icloud_enabled(app) {
+        if let Some(base) = get_icloud_base() {
+            let notes_dir = base.join("notes");
+            fs::create_dir_all(&notes_dir).ok();
+            return notes_dir;
+        }
+    }
+    get_local_notes_dir(app)
+}
+
+fn get_index_path(app: &tauri::AppHandle) -> PathBuf {
+    if is_icloud_enabled(app) {
+        if let Some(base) = get_icloud_base() {
+            fs::create_dir_all(&base).ok();
+            return base.join("notes-index.json");
+        }
+    }
+    get_local_index_path(app)
 }
 
 fn ensure_cache(app: &tauri::AppHandle, cache: &mut IndexCache) {
@@ -390,6 +440,54 @@ fn delete_note(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>
     ensure_cache(&app, &mut cache);
     cache.notes.retain(|n| n.id != id);
     flush_index(&app, &cache.notes);
+}
+
+/// Migrate notes between local and iCloud storage.
+/// Copies all .bin files and notes-index.json from source to destination.
+#[tauri::command]
+fn toggle_icloud_sync(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>, enable: bool) -> Result<(), String> {
+    let icloud_base = get_icloud_base().ok_or("iCloud Drive not available")?;
+
+    let local_notes = get_local_notes_dir(&app);
+    let local_index = get_local_index_path(&app);
+    let icloud_notes = icloud_base.join("notes");
+    let icloud_index = icloud_base.join("notes-index.json");
+
+    let (src_notes, src_index, dst_notes, dst_index) = if enable {
+        // Local → iCloud
+        (local_notes, local_index, icloud_notes, icloud_index)
+    } else {
+        // iCloud → Local
+        (icloud_notes, icloud_index, local_notes, local_index)
+    };
+
+    // Create destination directories
+    fs::create_dir_all(&dst_notes).map_err(|e| e.to_string())?;
+
+    // Copy index file
+    if src_index.exists() {
+        fs::copy(&src_index, &dst_index).map_err(|e| e.to_string())?;
+    }
+
+    // Copy all note .bin files
+    if src_notes.exists() {
+        if let Ok(entries) = fs::read_dir(&src_notes) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.extension().map_or(false, |e| e == "bin") {
+                    let dest = dst_notes.join(entry.file_name());
+                    fs::copy(&path, &dest).map_err(|e| e.to_string())?;
+                }
+            }
+        }
+    }
+
+    // Invalidate the in-memory cache so next access reads from new location
+    let mut cache = state.lock().unwrap();
+    cache.loaded = false;
+    cache.notes.clear();
+
+    Ok(())
 }
 
 /// Show or hide the notch widget window.
@@ -546,6 +644,7 @@ pub fn run() {
             delete_note,
             load_settings,
             save_settings,
+            toggle_icloud_sync,
             notch_poll_cursor,
             notch_set_interactive,
             set_notch_visible,

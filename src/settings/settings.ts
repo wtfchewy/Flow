@@ -9,6 +9,7 @@ export interface AppSettings {
   vibrancyBlur: number;
   onboarded: boolean;
   notchEnabled: boolean;
+  icloudSync: boolean;
 }
 
 const defaults: AppSettings = {
@@ -18,7 +19,10 @@ const defaults: AppSettings = {
   vibrancyBlur: 40,
   onboarded: false,
   notchEnabled: true,
+  icloudSync: false,
 };
+
+const isMac = navigator.platform.toUpperCase().includes('MAC');
 
 let overlay: HTMLElement | null = null;
 
@@ -141,6 +145,24 @@ export async function openSettings() {
   });
   notchRow.appendChild(notchToggle);
   panel.appendChild(notchRow);
+
+  // iCloud sync toggle (macOS only)
+  if (isMac) {
+    const icloudRow = createSettingRow('iCloud Sync');
+    const icloudToggle = createSwitch(settings.icloudSync, async (on) => {
+      try {
+        await invoke('toggle_icloud_sync', { enable: on });
+        settings.icloudSync = on;
+        await saveSettingsImmediate(settings);
+      } catch (err) {
+        // Revert the toggle on failure
+        icloudToggle.classList.toggle('on', !on);
+        console.error('iCloud sync toggle failed:', err);
+      }
+    });
+    icloudRow.appendChild(icloudToggle);
+    panel.appendChild(icloudRow);
+  }
 
   overlay.appendChild(panel);
   document.body.appendChild(overlay);

@@ -481,7 +481,7 @@ pub fn run() {
             };
 
             let widget_width: f64 = 440.0;
-            let widget_height: f64 = 120.0;
+            let widget_height: f64 = 140.0;
 
             WebviewWindowBuilder::new(
                 app,
@@ -523,6 +523,17 @@ pub fn run() {
                     main_window.show().ok();
                     main_window.set_focus().ok();
                     main_window.emit("create-note-from-notch", ()).ok();
+                }
+            });
+
+            // --- Bridge: notch note click → show main window & open note ---
+            let app_handle2 = app.handle().clone();
+            app.listen("notch-open-note", move |event| {
+                if let Some(main_window) = app_handle2.get_webview_window("main") {
+                    main_window.show().ok();
+                    main_window.set_focus().ok();
+                    // Forward the note ID payload to the main window
+                    main_window.emit("open-note-from-notch", event.payload()).ok();
                 }
             });
 

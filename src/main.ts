@@ -232,6 +232,14 @@ async function main() {
     await noteStore.createNote();
   });
 
+  // Listen for "open note" from the notch widget
+  listen<string>('open-note-from-notch', async (event) => {
+    const noteId = JSON.parse(event.payload as unknown as string);
+    if (noteId && noteStore.notes.value.find(n => n.id === noteId)) {
+      await noteStore.selectNote(noteId);
+    }
+  });
+
   // Watch for active note changes to mount/unmount editor
   let editorMounted = noteStore.notes.value.length > 0;
 

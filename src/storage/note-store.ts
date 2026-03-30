@@ -12,6 +12,7 @@ import {
   getEdgelessSpecs,
   RefNodeSlotsProvider,
 } from '../editor/setup';
+import { getIdentity } from '../collab/identity';
 import type { PeakEditorContainer } from '../editor/editor-container';
 import {
   listNotes,
@@ -19,7 +20,8 @@ import {
   loadNote,
   deleteNoteFromDisk,
 } from './persistence';
-import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { isTauri } from '../platform/platform';
+import * as collabStore from '../collab/collab-store';
 
 export const notes = signal<NoteMeta[]>([]);
 export const activeNoteId = signal<string | null>(null);
@@ -31,10 +33,18 @@ export function toggleSidebar() {
   sidebarVisible.value = !sidebarVisible.value;
 }
 
-let activeStore: Store | null = null;
+export let activeStore: Store | null = null;
 let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
 let workspace: TestWorkspace;
 let editorEl: PeakEditorContainer;
+
+export function getActiveStore(): Store | null {
+  return activeStore;
+}
+
+export function getWorkspaceRef(): TestWorkspace {
+  return workspace;
+}
 
 export function init(ws: TestWorkspace, editor: PeakEditorContainer) {
   workspace = ws;
@@ -100,14 +110,29 @@ export function setMode(mode: 'page' | 'edgeless') {
 
 function scheduleAutoSave() {
   if (autoSaveTimer) clearTimeout(autoSaveTimer);
+
+  // Skip disk save for non-host shared notes (server is authoritative)
+  const noteMeta = notes.value.find(n => n.id === activeNoteId.value);
+  if (noteMeta?.shared && !noteMeta.isHost) {
+    // Still update title/preview in memory for sidebar display
+    if (activeStore && activeNoteId.value) {
+      const { title, preview } = extractTitleAndPreview(activeStore);
+      const updated = notes.value.map(n =>
+        n.id === activeNoteId.value ? { ...n, title, preview, updatedAt: Date.now() } : n
+      );
+      notes.value = updated;
+    }
+    return;
+  }
+
   saving.value = true;
   autoSaveTimer = setTimeout(async () => {
     if (activeStore && activeNoteId.value) {
       const { title, preview } = extractTitleAndPreview(activeStore);
       const mode = activeMode.value;
       const ydoc = getYDoc(activeStore);
-      const noteMeta = notes.value.find(n => n.id === activeNoteId.value);
-      await saveNote(activeNoteId.value, title, preview, mode, ydoc, noteMeta?.pinned || false);
+      const meta = notes.value.find(n => n.id === activeNoteId.value);
+      await saveNote(activeNoteId.value, title, preview, mode, ydoc, meta?.pinned || false);
 
       const updated = notes.value.map(n =>
         n.id === activeNoteId.value
@@ -144,31 +169,53 @@ export async function selectNote(id: string) {
   activeNoteId.value = id;
   localStorage.setItem('peak-last-note', id);
 
-  // Remove old doc if it exists
-  try {
-    workspace.removeDoc(id);
-  } catch {
-    // ignore
-  }
+  const noteMeta = notes.value.find(n => n.id === id);
+  const session = collabStore.getSession(id);
 
-  const data = await loadNote(id);
-  if (data) {
-    activeStore = loadExistingDoc(workspace, id, data);
+  if (session) {
+    // Shared note with active collab session — reuse existing doc, don't reload
+    const doc = workspace.getDoc(id);
+    if (doc) {
+      activeStore = doc.getStore({ id });
+    }
   } else {
-    activeStore = createNewDoc(workspace, id);
+    // Regular note — remove old doc and reload from disk
+    try {
+      workspace.removeDoc(id);
+    } catch {
+      // ignore
+    }
+
+    const data = await loadNote(id);
+    if (data) {
+      activeStore = loadExistingDoc(workspace, id, data);
+    } else {
+      activeStore = createNewDoc(workspace, id);
+    }
   }
 
   const store = activeStore;
-  const noteMeta = notes.value.find(n => n.id === id);
   const mode = (noteMeta?.mode as 'page' | 'edgeless') || 'page';
   activeMode.value = mode;
 
-  editorEl.doc = store;
-  editorEl.pageSpecs = getPageSpecs(editorEl);
-  editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
-  editorEl.mode = mode;
+  if (store) {
+    editorEl.doc = store;
+    editorEl.pageSpecs = getPageSpecs(editorEl);
+    editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+    editorEl.mode = mode;
+  }
 
-  attachAutoSave(store);
+  // Activate/deactivate collab awareness for this note
+  if (session && store) {
+    collabStore.activateSession(id);
+    session.provider.rebindDoc(store.spaceDoc);
+  } else {
+    collabStore.deactivateAwareness();
+  }
+
+  if (store) {
+    attachAutoSave(store);
+  }
 }
 
 async function saveCurrentNote() {
@@ -178,9 +225,12 @@ async function saveCurrentNote() {
   }
 
   if (activeStore && activeNoteId.value) {
+    // Skip disk save for non-host shared notes (server is authoritative)
+    const curMeta = notes.value.find(n => n.id === activeNoteId.value);
+    if (curMeta?.shared && !curMeta.isHost) return;
+
     const { title, preview } = extractTitleAndPreview(activeStore);
     const ydoc = getYDoc(activeStore);
-    const curMeta = notes.value.find(n => n.id === activeNoteId.value);
     await saveNote(activeNoteId.value, title, preview, activeMode.value, ydoc, curMeta?.pinned || false);
   }
 }
@@ -220,6 +270,8 @@ export async function createNote() {
 }
 
 export async function deleteNote(id: string) {
+  const noteMeta = notes.value.find(n => n.id === id);
+
   // Detach auto-save observer before anything else
   if (ydocObserver) {
     ydocObserver();
@@ -230,6 +282,15 @@ export async function deleteNote(id: string) {
     autoSaveTimer = null;
   }
   saving.value = false;
+
+  // Handle shared note deletion
+  if (noteMeta?.shared) {
+    if (noteMeta.isHost) {
+      collabStore.closeRoom(id);
+    } else {
+      collabStore.leaveRoom(id);
+    }
+  }
 
   await deleteNoteFromDisk(id);
 
@@ -354,14 +415,79 @@ export function setupLinkedDocNavigation() {
   }
 }
 
-export function openNoteInNewWindow(id: string) {
-  const label = `note-${id}-${Date.now()}`;
-  new WebviewWindow(label, {
-    url: `index.html?noteId=${id}`,
-    title: '',
-    width: 900,
-    height: 700,
-    decorations: false,
-    transparent: true,
+/** Join a shared room, creating a local note entry for it */
+export async function joinSharedNote(roomId: string, token: string, ws?: TestWorkspace, docId?: string) {
+  // Use the host's docId if provided — this ensures the store ID matches the host's,
+  // which is required for BlockSuite's awareness selections (cursors) to work.
+  const id = docId || generateId();
+  const now = Date.now();
+
+  const meta: NoteMeta = {
+    id,
+    title: 'Shared Note',
+    createdAt: now,
+    updatedAt: now,
+    preview: '',
+    shared: true,
+    roomId,
+    roomToken: token,
+    isHost: false,
+  };
+
+  notes.value = [meta, ...notes.value];
+
+  // Create an EMPTY doc — no initial blocks. Provider will sync content from host.
+  const collection = ws || workspace;
+  const bsDoc = collection.getDoc(id) ?? collection.createDoc(id);
+  const store = bsDoc.getStore({ id });
+
+  activeStore = store;
+  activeNoteId.value = id;
+  activeMode.value = 'page';
+
+  // Set editor to this store (will show empty until sync completes)
+  editorEl.doc = store;
+  editorEl.pageSpecs = getPageSpecs(editorEl);
+  editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+  editorEl.mode = 'page';
+
+  // Join the room — provider syncs Yjs data into the spaceDoc
+  const spaceDoc = getYDoc(store);
+  const session = collabStore.joinRoom(id, roomId, token, spaceDoc);
+
+  // After sync: load the store (initializes block tree + StoreSelectionExtension for cursors)
+  session.provider.on('synced', () => {
+    // store.load() calls doc.load() internally AND initializes extensions
+    // (StoreSelectionExtension.loaded() attaches the awareness listener for remote cursors)
+    store.load();
+
+    // Set awareness user info
+    const identity = getIdentity();
+    if (collection.awarenessStore) {
+      collection.awarenessStore.setLocalStateField('user', { name: identity.name });
+      collection.awarenessStore.setLocalStateField('color', identity.color);
+    }
+
+    // Announce presence after a tick
+    setTimeout(() => session.provider.announcePresence(), 200);
   });
+
+  attachAutoSave(store);
+}
+
+export async function openNoteInNewWindow(id: string) {
+  if (isTauri) {
+    const { WebviewWindow } = await import('@tauri-apps/api/webviewWindow');
+    const label = `note-${id}-${Date.now()}`;
+    new WebviewWindow(label, {
+      url: `index.html?noteId=${id}`,
+      title: '',
+      width: 900,
+      height: 700,
+      decorations: false,
+      transparent: true,
+    });
+  } else {
+    window.open(`?noteId=${id}`, '_blank');
+  }
 }

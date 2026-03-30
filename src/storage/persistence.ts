@@ -1,30 +1,10 @@
-import { invoke } from '@tauri-apps/api/core';
-import * as Y from 'yjs';
+import { isTauri } from '../platform/platform';
 
-import type { NoteMeta } from '../types';
+const impl = isTauri
+  ? await import('../platform/persistence-tauri')
+  : await import('../platform/persistence-web');
 
-export async function listNotes(): Promise<NoteMeta[]> {
-  return invoke<NoteMeta[]>('list_notes');
-}
-
-export async function saveNote(
-  id: string,
-  title: string,
-  preview: string,
-  mode: string,
-  ydoc: Y.Doc,
-  pinned: boolean = false
-): Promise<void> {
-  const data = Array.from(Y.encodeStateAsUpdate(ydoc));
-  await invoke('save_note', { id, title, preview, mode, pinned, data });
-}
-
-export async function loadNote(id: string): Promise<Uint8Array | null> {
-  const data = await invoke<number[] | null>('load_note', { id });
-  if (!data) return null;
-  return new Uint8Array(data);
-}
-
-export async function deleteNoteFromDisk(id: string): Promise<void> {
-  await invoke('delete_note', { id });
-}
+export const listNotes = impl.listNotes;
+export const saveNote = impl.saveNote;
+export const loadNote = impl.loadNote;
+export const deleteNoteFromDisk = impl.deleteNoteFromDisk;

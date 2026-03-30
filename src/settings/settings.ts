@@ -1,6 +1,7 @@
-import { invoke } from '@tauri-apps/api/core';
+import { isTauri } from '../platform/platform';
 import { render } from 'lit';
 import { CloseIcon } from '@blocksuite/icons/lit';
+import { getIdentity, setIdentityName, setIdentityColor } from '../collab/identity';
 
 export interface AppSettings {
   theme: string;
@@ -22,9 +23,19 @@ const defaults: AppSettings = {
 
 let overlay: HTMLElement | null = null;
 
+const WEB_SETTINGS_KEY = 'peak-settings';
+
 export async function loadSettings(): Promise<AppSettings> {
-  const saved = await invoke<Partial<AppSettings>>('load_settings');
-  return { ...defaults, ...saved };
+  if (isTauri) {
+    const { invoke } = await import('@tauri-apps/api/core');
+    const saved = await invoke<Partial<AppSettings>>('load_settings');
+    return { ...defaults, ...saved };
+  }
+  try {
+    const raw = localStorage.getItem(WEB_SETTINGS_KEY);
+    if (raw) return { ...defaults, ...JSON.parse(raw) };
+  } catch { /* use defaults */ }
+  return { ...defaults };
 }
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -32,13 +43,22 @@ let saveTimer: ReturnType<typeof setTimeout> | null = null;
 function saveSettingsDebounced(settings: AppSettings) {
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    invoke('save_settings', { settings: { ...settings } });
+    saveSettingsImpl(settings);
   }, 300);
+}
+
+async function saveSettingsImpl(settings: AppSettings) {
+  if (isTauri) {
+    const { invoke } = await import('@tauri-apps/api/core');
+    await invoke('save_settings', { settings: { ...settings } });
+  } else {
+    localStorage.setItem(WEB_SETTINGS_KEY, JSON.stringify(settings));
+  }
 }
 
 export async function saveSettingsImmediate(settings: AppSettings) {
   if (saveTimer) clearTimeout(saveTimer);
-  await invoke('save_settings', { settings });
+  await saveSettingsImpl(settings);
 }
 
 export function applySettings(settings: AppSettings) {
@@ -132,21 +152,62 @@ export async function openSettings() {
   opacityRow.appendChild(opacitySlider);
   panel.appendChild(opacityRow);
 
-  // Notch widget toggle
-  const notchRow = createSettingRow('Notch Widget');
-  const notchToggle = createSwitch(settings.notchEnabled, async (on) => {
-    settings.notchEnabled = on;
-    await saveSettingsImmediate(settings);
-    invoke('set_notch_visible', { visible: on });
+  // Notch widget toggle (Tauri only)
+  if (isTauri) {
+    const notchRow = createSettingRow('Notch Widget');
+    const notchToggle = createSwitch(settings.notchEnabled, async (on) => {
+      settings.notchEnabled = on;
+      await saveSettingsImmediate(settings);
+      const { invoke } = await import('@tauri-apps/api/core');
+      invoke('set_notch_visible', { visible: on });
+    });
+    notchRow.appendChild(notchToggle);
+    panel.appendChild(notchRow);
+  }
+
+  // Separator
+  const separator = document.createElement('div');
+  separator.className = 'peak-settings-separator';
+  panel.appendChild(separator);
+
+  // Realtime section header
+  const realtimeHeader = document.createElement('div');
+  realtimeHeader.className = 'peak-settings-section-header';
+  realtimeHeader.textContent = 'Realtime';
+  panel.appendChild(realtimeHeader);
+
+  // Display Name
+  const identity = getIdentity();
+
+  const nameRow = createSettingRow('Display Name');
+  const nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.className = 'peak-settings-input';
+  nameInput.value = identity.name;
+  nameInput.placeholder = 'Anonymous';
+  nameInput.addEventListener('change', () => {
+    setIdentityName(nameInput.value);
   });
-  notchRow.appendChild(notchToggle);
-  panel.appendChild(notchRow);
+  nameRow.appendChild(nameInput);
+  panel.appendChild(nameRow);
+
+  // Cursor Color
+  const colorRow = createSettingRow('Cursor Color');
+  const colorInput = document.createElement('input');
+  colorInput.type = 'color';
+  colorInput.className = 'peak-settings-color-input';
+  colorInput.value = identity.color;
+  colorInput.addEventListener('change', () => {
+    setIdentityColor(colorInput.value);
+  });
+  colorRow.appendChild(colorInput);
+  panel.appendChild(colorRow);
 
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
 }
 
-function createSettingRow(label: string): HTMLElement {
+export function createSettingRow(label: string): HTMLElement {
   const row = document.createElement('div');
   row.className = 'peak-settings-row';
 
@@ -158,7 +219,7 @@ function createSettingRow(label: string): HTMLElement {
   return row;
 }
 
-function createSegmentedControl(
+export function createSegmentedControl(
   labels: string[],
   activeIndex: number,
   onChange: (index: number) => void
@@ -200,7 +261,7 @@ function createSegmentedControl(
   return control;
 }
 
-function createSwitch(
+export function createSwitch(
   on: boolean,
   onChange: (on: boolean) => void
 ): HTMLElement {
@@ -219,7 +280,7 @@ function createSwitch(
   return sw;
 }
 
-function createSlider(
+export function createSlider(
   min: number,
   max: number,
   value: number,

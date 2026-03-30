@@ -30,8 +30,9 @@ function groupNotes(noteList: NoteMeta[]): NoteGroup[] {
   const sevenDays = 7 * oneDay;
   const thirtyDays = 30 * oneDay;
 
-  const pinned = noteList.filter(n => n.pinned);
-  const unpinned = noteList.filter(n => !n.pinned);
+  const pinned = noteList.filter(n => n.pinned && !n.shared);
+  const shared = noteList.filter(n => n.shared && !n.pinned);
+  const unpinned = noteList.filter(n => !n.pinned && !n.shared);
 
   const groups: Map<string, NoteMeta[]> = new Map();
   const groupOrder: string[] = [];
@@ -62,6 +63,9 @@ function groupNotes(noteList: NoteMeta[]): NoteGroup[] {
   const result: NoteGroup[] = [];
   if (pinned.length > 0) {
     result.push({ label: 'Pinned', notes: pinned });
+  }
+  if (shared.length > 0) {
+    result.push({ label: 'Shared', notes: shared });
   }
   for (const label of groupOrder) {
     result.push({ label, notes: groups.get(label)! });
@@ -153,15 +157,31 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
     menu.appendChild(sep);
   }
 
-  addItem(OpenInNewIcon, 'Open in New Window', () => openNoteInNewWindow(note.id));
-  addItem(
-    note.pinned ? PinedIcon : PinIcon,
-    note.pinned ? 'Unpin Note' : 'Pin Note',
-    () => togglePinNote(note.id)
-  );
-  addItem(DuplicateIcon, 'Duplicate Note', () => duplicateNote(note.id));
-  addSeparator();
-  addItem(DeleteIcon, 'Delete Note', () => deleteNote(note.id), true);
+  if (note.shared && !note.isHost) {
+    // Non-host shared note: limited options
+    addItem(DeleteIcon, 'Leave Room', () => deleteNote(note.id), true);
+  } else if (note.shared && note.isHost) {
+    // Host shared note: normal options + stop sharing handled via delete
+    addItem(OpenInNewIcon, 'Open in New Window', () => openNoteInNewWindow(note.id));
+    addItem(
+      note.pinned ? PinedIcon : PinIcon,
+      note.pinned ? 'Unpin Note' : 'Pin Note',
+      () => togglePinNote(note.id)
+    );
+    addSeparator();
+    addItem(DeleteIcon, 'Stop Sharing & Delete', () => deleteNote(note.id), true);
+  } else {
+    // Normal local note
+    addItem(OpenInNewIcon, 'Open in New Window', () => openNoteInNewWindow(note.id));
+    addItem(
+      note.pinned ? PinedIcon : PinIcon,
+      note.pinned ? 'Unpin Note' : 'Pin Note',
+      () => togglePinNote(note.id)
+    );
+    addItem(DuplicateIcon, 'Duplicate Note', () => duplicateNote(note.id));
+    addSeparator();
+    addItem(DeleteIcon, 'Delete Note', () => deleteNote(note.id), true);
+  }
 
   document.body.appendChild(menu);
   activeMenu = menu;
@@ -191,6 +211,13 @@ function createNoteItem(note: NoteMeta, isActive: boolean): HTMLElement {
   const titleEl = document.createElement('div');
   titleEl.className = 'peak-note-item-title';
   titleEl.textContent = note.title || 'Untitled';
+
+  if (note.shared) {
+    const badge = document.createElement('span');
+    badge.className = 'peak-note-share-badge';
+    badge.title = note.isHost ? 'Sharing' : 'Shared with you';
+    titleEl.appendChild(badge);
+  }
 
   const metaEl = document.createElement('div');
   metaEl.className = 'peak-note-item-meta';

@@ -6,4 +6,8 @@ export interface NoteMeta {
   preview: string;
   mode?: 'page' | 'edgeless';
   pinned?: boolean;
+  shared?: boolean;
+  roomId?: string;
+  roomToken?: string;
+  isHost?: boolean;
 }

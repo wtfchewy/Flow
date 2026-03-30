@@ -2,12 +2,18 @@ import { render } from 'lit';
 import { NewPageIcon, SidebarIcon } from '@blocksuite/icons/lit';
 import { createNote, toggleSidebar } from '../storage/note-store';
 import { renderNoteList } from './note-list';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { isTauri } from '../platform/platform';
 
-function createTrafficLights(): HTMLElement {
+async function createTrafficLights(): Promise<HTMLElement> {
   const container = document.createElement('div');
   container.className = 'peak-traffic-lights';
 
+  if (!isTauri) {
+    // On web, just return an empty spacer for layout consistency
+    return container;
+  }
+
+  const { getCurrentWindow } = await import('@tauri-apps/api/window');
   const win = getCurrentWindow();
 
   const close = document.createElement('button');
@@ -32,7 +38,7 @@ function createTrafficLights(): HTMLElement {
   return container;
 }
 
-export function createSidebar(): HTMLElement {
+export async function createSidebar(): Promise<HTMLElement> {
   const sidebar = document.createElement('div');
   sidebar.className = 'peak-sidebar';
 
@@ -44,7 +50,7 @@ export function createSidebar(): HTMLElement {
   const leftGroup = document.createElement('div');
   leftGroup.className = 'peak-topbar-left';
 
-  leftGroup.appendChild(createTrafficLights());
+  leftGroup.appendChild(await createTrafficLights());
 
   const sidebarBtn = document.createElement('button');
   sidebarBtn.className = 'peak-sidebar-toggle-btn';

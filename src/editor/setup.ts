@@ -27,7 +27,7 @@ import {
   type DocCollectionOptions,
   TestWorkspace,
 } from '@blocksuite/affine/store/test';
-import { MemoryBlobSource } from '@blocksuite/affine/sync';
+import { MemoryBlobSource, type AwarenessSource } from '@blocksuite/affine/sync';
 import { effects as itEffects } from '@blocksuite/integration-test/effects';
 import { getTestStoreManager } from '@blocksuite/integration-test/store';
 import { getTestViewManager } from '@blocksuite/integration-test/view';
@@ -50,13 +50,14 @@ const storeManager = getTestStoreManager();
 const viewManager = getTestViewManager();
 
 // Create a workspace (doc collection)
-export function createWorkspace(): TestWorkspace {
+export function createWorkspace(awarenessSources?: AwarenessSource[]): TestWorkspace {
   const options: DocCollectionOptions = {
     id: 'peak-workspace',
     blobSources: {
       main: new MemoryBlobSource(),
       shadows: [],
     },
+    ...(awarenessSources ? { awarenessSources } : {}),
   };
 
   const collection = new TestWorkspace(options);
@@ -75,7 +76,9 @@ export function createNewDoc(
   const doc = collection.getDoc(docId) ?? collection.createDoc(docId);
   const store = doc.getStore({ id: docId });
 
-  doc.load(() => {
+  // Use store.load() (not doc.load()) to initialize StoreSelectionExtension
+  // which sets up the awareness listener needed for remote cursors
+  store.load(() => {
     const rootId = store.addBlock('affine:page', { title: new Text() });
     store.addBlock('affine:surface', {}, rootId);
     const noteId = store.addBlock('affine:note', {}, rootId);
@@ -96,7 +99,8 @@ export function loadExistingDoc(
 
   // Apply the saved Yjs state before loading
   Y.applyUpdate(doc.spaceDoc, data);
-  doc.load();
+  // Use store.load() (not doc.load()) to initialize StoreSelectionExtension
+  store.load();
 
   return store;
 }

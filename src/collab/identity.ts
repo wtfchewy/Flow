@@ -1,4 +1,4 @@
-/** Random identity generator - adjective + animal combos with session-stable colors */
+/** Random identity generator - adjective + animal combos with persistent colors */
 
 const ADJECTIVES = [
   'Coral', 'Mint', 'Amber', 'Slate', 'Azure', 'Ruby', 'Sage', 'Plum',
@@ -33,32 +33,58 @@ export interface Identity {
   sessionId: string;
 }
 
-const STORAGE_KEY = 'peak-collab-identity';
+const PERSIST_KEY = 'peak-collab-identity-persist'; // localStorage — name + color
+const SESSION_KEY = 'peak-collab-identity';          // sessionStorage — full identity with sessionId
 
-/** Get or create a session identity. Color is fixed per session. */
+/** Get or create a session identity. Name and color persist across sessions. */
 export function getIdentity(): Identity {
-  const stored = sessionStorage.getItem(STORAGE_KEY);
-  if (stored) {
+  // Check session cache first
+  const sessionStored = sessionStorage.getItem(SESSION_KEY);
+  if (sessionStored) {
     try {
-      return JSON.parse(stored);
+      return JSON.parse(sessionStored);
     } catch { /* regenerate */ }
   }
 
+  // Load persisted name/color from localStorage
+  let name: string | undefined;
+  let color: string | undefined;
+  try {
+    const persisted = localStorage.getItem(PERSIST_KEY);
+    if (persisted) {
+      const parsed = JSON.parse(persisted);
+      name = parsed.name;
+      color = parsed.color;
+    }
+  } catch { /* use random */ }
+
   const identity: Identity = {
-    name: `${randomFrom(ADJECTIVES)} ${randomFrom(ANIMALS)}`,
-    color: randomFrom(COLORS),
+    name: name || `${randomFrom(ADJECTIVES)} ${randomFrom(ANIMALS)}`,
+    color: color || randomFrom(COLORS),
     sessionId: crypto.randomUUID?.() || Math.random().toString(36).slice(2),
   };
 
-  sessionStorage.setItem(STORAGE_KEY, JSON.stringify(identity));
+  // Persist to both stores
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(identity));
+  localStorage.setItem(PERSIST_KEY, JSON.stringify({ name: identity.name, color: identity.color }));
   return identity;
 }
 
-/** Update display name (color stays the same) */
+/** Update display name */
 export function setIdentityName(name: string): Identity {
   const identity = getIdentity();
   identity.name = name.trim().slice(0, 30) || identity.name;
-  sessionStorage.setItem(STORAGE_KEY, JSON.stringify(identity));
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(identity));
+  localStorage.setItem(PERSIST_KEY, JSON.stringify({ name: identity.name, color: identity.color }));
+  return identity;
+}
+
+/** Update cursor color */
+export function setIdentityColor(color: string): Identity {
+  const identity = getIdentity();
+  identity.color = color;
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(identity));
+  localStorage.setItem(PERSIST_KEY, JSON.stringify({ name: identity.name, color: identity.color }));
   return identity;
 }
 

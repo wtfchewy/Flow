@@ -575,6 +575,48 @@ html.vibrancy .peak-editor-drag-wrap {
   border-top: 0.5px solid var(--affine-border-color);
 }
 
+.peak-settings-separator {
+  height: 1px;
+  background: var(--affine-border-color);
+  margin: 12px 0;
+}
+
+.peak-settings-section-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--affine-text-secondary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.peak-settings-input {
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--affine-border-color);
+  border-radius: 8px;
+  background: var(--affine-background-primary-color);
+  color: var(--affine-text-primary-color);
+  font-size: 13px;
+  font-family: var(--affine-font-family);
+  outline: none;
+  width: 160px;
+  transition: border-color 0.15s;
+}
+
+.peak-settings-input:focus {
+  border-color: var(--affine-primary-color, #1e6fff);
+}
+
+.peak-settings-color-input {
+  width: 40px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid var(--affine-border-color);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
 
 /* Segmented control */
 .peak-segmented-control {
@@ -768,4 +810,354 @@ html.vibrancy .peak-welcome-overlay {
 
 .peak-welcome-btn:active {
   opacity: 0.8;
+}
+
+/* ===== Share Button in Mode Toggle ===== */
+.peak-mode-btn.share-btn {
+  margin-left: 4px;
+  padding-left: 6px;
+  border-left: 1px solid color-mix(in srgb, var(--affine-border-color) 60%, transparent);
+}
+
+.peak-mode-btn.share-btn.active-share {
+  color: var(--affine-primary-color, #1e6fff);
+}
+
+/* ===== Share Modal ===== */
+.peak-share-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: peak-share-fade 0.15s ease;
+}
+
+@keyframes peak-share-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.peak-share-panel {
+  width: 420px;
+  max-height: 80vh;
+  background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--affine-font-family);
+}
+
+.peak-share-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.peak-share-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--affine-text-primary-color);
+  flex: 1;
+}
+
+.peak-share-status-dot {
+  display: none;
+}
+
+.peak-share-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--affine-text-secondary-color);
+  cursor: pointer;
+}
+
+.peak-share-close:hover {
+  background: var(--affine-hover-color);
+  color: var(--affine-text-primary-color);
+}
+
+.peak-share-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.peak-share-desc {
+  font-size: 13px;
+  color: var(--affine-text-secondary-color);
+  line-height: 1.5;
+}
+
+.peak-share-identity-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--affine-hover-color);
+  border-radius: 8px;
+}
+
+.peak-share-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.peak-share-identity-name {
+  font-size: 13px;
+  color: var(--affine-text-primary-color);
+}
+
+.peak-share-start-btn {
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: var(--affine-primary-color, #1e6fff);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--affine-font-family);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.peak-share-start-btn:hover {
+  opacity: 0.9;
+}
+
+.peak-share-start-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Tabs */
+.peak-share-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--affine-hover-color);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.peak-share-tab {
+  flex: 1;
+  height: 30px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--affine-text-secondary-color);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--affine-font-family);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.peak-share-tab.active {
+  background: var(--affine-background-primary-color);
+  color: var(--affine-text-primary-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.peak-share-tab-content {
+  min-height: 80px;
+}
+
+/* Link rows */
+.peak-share-link-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.peak-share-link-row + .peak-share-link-row {
+  border-top: 0.5px solid var(--affine-border-color);
+}
+
+.peak-share-link-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--affine-text-primary-color);
+  min-width: 50px;
+}
+
+.peak-share-link-url {
+  flex: 1;
+  font-size: 11px;
+  color: var(--affine-text-secondary-color);
+  background: var(--affine-hover-color);
+  padding: 6px 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: all;
+}
+
+.peak-share-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--affine-text-secondary-color);
+  font-size: 12px;
+  font-family: var(--affine-font-family);
+  cursor: pointer;
+  white-space: nowrap;
+  gap: 4px;
+}
+
+.peak-share-icon-btn:hover {
+  background: var(--affine-hover-color);
+  color: var(--affine-text-primary-color);
+}
+
+.peak-share-icon-btn.danger {
+  color: #ff5f57;
+}
+
+.peak-share-icon-btn.danger:hover {
+  background: rgba(255, 95, 87, 0.12);
+}
+
+/* Participant rows */
+.peak-share-participant-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.peak-share-participant-row + .peak-share-participant-row {
+  border-top: 0.5px solid var(--affine-border-color);
+}
+
+.peak-share-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.peak-share-participant-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.peak-share-participant-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--affine-text-primary-color);
+}
+
+.peak-share-participant-role {
+  font-size: 11px;
+  color: var(--affine-text-secondary-color);
+  text-transform: capitalize;
+}
+
+/* History items */
+.peak-share-history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px;
+  border-radius: 6px;
+}
+
+.peak-share-history-item:hover {
+  background: var(--affine-hover-color);
+}
+
+.peak-share-history-item + .peak-share-history-item {
+  border-top: 0.5px solid var(--affine-border-color);
+}
+
+.peak-share-history-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.peak-share-history-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.peak-share-history-author {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--affine-text-primary-color);
+}
+
+.peak-share-history-time {
+  font-size: 12px;
+  color: var(--affine-text-secondary-color);
+}
+
+/* Footer */
+.peak-share-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--affine-border-color);
+}
+
+.peak-share-stop-btn {
+  width: 100%;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 95, 87, 0.12);
+  color: #ff5f57;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--affine-font-family);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.peak-share-stop-btn:hover {
+  background: rgba(255, 95, 87, 0.2);
+}
+
+/* ===== Sidebar Share Badge ===== */
+.peak-note-share-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-left: 6px;
+  flex-shrink: 0;
 }

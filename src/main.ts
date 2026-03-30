@@ -2,7 +2,7 @@ import './style.css';
 import './editor/editor-container';
 
 import { render } from 'lit';
-import { PageIcon, EdgelessIcon, SidebarIcon } from '@blocksuite/icons/lit';
+import { PageIcon, EdgelessIcon, SidebarIcon, LockIcon } from '@blocksuite/icons/lit';
 import {
   initBlockSuite,
   createWorkspace,
@@ -11,15 +11,18 @@ import { PeakEditorContainer } from './editor/editor-container';
 import { createSidebar } from './sidebar/sidebar';
 import * as noteStore from './storage/note-store';
 import { effect } from '@preact/signals-core';
-import { getCurrentWindow } from '@tauri-apps/api/window';
-import { listen } from '@tauri-apps/api/event';
-import { loadSettings, applySettings } from './settings/settings'; // also registers window.__openSettings
+import { isTauri } from './platform/platform';
+import { loadSettings, applySettings } from './settings/settings';
 import { showWelcome } from './welcome/welcome';
+import { CollabAwarenessSource } from './collab/ws-provider';
+import { setSharedAwarenessSource, activeCollabSession, joinRoom } from './collab/collab-store';
+import { openShareModal } from './collab/share-modal';
 
-function makeDraggable(el: HTMLElement) {
+async function makeDraggable(el: HTMLElement) {
+  if (!isTauri) return;
+  const { getCurrentWindow } = await import('@tauri-apps/api/window');
   el.addEventListener('mousedown', (e) => {
     if (e.button !== 0) return;
-    // Don't drag if clicking on an interactive element
     const target = e.target as HTMLElement;
     if (target.closest('button, input, textarea, select, a, [contenteditable], .peak-note-item, .peak-editor-area, .peak-sidebar-resize, .peak-traffic-lights')) return;
     e.preventDefault();
@@ -41,8 +44,10 @@ async function main() {
   // Initialize BlockSuite (register custom elements)
   initBlockSuite();
 
-  // Create workspace
-  const workspace = createWorkspace();
+  // Create workspace with dormant awareness source for collab
+  const sharedAwarenessSource = new CollabAwarenessSource();
+  setSharedAwarenessSource(sharedAwarenessSource);
+  const workspace = createWorkspace([sharedAwarenessSource]);
 
   // Create the editor element
   const editor = document.createElement(
@@ -52,16 +57,19 @@ async function main() {
   // Initialize note store
   noteStore.init(workspace, editor);
 
-  // Check if opened as a secondary window for a specific note
+  // Check URL params for secondary window or room join
   const urlParams = new URLSearchParams(window.location.search);
   const openNoteId = urlParams.get('noteId');
+  const joinRoomId = urlParams.get('room');
+  const joinToken = urlParams.get('token');
+  const joinDocId = urlParams.get('docId');
 
   // Build the UI
   const app = document.getElementById('app')!;
 
   // Sidebar
-  const sidebar = createSidebar();
-  makeDraggable(sidebar);
+  const sidebar = await createSidebar();
+  await makeDraggable(sidebar);
   app.appendChild(sidebar);
 
   // Resize handle between sidebar and editor
@@ -181,8 +189,22 @@ async function main() {
     }
   });
 
+  // Share/lock button
+  const shareBtn = document.createElement('button');
+  shareBtn.className = 'peak-mode-btn share-btn';
+  shareBtn.title = 'Share';
+  render(LockIcon({ width: '20', height: '20' }), shareBtn);
+  shareBtn.addEventListener('click', () => openShareModal());
+
+  // React to collab state
+  effect(() => {
+    const session = activeCollabSession.value;
+    shareBtn.classList.toggle('active-share', !!session);
+  });
+
   modeToggle.appendChild(pageBtn);
   modeToggle.appendChild(edgelessBtn);
+  modeToggle.appendChild(shareBtn);
   editorArea.appendChild(modeToggle);
 
   // Editor container (full height)
@@ -200,15 +222,20 @@ async function main() {
   // Wrap editor area in a draggable region (the margin/border area)
   const editorDragWrap = document.createElement('div');
   editorDragWrap.className = 'peak-editor-drag-wrap';
-  makeDraggable(editorDragWrap);
+  await makeDraggable(editorDragWrap);
   editorDragWrap.appendChild(editorArea);
   app.appendChild(editorDragWrap);
 
   // Load existing notes
   await noteStore.loadNoteList();
 
+  // Handle room join via URL params
+  if (joinRoomId && joinToken) {
+    await noteStore.joinSharedNote(joinRoomId, joinToken, workspace, joinDocId || undefined);
+    mountEditor(editorWrapper, editor);
+  }
   // On first launch, create the first note automatically
-  if (isFirstLaunch && noteStore.notes.value.length === 0) {
+  else if (isFirstLaunch && noteStore.notes.value.length === 0) {
     await noteStore.createNote();
     mountEditor(editorWrapper, editor);
   } else {
@@ -227,10 +254,13 @@ async function main() {
   // Wire up linked doc navigation
   noteStore.setupLinkedDocNavigation();
 
-  // Listen for "create note" from the notch widget (same app, direct event)
-  listen('create-note-from-notch', async () => {
-    await noteStore.createNote();
-  });
+  // Listen for "create note" from the notch widget (Tauri only)
+  if (isTauri) {
+    const { listen } = await import('@tauri-apps/api/event');
+    listen('create-note-from-notch', async () => {
+      await noteStore.createNote();
+    });
+  }
 
   // Watch for active note changes to mount/unmount editor
   let editorMounted = noteStore.notes.value.length > 0;

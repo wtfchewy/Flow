@@ -1,8 +1,7 @@
+import { resolve } from 'path';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import { defineConfig } from 'vite';
 import wasm from 'vite-plugin-wasm';
-
-import { blocksuiteAliases } from './blocksuite-aliases';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -19,10 +18,17 @@ export default defineConfig({
   esbuild: {
     target: 'es2022',
   },
+  optimizeDeps: {
+    entries: ['index.html'],
+  },
   resolve: {
     extensions: ['.ts', '.js'],
     dedupe: ['lit', 'yjs', '@preact/signals-core'],
-    alias: blocksuiteAliases,
+    alias: {
+      // @blocksuite/icons ships React (rc) + Lit exports; stub React since we only use Lit
+      'react/jsx-runtime': resolve(__dirname, 'src/stubs/react.ts'),
+      'react': resolve(__dirname, 'src/stubs/react.ts'),
+    },
   },
   build: {
     target: 'es2022',

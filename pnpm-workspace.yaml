@@ -1,0 +1,4 @@
+packages:
+  - 'blocksuite/packages/**/*'
+onlyBuiltDependencies:
+  - esbuild

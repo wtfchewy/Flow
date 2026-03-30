@@ -19,7 +19,7 @@ export default defineConfig({
     target: 'es2022',
   },
   optimizeDeps: {
-    entries: ['index.html', 'notch.html'],
+    entries: ['index.html', 'notch.html', 'collab.html'],
   },
   resolve: {
     extensions: ['.ts', '.js'],
@@ -37,6 +37,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         notch: resolve(__dirname, 'notch.html'),
+        collab: resolve(__dirname, 'collab.html'),
       },
       onwarn(warning, defaultHandler) {
         if (

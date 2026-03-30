@@ -35,7 +35,7 @@ import { Signal } from '@preact/signals-core';
 import { Subject } from 'rxjs';
 import * as Y from 'yjs';
 
-import type { FlowEditorContainer } from './editor-container';
+import type { PeakEditorContainer } from './editor-container';
 
 // Register all BlockSuite custom elements
 let initialized = false;
@@ -52,7 +52,7 @@ const viewManager = getTestViewManager();
 // Create a workspace (doc collection)
 export function createWorkspace(): TestWorkspace {
   const options: DocCollectionOptions = {
-    id: 'flow-workspace',
+    id: 'peak-workspace',
     blobSources: {
       main: new MemoryBlobSource(),
       shadows: [],
@@ -107,7 +107,7 @@ export function getYDoc(store: Store): Y.Doc {
 }
 
 // Build common extensions for the editor
-function mockDocModeService(editor: FlowEditorContainer) {
+function mockDocModeService(editor: PeakEditorContainer) {
   const docModeService: DocModeProvider = {
     getPrimaryMode: () => 'page' as DocMode,
     onPrimaryModeChange: () => new Subject<DocMode>().subscribe(),
@@ -142,7 +142,7 @@ function mockEditorSetting() {
 }
 
 export function getCommonExtensions(
-  editor: FlowEditorContainer
+  editor: PeakEditorContainer
 ): ExtensionType[] {
   return [
     FontConfigExtension(CommunityCanvasTextFonts),
@@ -156,10 +156,10 @@ export function getCommonExtensions(
   ];
 }
 
-export function getPageSpecs(editor: FlowEditorContainer): ExtensionType[] {
+export function getPageSpecs(editor: PeakEditorContainer): ExtensionType[] {
   return [...viewManager.get('page'), ...getCommonExtensions(editor)];
 }
 
-export function getEdgelessSpecs(editor: FlowEditorContainer): ExtensionType[] {
+export function getEdgelessSpecs(editor: PeakEditorContainer): ExtensionType[] {
   return [...viewManager.get('edgeless'), ...getCommonExtensions(editor)];
 }

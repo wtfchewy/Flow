@@ -1,8 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicehash/tauri/refs/heads/main/crates/tauri-config-schema/schema.json",
-  "productName": "Flow",
+  "productName": "Peak",
   "version": "0.1.0",
-  "identifier": "com.flow.app",
+  "identifier": "com.peak.app",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420",

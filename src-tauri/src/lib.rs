@@ -205,11 +205,11 @@ pub fn run() {
             // Build macOS-style app menu
             let settings_item = MenuItem::with_id(app, "settings", "Settings…", true, Some("CmdOrCtrl+,"))?;
             let separator = PredefinedMenuItem::separator(app)?;
-            let quit = PredefinedMenuItem::quit(app, Some("Quit Flow"))?;
-            let hide = PredefinedMenuItem::hide(app, Some("Hide Flow"))?;
+            let quit = PredefinedMenuItem::quit(app, Some("Quit Peak"))?;
+            let hide = PredefinedMenuItem::hide(app, Some("Hide Peak"))?;
             let show_all = PredefinedMenuItem::show_all(app, Some("Show All"))?;
 
-            let app_menu = Submenu::with_items(app, "Flow", true, &[
+            let app_menu = Submenu::with_items(app, "Peak", true, &[
                 &settings_item,
                 &separator,
                 &hide,

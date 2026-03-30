@@ -45,8 +45,8 @@ export function applySettings(settings: AppSettings) {
 
   const root = document.documentElement.style;
   const rgb = settings.theme === 'light' ? '255, 255, 255' : '0, 0, 0';
-  root.setProperty('--flow-vibrancy-bg', `rgba(${rgb}, ${settings.vibrancyOpacity})`);
-  root.setProperty('--flow-vibrancy-filter', `blur(${settings.vibrancyBlur}px)`);
+  root.setProperty('--peak-vibrancy-bg', `rgba(${rgb}, ${settings.vibrancyOpacity})`);
+  root.setProperty('--peak-vibrancy-filter', `blur(${settings.vibrancyBlur}px)`);
 }
 
 export function closeSettings() {
@@ -62,24 +62,24 @@ export async function openSettings() {
   const settings = await loadSettings();
 
   overlay = document.createElement('div');
-  overlay.className = 'flow-settings-overlay';
+  overlay.className = 'peak-settings-overlay';
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) closeSettings();
   });
 
   const panel = document.createElement('div');
-  panel.className = 'flow-settings-panel';
+  panel.className = 'peak-settings-panel';
 
   // Header
   const header = document.createElement('div');
-  header.className = 'flow-settings-header';
+  header.className = 'peak-settings-header';
 
   const headerText = document.createElement('span');
   headerText.textContent = 'Settings';
   header.appendChild(headerText);
 
   const closeBtn = document.createElement('button');
-  closeBtn.className = 'flow-settings-close';
+  closeBtn.className = 'peak-settings-close';
   render(CloseIcon({ width: '20', height: '20' }), closeBtn);
   closeBtn.addEventListener('click', closeSettings);
   header.appendChild(closeBtn);
@@ -136,10 +136,10 @@ export async function openSettings() {
 
 function createSettingRow(label: string): HTMLElement {
   const row = document.createElement('div');
-  row.className = 'flow-settings-row';
+  row.className = 'peak-settings-row';
 
   const labelEl = document.createElement('span');
-  labelEl.className = 'flow-settings-label';
+  labelEl.className = 'peak-settings-label';
   labelEl.textContent = label;
   row.appendChild(labelEl);
 
@@ -152,13 +152,13 @@ function createSegmentedControl(
   onChange: (index: number) => void
 ): HTMLElement {
   const control = document.createElement('div');
-  control.className = 'flow-segmented-control';
+  control.className = 'peak-segmented-control';
 
   const buttons: HTMLButtonElement[] = [];
 
   labels.forEach((label, i) => {
     const btn = document.createElement('button');
-    btn.className = `flow-segmented-btn${i === activeIndex ? ' active' : ''}`;
+    btn.className = `peak-segmented-btn${i === activeIndex ? ' active' : ''}`;
     btn.textContent = label;
     btn.addEventListener('click', () => {
       buttons.forEach((b) => b.classList.remove('active'));
@@ -171,7 +171,7 @@ function createSegmentedControl(
   });
 
   const slider = document.createElement('div');
-  slider.className = 'flow-segmented-slider';
+  slider.className = 'peak-segmented-slider';
   control.appendChild(slider);
 
   function updateSliderPos() {
@@ -193,10 +193,10 @@ function createSwitch(
   onChange: (on: boolean) => void
 ): HTMLElement {
   const sw = document.createElement('button');
-  sw.className = `flow-switch${on ? ' on' : ''}`;
+  sw.className = `peak-switch${on ? ' on' : ''}`;
 
   const knob = document.createElement('div');
-  knob.className = 'flow-switch-knob';
+  knob.className = 'peak-switch-knob';
   sw.appendChild(knob);
 
   sw.addEventListener('click', () => {
@@ -215,11 +215,11 @@ function createSlider(
   step?: number
 ): HTMLElement {
   const wrapper = document.createElement('div');
-  wrapper.className = 'flow-slider-wrapper';
+  wrapper.className = 'peak-slider-wrapper';
 
   const input = document.createElement('input');
   input.type = 'range';
-  input.className = 'flow-slider';
+  input.className = 'peak-slider';
   input.min = String(min);
   input.max = String(max);
   input.step = String(step ?? 1);

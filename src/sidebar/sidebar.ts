@@ -6,22 +6,22 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 
 function createTrafficLights(): HTMLElement {
   const container = document.createElement('div');
-  container.className = 'flow-traffic-lights';
+  container.className = 'peak-traffic-lights';
 
   const win = getCurrentWindow();
 
   const close = document.createElement('button');
-  close.className = 'flow-traffic-btn flow-traffic-close';
+  close.className = 'peak-traffic-btn peak-traffic-close';
   close.title = 'Close';
   close.addEventListener('click', () => win.close());
 
   const minimize = document.createElement('button');
-  minimize.className = 'flow-traffic-btn flow-traffic-minimize';
+  minimize.className = 'peak-traffic-btn peak-traffic-minimize';
   minimize.title = 'Minimize';
   minimize.addEventListener('click', () => win.minimize());
 
   const fullscreen = document.createElement('button');
-  fullscreen.className = 'flow-traffic-btn flow-traffic-fullscreen';
+  fullscreen.className = 'peak-traffic-btn peak-traffic-fullscreen';
   fullscreen.title = 'Fullscreen';
   fullscreen.addEventListener('click', () => win.toggleMaximize());
 
@@ -34,22 +34,22 @@ function createTrafficLights(): HTMLElement {
 
 export function createSidebar(): HTMLElement {
   const sidebar = document.createElement('div');
-  sidebar.className = 'flow-sidebar';
+  sidebar.className = 'peak-sidebar';
 
   // Top bar
   const topBar = document.createElement('div');
-  topBar.className = 'flow-sidebar-topbar';
+  topBar.className = 'peak-sidebar-topbar';
 
   // Left group: traffic lights + sidebar toggle
   const leftGroup = document.createElement('div');
-  leftGroup.className = 'flow-topbar-left';
+  leftGroup.className = 'peak-topbar-left';
 
   leftGroup.appendChild(createTrafficLights());
 
   const sidebarBtn = document.createElement('button');
-  sidebarBtn.className = 'flow-sidebar-toggle-btn';
+  sidebarBtn.className = 'peak-sidebar-toggle-btn';
   const sidebarIconSpan = document.createElement('span');
-  sidebarIconSpan.className = 'flow-new-note-icon';
+  sidebarIconSpan.className = 'peak-new-note-icon';
   render(SidebarIcon({ width: '20', height: '20' }), sidebarIconSpan);
   sidebarBtn.appendChild(sidebarIconSpan);
   const sidebarTooltip = document.createElement('affine-tooltip');
@@ -63,9 +63,9 @@ export function createSidebar(): HTMLElement {
 
   // Right: new note button
   const newNoteBtn = document.createElement('button');
-  newNoteBtn.className = 'flow-new-note-btn';
+  newNoteBtn.className = 'peak-new-note-btn';
   const iconSpan = document.createElement('span');
-  iconSpan.className = 'flow-new-note-icon';
+  iconSpan.className = 'peak-new-note-icon';
   render(NewPageIcon({ width: '20', height: '20' }), iconSpan);
   newNoteBtn.appendChild(iconSpan);
   const newNoteTooltip = document.createElement('affine-tooltip');
@@ -79,8 +79,8 @@ export function createSidebar(): HTMLElement {
 
   // Note list container
   const noteListContainer = document.createElement('div');
-  noteListContainer.className = 'flow-note-list';
-  noteListContainer.id = 'flow-note-list';
+  noteListContainer.className = 'peak-note-list';
+  noteListContainer.id = 'peak-note-list';
   sidebar.appendChild(noteListContainer);
 
   // Start rendering the note list reactively

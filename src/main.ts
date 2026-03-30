@@ -7,7 +7,7 @@ import {
   initBlockSuite,
   createWorkspace,
 } from './editor/setup';
-import { FlowEditorContainer } from './editor/editor-container';
+import { PeakEditorContainer } from './editor/editor-container';
 import { createSidebar } from './sidebar/sidebar';
 import * as noteStore from './storage/note-store';
 import { effect } from '@preact/signals-core';
@@ -20,7 +20,7 @@ function makeDraggable(el: HTMLElement) {
     if (e.button !== 0) return;
     // Don't drag if clicking on an interactive element
     const target = e.target as HTMLElement;
-    if (target.closest('button, input, textarea, select, a, [contenteditable], .flow-note-item, .flow-editor-area, .flow-sidebar-resize, .flow-traffic-lights')) return;
+    if (target.closest('button, input, textarea, select, a, [contenteditable], .peak-note-item, .peak-editor-area, .peak-sidebar-resize, .peak-traffic-lights')) return;
     e.preventDefault();
     getCurrentWindow().startDragging();
   });
@@ -45,8 +45,8 @@ async function main() {
 
   // Create the editor element
   const editor = document.createElement(
-    'flow-editor-container'
-  ) as FlowEditorContainer;
+    'peak-editor-container'
+  ) as PeakEditorContainer;
 
   // Initialize note store
   noteStore.init(workspace, editor);
@@ -65,7 +65,7 @@ async function main() {
 
   // Resize handle between sidebar and editor
   const resizeHandle = document.createElement('div');
-  resizeHandle.className = 'flow-sidebar-resize';
+  resizeHandle.className = 'peak-sidebar-resize';
   app.appendChild(resizeHandle);
 
   // Start with sidebar collapsed in new-window mode
@@ -98,19 +98,19 @@ async function main() {
 
   // Editor area
   const editorArea = document.createElement('div');
-  editorArea.className = 'flow-editor-area';
+  editorArea.className = 'peak-editor-area';
 
   // Drag region for titlebar (transparent, over top of editor)
   const dragRegion = document.createElement('div');
-  dragRegion.className = 'flow-editor-drag-region';
+  dragRegion.className = 'peak-editor-drag-region';
   editorArea.appendChild(dragRegion);
 
   // Sidebar toggle button (top-left, only when sidebar hidden)
   const sidebarPill = document.createElement('div');
-  sidebarPill.className = 'flow-editor-sidebar-pill';
+  sidebarPill.className = 'peak-editor-sidebar-pill';
 
   const sidebarBtn = document.createElement('button');
-  sidebarBtn.className = 'flow-mode-btn sidebar-btn';
+  sidebarBtn.className = 'peak-mode-btn sidebar-btn';
   render(SidebarIcon({ width: '20', height: '20' }), sidebarBtn);
   sidebarBtn.addEventListener('click', () => noteStore.toggleSidebar());
 
@@ -119,7 +119,7 @@ async function main() {
 
   // Saving indicator (top-left, next to sidebar pill or standalone)
   const savingText = document.createElement('span');
-  savingText.className = 'flow-saving-text';
+  savingText.className = 'peak-saving-text';
   savingText.textContent = 'Saving';
   editorArea.appendChild(savingText);
 
@@ -143,15 +143,15 @@ async function main() {
 
   // Floating mode toggle (top-right overlay)
   const modeToggle = document.createElement('div');
-  modeToggle.className = 'flow-mode-toggle';
+  modeToggle.className = 'peak-mode-toggle';
 
   // Sliding background indicator
   const slider = document.createElement('div');
-  slider.className = 'flow-mode-slider';
+  slider.className = 'peak-mode-slider';
   modeToggle.appendChild(slider);
 
   const pageBtn = document.createElement('button');
-  pageBtn.className = 'flow-mode-btn active';
+  pageBtn.className = 'peak-mode-btn active';
   pageBtn.title = 'Page mode';
   render(PageIcon({ width: '20', height: '20' }), pageBtn);
   pageBtn.addEventListener('click', () => {
@@ -159,7 +159,7 @@ async function main() {
   });
 
   const edgelessBtn = document.createElement('button');
-  edgelessBtn.className = 'flow-mode-btn';
+  edgelessBtn.className = 'peak-mode-btn';
   edgelessBtn.title = 'Edgeless mode';
   render(EdgelessIcon({ width: '20', height: '20' }), edgelessBtn);
   edgelessBtn.addEventListener('click', () => {
@@ -186,11 +186,11 @@ async function main() {
 
   // Editor container (full height)
   const editorWrapper = document.createElement('div');
-  editorWrapper.className = 'flow-editor-container';
+  editorWrapper.className = 'peak-editor-container';
 
   const emptyState = document.createElement('div');
-  emptyState.className = 'flow-editor-empty';
-  emptyState.id = 'flow-editor-empty';
+  emptyState.className = 'peak-editor-empty';
+  emptyState.id = 'peak-editor-empty';
   emptyState.textContent = 'Select a note or create a new one';
   editorWrapper.appendChild(emptyState);
 
@@ -198,7 +198,7 @@ async function main() {
 
   // Wrap editor area in a draggable region (the margin/border area)
   const editorDragWrap = document.createElement('div');
-  editorDragWrap.className = 'flow-editor-drag-wrap';
+  editorDragWrap.className = 'peak-editor-drag-wrap';
   makeDraggable(editorDragWrap);
   editorDragWrap.appendChild(editorArea);
   app.appendChild(editorDragWrap);
@@ -212,7 +212,7 @@ async function main() {
     mountEditor(editorWrapper, editor);
   } else {
     // Select the target note (priority: URL param > last opened > first note)
-    const lastNoteId = localStorage.getItem('flow-last-note');
+    const lastNoteId = localStorage.getItem('peak-last-note');
     const noteToOpen = openNoteId
       || (lastNoteId && noteStore.notes.value.find(n => n.id === lastNoteId) ? lastNoteId : null)
       || (noteStore.notes.value.length > 0 ? noteStore.notes.value[0].id : null);
@@ -243,9 +243,9 @@ async function main() {
 
 function mountEditor(
   container: HTMLElement,
-  editor: FlowEditorContainer
+  editor: PeakEditorContainer
 ) {
-  const empty = document.getElementById('flow-editor-empty');
+  const empty = document.getElementById('peak-editor-empty');
   if (empty) empty.remove();
   if (!container.contains(editor)) {
     container.appendChild(editor);
@@ -255,8 +255,8 @@ function mountEditor(
 function unmountEditor(container: HTMLElement) {
   container.innerHTML = '';
   const emptyState = document.createElement('div');
-  emptyState.className = 'flow-editor-empty';
-  emptyState.id = 'flow-editor-empty';
+  emptyState.className = 'peak-editor-empty';
+  emptyState.id = 'peak-editor-empty';
   emptyState.textContent = 'Select a note or create a new one';
   container.appendChild(emptyState);
 }

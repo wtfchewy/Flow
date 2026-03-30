@@ -7,25 +7,25 @@ import { type AppSettings, applySettings, saveSettingsImmediate } from '../setti
 export function showWelcome(settings: AppSettings): Promise<void> {
   return new Promise((resolve) => {
     const overlay = document.createElement('div');
-    overlay.className = 'flow-welcome-overlay';
+    overlay.className = 'peak-welcome-overlay';
 
     const card = document.createElement('div');
-    card.className = 'flow-welcome-card';
+    card.className = 'peak-welcome-card';
 
     // Title
     const title = document.createElement('h1');
-    title.className = 'flow-welcome-title';
-    title.textContent = 'Welcome to Flow';
+    title.className = 'peak-welcome-title';
+    title.textContent = 'Welcome to Peak';
     card.appendChild(title);
 
     const subtitle = document.createElement('p');
-    subtitle.className = 'flow-welcome-subtitle';
+    subtitle.className = 'peak-welcome-subtitle';
     subtitle.textContent = 'Set up your workspace before getting started.';
     card.appendChild(subtitle);
 
     // Settings section
     const settingsSection = document.createElement('div');
-    settingsSection.className = 'flow-welcome-settings';
+    settingsSection.className = 'peak-welcome-settings';
 
     // Theme
     const themeRow = createRow('Appearance');
@@ -71,7 +71,7 @@ export function showWelcome(settings: AppSettings): Promise<void> {
 
     // Let's Go button
     const btn = document.createElement('button');
-    btn.className = 'flow-welcome-btn';
+    btn.className = 'peak-welcome-btn';
     btn.textContent = "Let's Go";
     btn.addEventListener('click', async () => {
       settings.onboarded = true;
@@ -91,10 +91,10 @@ export function showWelcome(settings: AppSettings): Promise<void> {
 
 function createRow(label: string): HTMLElement {
   const row = document.createElement('div');
-  row.className = 'flow-settings-row';
+  row.className = 'peak-settings-row';
 
   const labelEl = document.createElement('span');
-  labelEl.className = 'flow-settings-label';
+  labelEl.className = 'peak-settings-label';
   labelEl.textContent = label;
   row.appendChild(labelEl);
 
@@ -107,13 +107,13 @@ function createSegmentedControl(
   onChange: (index: number) => void
 ): HTMLElement {
   const control = document.createElement('div');
-  control.className = 'flow-segmented-control';
+  control.className = 'peak-segmented-control';
 
   const buttons: HTMLButtonElement[] = [];
 
   labels.forEach((label, i) => {
     const btn = document.createElement('button');
-    btn.className = `flow-segmented-btn${i === activeIndex ? ' active' : ''}`;
+    btn.className = `peak-segmented-btn${i === activeIndex ? ' active' : ''}`;
     btn.textContent = label;
     btn.addEventListener('click', () => {
       buttons.forEach((b) => b.classList.remove('active'));
@@ -126,7 +126,7 @@ function createSegmentedControl(
   });
 
   const slider = document.createElement('div');
-  slider.className = 'flow-segmented-slider';
+  slider.className = 'peak-segmented-slider';
   control.appendChild(slider);
 
   function updateSliderPos() {
@@ -147,10 +147,10 @@ function createSwitch(
   onChange: (on: boolean) => void
 ): HTMLElement {
   const sw = document.createElement('button');
-  sw.className = `flow-switch${on ? ' on' : ''}`;
+  sw.className = `peak-switch${on ? ' on' : ''}`;
 
   const knob = document.createElement('div');
-  knob.className = 'flow-switch-knob';
+  knob.className = 'peak-switch-knob';
   sw.appendChild(knob);
 
   sw.addEventListener('click', () => {
@@ -169,11 +169,11 @@ function createSlider(
   step?: number
 ): HTMLElement {
   const wrapper = document.createElement('div');
-  wrapper.className = 'flow-slider-wrapper';
+  wrapper.className = 'peak-slider-wrapper';
 
   const input = document.createElement('input');
   input.type = 'range';
-  input.className = 'flow-slider';
+  input.className = 'peak-slider';
   input.min = String(min);
   input.max = String(max);
   input.step = String(step ?? 1);

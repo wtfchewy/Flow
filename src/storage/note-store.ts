@@ -12,7 +12,7 @@ import {
   getEdgelessSpecs,
   RefNodeSlotsProvider,
 } from '../editor/setup';
-import type { FlowEditorContainer } from '../editor/editor-container';
+import type { PeakEditorContainer } from '../editor/editor-container';
 import {
   listNotes,
   saveNote,
@@ -34,9 +34,9 @@ export function toggleSidebar() {
 let activeStore: Store | null = null;
 let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
 let workspace: TestWorkspace;
-let editorEl: FlowEditorContainer;
+let editorEl: PeakEditorContainer;
 
-export function init(ws: TestWorkspace, editor: FlowEditorContainer) {
+export function init(ws: TestWorkspace, editor: PeakEditorContainer) {
   workspace = ws;
   editorEl = editor;
 }
@@ -142,7 +142,7 @@ export async function selectNote(id: string) {
   await saveCurrentNote();
 
   activeNoteId.value = id;
-  localStorage.setItem('flow-last-note', id);
+  localStorage.setItem('peak-last-note', id);
 
   // Remove old doc if it exists
   try {

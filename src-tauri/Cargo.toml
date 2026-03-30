@@ -1,12 +1,12 @@
 [package]
-name = "flow"
+name = "peak"
 version = "0.1.0"
 description = "A note-taking app powered by BlockSuite"
 authors = []
 edition = "2021"
 
 [lib]
-name = "flow_lib"
+name = "peak_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]

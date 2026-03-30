@@ -110,14 +110,14 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
   dismissMenu();
 
   // Highlight the right-clicked note
-  const noteItem = (e.target as HTMLElement).closest('.flow-note-item') as HTMLElement | null;
+  const noteItem = (e.target as HTMLElement).closest('.peak-note-item') as HTMLElement | null;
   if (noteItem) {
     noteItem.classList.add('context-target');
     contextTargetItem = noteItem;
   }
 
   const menu = document.createElement('div');
-  menu.className = 'flow-context-menu';
+  menu.className = 'peak-context-menu';
   menu.style.left = `${e.clientX}px`;
   menu.style.top = `${e.clientY}px`;
 
@@ -128,10 +128,10 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
     danger = false
   ) {
     const item = document.createElement('div');
-    item.className = `flow-context-menu-item${danger ? ' danger' : ''}`;
+    item.className = `peak-context-menu-item${danger ? ' danger' : ''}`;
 
     const iconEl = document.createElement('span');
-    iconEl.className = 'flow-context-menu-icon';
+    iconEl.className = 'peak-context-menu-icon';
     render(iconFn({ width: '18', height: '18' }), iconEl);
 
     const labelEl = document.createElement('span');
@@ -149,7 +149,7 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
 
   function addSeparator() {
     const sep = document.createElement('div');
-    sep.className = 'flow-context-menu-separator';
+    sep.className = 'peak-context-menu-separator';
     menu.appendChild(sep);
   }
 
@@ -182,25 +182,25 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
 
 function createNoteItem(note: NoteMeta, isActive: boolean): HTMLElement {
   const item = document.createElement('div');
-  item.className = `flow-note-item${isActive ? ' active' : ''}`;
+  item.className = `peak-note-item${isActive ? ' active' : ''}`;
   item.dataset.noteId = note.id;
 
   item.addEventListener('click', () => selectNote(note.id));
   item.addEventListener('contextmenu', (e) => showContextMenu(e, note));
 
   const titleEl = document.createElement('div');
-  titleEl.className = 'flow-note-item-title';
+  titleEl.className = 'peak-note-item-title';
   titleEl.textContent = note.title || 'Untitled';
 
   const metaEl = document.createElement('div');
-  metaEl.className = 'flow-note-item-meta';
+  metaEl.className = 'peak-note-item-meta';
 
   const dateEl = document.createElement('span');
-  dateEl.className = 'flow-note-item-date';
+  dateEl.className = 'peak-note-item-date';
   dateEl.textContent = formatDate(note.updatedAt);
 
   const previewEl = document.createElement('span');
-  previewEl.className = 'flow-note-item-preview';
+  previewEl.className = 'peak-note-item-preview';
   previewEl.textContent = note.preview || 'No additional text';
 
   metaEl.appendChild(dateEl);
@@ -221,7 +221,7 @@ export function renderNoteList(container: HTMLElement) {
 
     if (noteList.length === 0) {
       const empty = document.createElement('div');
-      empty.className = 'flow-empty-state';
+      empty.className = 'peak-empty-state';
       empty.textContent = 'No notes yet';
       container.appendChild(empty);
       return;
@@ -231,10 +231,10 @@ export function renderNoteList(container: HTMLElement) {
 
     for (const group of grouped) {
       const groupEl = document.createElement('div');
-      groupEl.className = 'flow-note-group';
+      groupEl.className = 'peak-note-group';
 
       const headerEl = document.createElement('div');
-      headerEl.className = 'flow-note-group-header';
+      headerEl.className = 'peak-note-group-header';
       headerEl.textContent = group.label;
       groupEl.appendChild(headerEl);
 

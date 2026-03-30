@@ -13,7 +13,7 @@ import { property } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
 import { when } from 'lit/directives/when.js';
 
-export class FlowEditorContainer extends SignalWatcher(
+export class PeakEditorContainer extends SignalWatcher(
   WithDisposable(ShadowlessElement)
 ) {
   static override styles = css`
@@ -32,13 +32,13 @@ export class FlowEditorContainer extends SignalWatcher(
       box-sizing: border-box;
     }
 
-    .flow-page-editor-container {
+    .peak-page-editor-container {
       flex-grow: 1;
       font-family: var(--affine-font-family);
       display: block;
     }
 
-    .flow-page-editor-container * {
+    .peak-page-editor-container * {
       box-sizing: border-box;
     }
 
@@ -213,7 +213,7 @@ export class FlowEditorContainer extends SignalWatcher(
           )}
           <div
             class=${mode === 'page'
-              ? 'page-editor flow-page-editor-container'
+              ? 'page-editor peak-page-editor-container'
               : 'edgeless-editor-container'}
           >
             ${this._editorTemplate.value}
@@ -231,10 +231,10 @@ export class FlowEditorContainer extends SignalWatcher(
   override accessor autofocus = false;
 }
 
-customElements.define('flow-editor-container', FlowEditorContainer);
+customElements.define('peak-editor-container', PeakEditorContainer);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'flow-editor-container': FlowEditorContainer;
+    'peak-editor-container': PeakEditorContainer;
   }
 }

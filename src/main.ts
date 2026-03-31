@@ -227,6 +227,9 @@ async function main() {
   // Wire up linked doc navigation
   noteStore.setupLinkedDocNavigation();
 
+  // Open external links (hyperlinks, bookmarks, embeds) in system browser
+  noteStore.setupExternalLinkHandler();
+
   // Listen for "create note" from the notch widget (same app, direct event)
   listen('create-note-from-notch', async () => {
     await noteStore.createNote();

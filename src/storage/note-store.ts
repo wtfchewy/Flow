@@ -359,6 +359,70 @@ export function setupLinkedDocNavigation() {
   }
 }
 
+/**
+ * Intercept external link clicks and window.open calls so they open
+ * in the system browser instead of navigating the Tauri webview.
+ */
+export function setupExternalLinkHandler() {
+  const { openUrl } = await_import_opener();
+
+  // Intercept clicks on <a> tags with external hrefs
+  document.addEventListener('click', (e) => {
+    const anchor = (e.target as HTMLElement)?.closest?.('a[href]');
+    if (!anchor) return;
+    const href = anchor.getAttribute('href');
+    if (!href) return;
+    // Skip internal links (relative, javascript:, #hash)
+    if (href.startsWith('#') || href.startsWith('javascript:')) return;
+    try {
+      const url = new URL(href, window.location.href);
+      if (url.origin !== window.location.origin) {
+        e.preventDefault();
+        e.stopPropagation();
+        openUrl(url.href);
+      }
+    } catch {
+      // not a valid URL, let default behavior handle it
+    }
+  }, true);
+
+  // Override window.open for embed blocks (bookmark, github, youtube, etc.)
+  const originalOpen = window.open;
+  window.open = function(url?: string | URL, target?: string, features?: string) {
+    if (url) {
+      const urlStr = url.toString();
+      try {
+        const parsed = new URL(urlStr, window.location.href);
+        if (parsed.origin !== window.location.origin) {
+          openUrl(parsed.href);
+          return null;
+        }
+      } catch {
+        // fall through to original
+      }
+    }
+    return originalOpen.call(window, url, target, features);
+  };
+}
+
+// Lazy-load the opener plugin to avoid top-level await
+function await_import_opener() {
+  let _openUrl: ((url: string) => Promise<void>) | null = null;
+
+  return {
+    openUrl: (url: string) => {
+      if (_openUrl) {
+        _openUrl(url);
+        return;
+      }
+      import('@tauri-apps/plugin-opener').then(mod => {
+        _openUrl = mod.openUrl;
+        _openUrl(url);
+      });
+    }
+  };
+}
+
 export function openNoteInNewWindow(id: string) {
   const label = `note-${id}-${Date.now()}`;
   new WebviewWindow(label, {

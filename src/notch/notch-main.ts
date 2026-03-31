@@ -106,6 +106,55 @@ function close() {
   setInteractive(false);
 }
 
+// --- Drag-and-drop markdown import ---
+// Listen on document so the full webview area is a drop target.
+// dragenter + dragover must preventDefault for drop to fire.
+let dragEnterCount = 0;
+
+document.addEventListener('dragenter', (e) => {
+  e.preventDefault();
+  dragEnterCount++;
+  if (!opened) open();
+  island.classList.add('notch-drop-target');
+}, true);
+
+document.addEventListener('dragover', (e) => {
+  e.preventDefault();
+}, true);
+
+document.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  dragEnterCount--;
+  if (dragEnterCount <= 0) {
+    dragEnterCount = 0;
+    island.classList.remove('notch-drop-target');
+  }
+}, true);
+
+document.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  dragEnterCount = 0;
+  island.classList.remove('notch-drop-target');
+
+  const files = Array.from(e.dataTransfer?.files ?? []);
+  const mdFiles = files.filter(f => f.name.toLowerCase().endsWith('.md'));
+
+  if (mdFiles.length > 0) {
+    island.classList.add('notch-drop-success');
+
+    for (const file of mdFiles) {
+      const markdown = await file.text();
+      const fileName = file.name.replace(/\.md$/i, '');
+      await emit('notch-import-markdown', JSON.stringify({ markdown, fileName }));
+    }
+
+    setTimeout(() => {
+      island.classList.remove('notch-drop-success');
+      close();
+    }, 800);
+  }
+}, true);
+
 // --- Cursor polling ---
 setInterval(async () => {
   try {

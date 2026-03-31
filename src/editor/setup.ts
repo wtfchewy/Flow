@@ -49,6 +49,10 @@ export function initBlockSuite() {
 const storeManager = getTestStoreManager();
 const viewManager = getTestViewManager();
 
+export function getStoreExtensions(): ExtensionType[] {
+  return storeManager.get('store');
+}
+
 // Create a workspace (doc collection)
 export function createWorkspace(): TestWorkspace {
   const options: DocCollectionOptions = {

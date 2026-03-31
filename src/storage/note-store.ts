@@ -10,6 +10,7 @@ import {
   getYDoc,
   getPageSpecs,
   getEdgelessSpecs,
+  getStoreExtensions,
   RefNodeSlotsProvider,
 } from '../editor/setup';
 import type { PeakEditorContainer } from '../editor/editor-container';
@@ -222,6 +223,82 @@ export async function createNote() {
   // Save initial empty state
   const ydoc = getYDoc(store);
   await saveNote(id, 'Untitled', '', 'page', ydoc, false);
+}
+
+export async function importMarkdownFile(file: File) {
+  await saveCurrentNote();
+
+  let markdown = await file.text();
+  const fileName = file.name.replace(/\.md$/i, '') || 'Untitled';
+
+  // Extract title from first line if it's a # heading
+  let headingTitle = '';
+  const firstLineMatch = markdown.match(/^#\s+(.+)/);
+  if (firstLineMatch) {
+    headingTitle = firstLineMatch[1].trim();
+    // Strip the heading line from the markdown body
+    markdown = markdown.replace(/^#\s+.+\n?/, '');
+  }
+
+  const id = generateId();
+  const now = Date.now();
+
+  // Create a new doc with initial structure
+  const store = createNewDoc(workspace, id);
+
+  // Set the doc title from the heading
+  if (headingTitle && store.root) {
+    const titleProp = (store.root as any).props?.title;
+    if (titleProp && typeof titleProp.insert === 'function') {
+      titleProp.insert(headingTitle, 0);
+    }
+  }
+
+  // Find the note block to import markdown into
+  const noteBlock = store.root?.children.find(b => b.flavour === 'affine:note');
+  if (!noteBlock) return;
+
+  // Remove the default empty paragraph
+  for (const child of noteBlock.children) {
+    store.deleteBlock(child);
+  }
+
+  // Import markdown content into the note block
+  await MarkdownTransformer.importMarkdownToBlock({
+    doc: store,
+    blockId: noteBlock.id,
+    markdown,
+    extensions: getStoreExtensions(),
+  });
+
+  // Extract title/preview from the imported content
+  const { title, preview } = extractTitleAndPreview(store);
+  const finalTitle = headingTitle || (title !== 'Untitled' ? title : fileName);
+
+  const meta: NoteMeta = {
+    id,
+    title: finalTitle,
+    createdAt: now,
+    updatedAt: now,
+    preview,
+  };
+
+  notes.value = [meta, ...notes.value];
+
+  activeStore = store;
+  activeNoteId.value = id;
+  activeMode.value = 'page';
+
+  editorEl.doc = store;
+  editorEl.pageSpecs = getPageSpecs(editorEl);
+  editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+  editorEl.mode = 'page';
+
+  attachAutoSave(store);
+
+  // Save to disk
+  const ydoc = getYDoc(store);
+  await saveNote(id, finalTitle, preview, 'page', ydoc, false);
 }
 
 export async function deleteNote(id: string) {

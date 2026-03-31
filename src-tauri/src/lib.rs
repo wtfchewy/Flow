@@ -160,8 +160,9 @@ fn check_cursor_position(ns_view_ptr: std::ptr::NonNull<std::ffi::c_void>) -> (b
     }
 }
 
-/// Tauri command: returns [inHoverZone, inWindow] without toggling anything.
-/// The frontend decides what to do based on its current state.
+/// Tauri command: returns [inHoverZone, inWindow].
+/// Proactively sets ignoresMouseEvents=NO when cursor is in the hover zone
+/// so that drag-and-drop events can reach the webview without JS roundtrip delay.
 #[tauri::command]
 fn notch_poll_cursor(app: tauri::AppHandle) -> (bool, bool) {
     #[cfg(target_os = "macos")]
@@ -170,7 +171,13 @@ fn notch_poll_cursor(app: tauri::AppHandle) -> (bool, bool) {
         if let Some(notch_win) = app.get_webview_window("notch-widget") {
             if let Ok(handle) = notch_win.window_handle() {
                 if let raw_window_handle::RawWindowHandle::AppKit(appkit) = handle.as_raw() {
-                    return check_cursor_position(appkit.ns_view);
+                    let result = check_cursor_position(appkit.ns_view);
+                    // When cursor enters hover zone, immediately make interactive
+                    // so drag-and-drop works without waiting for JS roundtrip
+                    if result.0 {
+                        set_notch_ignores_mouse(appkit.ns_view, false);
+                    }
+                    return result;
                 }
             }
         }
@@ -598,6 +605,7 @@ pub fn run() {
             .visible(notch_enabled)
             .resizable(false)
             .shadow(false)
+            .disable_drag_drop_handler()
             .build()?;
 
             // Position at absolute top of screen (over the notch) + set up mouse passthrough
@@ -633,6 +641,16 @@ pub fn run() {
                     main_window.set_focus().ok();
                     // Forward the note ID payload to the main window
                     main_window.emit("open-note-from-notch", event.payload()).ok();
+                }
+            });
+
+            // --- Bridge: notch markdown drop → show main window & import ---
+            let app_handle3 = app.handle().clone();
+            app.listen("notch-import-markdown", move |event| {
+                if let Some(main_window) = app_handle3.get_webview_window("main") {
+                    main_window.show().ok();
+                    main_window.set_focus().ok();
+                    main_window.emit("import-markdown-from-notch", event.payload()).ok();
                 }
             });
 

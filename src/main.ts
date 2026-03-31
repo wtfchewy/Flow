@@ -243,6 +243,15 @@ async function main() {
     }
   });
 
+  // Listen for markdown drop from the notch widget
+  listen<string>('import-markdown-from-notch', async (event) => {
+    const data = JSON.parse(JSON.parse(event.payload as unknown as string));
+    if (data?.markdown) {
+      const file = new File([data.markdown], `${data.fileName || 'Untitled'}.md`, { type: 'text/markdown' });
+      await noteStore.importMarkdownFile(file);
+    }
+  });
+
   // Watch for active note changes to mount/unmount editor
   let editorMounted = noteStore.notes.value.length > 0;
 

@@ -44,6 +44,10 @@ body {
               opacity 0.08s ease;
 }
 
+.peak-sidebar.peak-sidebar-dragover {
+  background: color-mix(in srgb, var(--affine-primary-color) 8%, transparent);
+}
+
 .peak-sidebar.collapsed {
   opacity: 0;
   pointer-events: none;

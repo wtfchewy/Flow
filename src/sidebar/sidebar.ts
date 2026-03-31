@@ -1,6 +1,6 @@
 import { render } from 'lit';
 import { NewPageIcon, SidebarIcon } from '@blocksuite/icons/lit';
-import { createNote, toggleSidebar } from '../storage/note-store';
+import { createNote, importMarkdownFile, toggleSidebar } from '../storage/note-store';
 import { renderNoteList } from './note-list';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
@@ -85,6 +85,32 @@ export function createSidebar(): HTMLElement {
 
   // Start rendering the note list reactively
   renderNoteList(noteListContainer);
+
+  // Drag-and-drop markdown files to import
+  sidebar.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    sidebar.classList.add('peak-sidebar-dragover');
+  });
+
+  sidebar.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    sidebar.classList.remove('peak-sidebar-dragover');
+  });
+
+  sidebar.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    sidebar.classList.remove('peak-sidebar-dragover');
+
+    const files = Array.from(e.dataTransfer?.files ?? []);
+    const mdFiles = files.filter(f => f.name.toLowerCase().endsWith('.md'));
+
+    for (const file of mdFiles) {
+      await importMarkdownFile(file);
+    }
+  });
 
   return sidebar;
 }

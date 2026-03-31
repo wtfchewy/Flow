@@ -507,6 +507,27 @@ html[data-theme='light'] .peak-note-item-folder {
   flex: 1;
   overflow: auto;
   height: 100%;
+  position: relative;
+}
+
+.peak-outline-viewer {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.peak-outline-viewer .outline-viewer-root {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.peak-outline-viewer .outline-viewer-indicators-container {
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .peak-editor-container peak-editor-container {

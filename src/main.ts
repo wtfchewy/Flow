@@ -195,6 +195,9 @@ async function main() {
   emptyState.textContent = 'Select a note or create a new one';
   editorWrapper.appendChild(emptyState);
 
+  // Outline viewer will be created once the editor host is available
+  let outlineViewer: HTMLElement | null = null;
+
   editorArea.appendChild(editorWrapper);
 
   // Wrap editor area in a draggable region (the margin/border area)
@@ -263,6 +266,36 @@ async function main() {
     } else if (!id && editorMounted) {
       unmountEditor(editorWrapper);
       editorMounted = false;
+    }
+
+    // Update outline viewer when editor host is available for the current note
+    if (id) {
+      // Remove stale viewer immediately on note switch
+      if (outlineViewer) {
+        outlineViewer.remove();
+        outlineViewer = null;
+      }
+      const targetId = id;
+      const tryAttach = () => {
+        // Bail if user already switched to a different note
+        if (noteStore.activeNoteId.peek() !== targetId) return;
+        const host = editor.host;
+        if (host && host.store?.id === targetId) {
+          outlineViewer = document.createElement('affine-outline-viewer');
+          outlineViewer.className = 'peak-outline-viewer';
+          (outlineViewer as any).editor = host;
+          editorWrapper.appendChild(outlineViewer);
+        } else {
+          requestAnimationFrame(tryAttach);
+        }
+      };
+      // Wait a frame for the editor to update its std/host
+      requestAnimationFrame(tryAttach);
+    } else {
+      if (outlineViewer) {
+        outlineViewer.remove();
+        outlineViewer = null;
+      }
     }
   });
 }

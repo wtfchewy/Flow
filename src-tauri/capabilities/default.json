@@ -1,7 +1,8 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Default capability for Peak",
+  "description": "Default capability for Peak (desktop)",
+  "platforms": ["macOS", "windows", "linux"],
   "windows": ["*"],
   "permissions": [
     "core:default",

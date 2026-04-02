@@ -737,6 +737,148 @@ html.vibrancy .peak-editor-drag-wrap {
   cursor: pointer;
 }
 
+/* ===== Mobile Layout ===== */
+
+/* Mobile backdrop overlay behind sidebar */
+.peak-mobile-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.peak-mobile-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+html.mobile .peak-mobile-backdrop {
+  display: block;
+}
+
+/* Mobile: sidebar becomes a full-width overlay panel */
+html.mobile #app {
+  border-radius: 0;
+  position: relative;
+}
+
+html.mobile .peak-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 85vw;
+  max-width: 380px;
+  z-index: 50;
+  background: var(--affine-background-secondary-color);
+  transform: translateX(-100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 0 !important;
+  opacity: 1 !important;
+  pointer-events: auto;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+}
+
+html.mobile .peak-sidebar.open {
+  transform: translateX(0);
+}
+
+html.mobile.vibrancy .peak-sidebar {
+  background: var(--peak-vibrancy-bg, rgba(0, 0, 0, 0.15));
+  -webkit-backdrop-filter: var(--peak-vibrancy-filter, blur(40px));
+  backdrop-filter: var(--peak-vibrancy-filter, blur(40px));
+}
+
+/* Mobile: hide resize handle */
+html.mobile .peak-sidebar-resize {
+  display: none !important;
+}
+
+/* Mobile: editor takes full width, no padding/border-radius */
+html.mobile .peak-editor-drag-wrap {
+  padding: 0;
+}
+
+html.mobile .peak-editor-area {
+  border-radius: 0;
+}
+
+/* Mobile: sidebar pill always in top-left */
+html.mobile .peak-editor-sidebar-pill {
+  top: env(safe-area-inset-top, 10px);
+  left: env(safe-area-inset-left, 10px);
+}
+
+/* Mobile: mode toggle positioning */
+html.mobile .peak-mode-toggle {
+  top: env(safe-area-inset-top, 10px);
+  right: env(safe-area-inset-right, 10px);
+}
+
+/* Mobile: saving text positioning */
+html.mobile .peak-saving-text {
+  top: env(safe-area-inset-top, 10px);
+  left: 60px;
+}
+
+/* Mobile: sidebar topbar with safe area */
+html.mobile .peak-sidebar-topbar {
+  padding-top: calc(env(safe-area-inset-top, 10px) + 10px);
+  padding-left: calc(env(safe-area-inset-left, 0px) + 12px);
+}
+
+/* Mobile: note items with larger touch targets */
+html.mobile .peak-note-item {
+  padding: 14px 12px;
+  min-height: 44px;
+}
+
+/* Mobile: editor container safe area padding */
+html.mobile .peak-editor-container {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Mobile: context menu positioned from bottom on mobile */
+html.mobile .peak-context-menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  max-width: 100%;
+  border-radius: 14px 14px 0 0;
+  padding: 12px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 8px) + 8px);
+}
+
+html.mobile .peak-context-menu-item {
+  height: 44px;
+  font-size: 15px;
+}
+
+/* Mobile: settings panel full-width */
+html.mobile .peak-settings-panel {
+  width: calc(100vw - 32px);
+  max-width: 400px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+
+/* Mobile: welcome card */
+html.mobile .peak-welcome-card {
+  width: calc(100vw - 48px);
+  max-width: 400px;
+}
+
+/* Mobile: outline viewer hidden (too small for sidebar outline) */
+html.mobile .peak-outline-viewer {
+  display: none;
+}
+
 /* ===== Welcome / Onboarding ===== */
 
 .peak-welcome-overlay {

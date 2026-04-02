@@ -25,6 +25,7 @@ import {
   exportNoteAsHtml,
   exportNoteAsPdf,
 } from '../storage/note-store';
+import { isMobile } from '../platform';
 
 interface NoteGroup {
   label: string;
@@ -215,7 +216,9 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
     menu.appendChild(sep);
   }
 
-  addItem(OpenInNewIcon, 'Open in New Window', () => openNoteInNewWindow(note.id));
+  if (!isMobile) {
+    addItem(OpenInNewIcon, 'Open in New Window', () => openNoteInNewWindow(note.id));
+  }
   addItem(
     note.pinned ? PinedIcon : PinIcon,
     note.pinned ? 'Unpin Note' : 'Pin Note',
@@ -234,13 +237,19 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
   document.body.appendChild(menu);
   activeMenu = menu;
 
-  // Adjust position if menu goes off screen
-  const rect = menu.getBoundingClientRect();
-  if (rect.right > window.innerWidth) {
-    menu.style.left = `${window.innerWidth - rect.width - 8}px`;
-  }
-  if (rect.bottom > window.innerHeight) {
-    menu.style.top = `${window.innerHeight - rect.height - 8}px`;
+  if (isMobile) {
+    // On mobile, CSS positions the menu as a bottom sheet
+    menu.style.left = '';
+    menu.style.top = '';
+  } else {
+    // Adjust position if menu goes off screen
+    const rect = menu.getBoundingClientRect();
+    if (rect.right > window.innerWidth) {
+      menu.style.left = `${window.innerWidth - rect.width - 8}px`;
+    }
+    if (rect.bottom > window.innerHeight) {
+      menu.style.top = `${window.innerHeight - rect.height - 8}px`;
+    }
   }
 
   setTimeout(() => {
@@ -255,6 +264,30 @@ function createNoteItem(note: NoteMeta, isActive: boolean): HTMLElement {
 
   item.addEventListener('click', () => selectNote(note.id));
   item.addEventListener('contextmenu', (e) => showContextMenu(e, note));
+
+  // Long-press to trigger context menu on mobile (touch devices)
+  if (isMobile) {
+    let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+    item.addEventListener('touchstart', (e) => {
+      longPressTimer = setTimeout(() => {
+        longPressTimer = null;
+        // Synthesize a contextmenu-like event at the touch position
+        const touch = e.touches[0];
+        const syntheticEvent = new MouseEvent('contextmenu', {
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          bubbles: true,
+        });
+        showContextMenu(syntheticEvent, note);
+      }, 500);
+    }, { passive: true });
+    item.addEventListener('touchend', () => {
+      if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    });
+    item.addEventListener('touchmove', () => {
+      if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    });
+  }
 
   const titleEl = document.createElement('div');
   titleEl.className = 'peak-note-item-title';

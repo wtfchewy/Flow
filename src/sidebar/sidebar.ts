@@ -3,6 +3,7 @@ import { NewPageIcon, SidebarIcon } from '@blocksuite/icons/lit';
 import { createNote, importMarkdownFile, toggleSidebar } from '../storage/note-store';
 import { renderNoteList } from './note-list';
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { isMobile } from '../platform';
 
 function createTrafficLights(): HTMLElement {
   const container = document.createElement('div');
@@ -40,11 +41,13 @@ export function createSidebar(): HTMLElement {
   const topBar = document.createElement('div');
   topBar.className = 'peak-sidebar-topbar';
 
-  // Left group: traffic lights + sidebar toggle
+  // Left group: traffic lights (desktop only) + sidebar toggle
   const leftGroup = document.createElement('div');
   leftGroup.className = 'peak-topbar-left';
 
-  leftGroup.appendChild(createTrafficLights());
+  if (!isMobile) {
+    leftGroup.appendChild(createTrafficLights());
+  }
 
   const sidebarBtn = document.createElement('button');
   sidebarBtn.className = 'peak-sidebar-toggle-btn';

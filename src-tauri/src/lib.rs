@@ -2,14 +2,19 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use std::sync::Mutex;
-use tauri::{Emitter, Listener, Manager};
+use tauri::Manager;
+
+#[cfg(not(mobile))]
+use tauri::{Emitter, Listener};
+#[cfg(not(mobile))]
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
+#[cfg(not(mobile))]
 use tauri::webview::WebviewWindowBuilder;
 
 /// Position the notch window at the absolute top of the screen and set its
 /// level above the macOS menu bar so it overlaps the notch.
 /// Also sets ignoresMouseEvents:YES so events pass through by default.
-#[cfg(target_os = "macos")]
+#[cfg(all(target_os = "macos", not(target_os = "ios")))]
 fn configure_notch_window(ns_view_ptr: std::ptr::NonNull<std::ffi::c_void>, width: f64, height: f64) {
     use std::ffi::c_void;
 
@@ -163,6 +168,7 @@ fn check_cursor_position(ns_view_ptr: std::ptr::NonNull<std::ffi::c_void>) -> (b
 /// Tauri command: returns [inHoverZone, inWindow].
 /// Proactively sets ignoresMouseEvents=NO when cursor is in the hover zone
 /// so that drag-and-drop events can reach the webview without JS roundtrip delay.
+#[cfg(not(mobile))]
 #[tauri::command]
 fn notch_poll_cursor(app: tauri::AppHandle) -> (bool, bool) {
     #[cfg(target_os = "macos")]
@@ -186,6 +192,7 @@ fn notch_poll_cursor(app: tauri::AppHandle) -> (bool, bool) {
 }
 
 /// Tauri command: set ignoresMouseEvents on the notch window directly.
+#[cfg(not(mobile))]
 #[tauri::command]
 fn notch_set_interactive(app: tauri::AppHandle, interactive: bool) {
     #[cfg(target_os = "macos")]
@@ -234,7 +241,7 @@ pub struct AppSettings {
     pub onboarded: bool,
     #[serde(default = "default_notch_enabled")]
     pub notch_enabled: bool,
-    #[serde(default)]
+    #[serde(default = "default_icloud_sync")]
     pub icloud_sync: bool,
 }
 
@@ -258,6 +265,11 @@ fn default_notch_enabled() -> bool {
     true
 }
 
+fn default_icloud_sync() -> bool {
+    // On iOS, iCloud is enabled by default
+    cfg!(target_os = "ios")
+}
+
 impl Default for AppSettings {
     fn default() -> Self {
         Self {
@@ -267,7 +279,7 @@ impl Default for AppSettings {
             vibrancy_blur: default_vibrancy_blur(),
             onboarded: false,
             notch_enabled: default_notch_enabled(),
-            icloud_sync: false,
+            icloud_sync: default_icloud_sync(),
         }
     }
 }
@@ -309,6 +321,8 @@ fn save_settings(app: tauri::AppHandle, settings: AppSettings) {
 }
 
 /// Returns the iCloud Drive base directory for Peak, if available.
+/// On macOS: ~/Library/Mobile Documents/com~apple~CloudDocs/Peak
+/// On iOS: the app's iCloud container Documents directory
 #[cfg(target_os = "macos")]
 fn get_icloud_base() -> Option<PathBuf> {
     let home = std::env::var("HOME").ok()?;
@@ -317,20 +331,35 @@ fn get_icloud_base() -> Option<PathBuf> {
     Some(icloud)
 }
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(target_os = "ios")]
+fn get_icloud_base() -> Option<PathBuf> {
+    // On iOS, iCloud Documents are stored in the app's ubiquity container.
+    // The path is typically: ~/Library/Mobile Documents/iCloud~com~peak~notes/Documents
+    // But the simplest approach on iOS is to use the same CloudDocs path,
+    // which iOS shares with macOS via iCloud Drive.
+    let home = std::env::var("HOME").ok()?;
+    let icloud = PathBuf::from(home)
+        .join("Library/Mobile Documents/com~apple~CloudDocs/Peak");
+    Some(icloud)
+}
+
+#[cfg(not(any(target_os = "macos", target_os = "ios")))]
 fn get_icloud_base() -> Option<PathBuf> {
     None
 }
 
+/// On mobile (iOS), iCloud is the default storage backend.
+/// On desktop, iCloud is opt-in via settings.
 fn is_icloud_enabled(app: &tauri::AppHandle) -> bool {
     let path = get_settings_path(app);
+    let default_icloud = cfg!(target_os = "ios");
     if path.exists() {
         let data = fs::read_to_string(&path).unwrap_or_default();
         serde_json::from_str::<AppSettings>(&data)
             .map(|s| s.icloud_sync)
-            .unwrap_or(false)
+            .unwrap_or(default_icloud)
     } else {
-        false
+        default_icloud
     }
 }
 
@@ -498,6 +527,7 @@ fn toggle_icloud_sync(app: tauri::AppHandle, state: tauri::State<'_, Mutex<Index
 }
 
 /// Show or hide the notch widget window.
+#[cfg(not(mobile))]
 #[tauri::command]
 fn set_notch_visible(app: tauri::AppHandle, visible: bool) {
     if let Some(notch_win) = app.get_webview_window("notch-widget") {
@@ -516,158 +546,180 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .manage(Mutex::new(IndexCache::new()))
         .setup(|app| {
-            // Build macOS-style app menu
-            let settings_item = MenuItem::with_id(app, "settings", "Settings…", true, Some("CmdOrCtrl+,"))?;
-            let separator = PredefinedMenuItem::separator(app)?;
-            let quit = PredefinedMenuItem::quit(app, Some("Quit Peak"))?;
-            let hide = PredefinedMenuItem::hide(app, Some("Hide Peak"))?;
-            let show_all = PredefinedMenuItem::show_all(app, Some("Show All"))?;
+            // --- Desktop-only setup: menus, notch widget, window close behavior ---
+            #[cfg(not(mobile))]
+            {
+                // Build macOS-style app menu
+                let settings_item = MenuItem::with_id(app, "settings", "Settings…", true, Some("CmdOrCtrl+,"))?;
+                let separator = PredefinedMenuItem::separator(app)?;
+                let quit = PredefinedMenuItem::quit(app, Some("Quit Peak"))?;
+                let hide = PredefinedMenuItem::hide(app, Some("Hide Peak"))?;
+                let show_all = PredefinedMenuItem::show_all(app, Some("Show All"))?;
 
-            let app_menu = Submenu::with_items(app, "Peak", true, &[
-                &settings_item,
-                &separator,
-                &hide,
-                &show_all,
-                &PredefinedMenuItem::separator(app)?,
-                &quit,
-            ])?;
+                let app_menu = Submenu::with_items(app, "Peak", true, &[
+                    &settings_item,
+                    &separator,
+                    &hide,
+                    &show_all,
+                    &PredefinedMenuItem::separator(app)?,
+                    &quit,
+                ])?;
 
-            let edit_menu = Submenu::with_items(app, "Edit", true, &[
-                &PredefinedMenuItem::undo(app, None)?,
-                &PredefinedMenuItem::redo(app, None)?,
-                &PredefinedMenuItem::separator(app)?,
-                &PredefinedMenuItem::cut(app, None)?,
-                &PredefinedMenuItem::copy(app, None)?,
-                &PredefinedMenuItem::paste(app, None)?,
-                &PredefinedMenuItem::select_all(app, None)?,
-            ])?;
+                let edit_menu = Submenu::with_items(app, "Edit", true, &[
+                    &PredefinedMenuItem::undo(app, None)?,
+                    &PredefinedMenuItem::redo(app, None)?,
+                    &PredefinedMenuItem::separator(app)?,
+                    &PredefinedMenuItem::cut(app, None)?,
+                    &PredefinedMenuItem::copy(app, None)?,
+                    &PredefinedMenuItem::paste(app, None)?,
+                    &PredefinedMenuItem::select_all(app, None)?,
+                ])?;
 
-            let menu = Menu::with_items(app, &[&app_menu, &edit_menu])?;
-            app.set_menu(menu)?;
+                let menu = Menu::with_items(app, &[&app_menu, &edit_menu])?;
+                app.set_menu(menu)?;
 
-            // Listen for settings menu click
-            app.on_menu_event(move |app_handle, event| {
-                if event.id() == "settings" {
-                    if let Some(window) = app_handle.get_webview_window("main") {
-                        window.eval("window.__openSettings?.()").ok();
+                // Listen for settings menu click
+                app.on_menu_event(move |app_handle, event| {
+                    if event.id() == "settings" {
+                        if let Some(window) = app_handle.get_webview_window("main") {
+                            window.eval("window.__openSettings?.()").ok();
+                        }
+                    }
+                });
+
+                // --- Main window close behavior ---
+                // If notch is active: hide the window (app stays alive for the notch)
+                // If notch is disabled: let the app quit normally
+                if let Some(main_win) = app.get_webview_window("main") {
+                    let w = main_win.clone();
+                    let handle = app.handle().clone();
+                    main_win.on_window_event(move |event| {
+                        if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+                            let notch_visible = handle.get_webview_window("notch-widget")
+                                .and_then(|nw| nw.is_visible().ok())
+                                .unwrap_or(false);
+                            if notch_visible {
+                                // Notch is running — just hide the main window
+                                api.prevent_close();
+                                w.hide().ok();
+                            }
+                            // Otherwise let the close proceed normally (app quits)
+                        }
+                    });
+                }
+
+                // --- Create the notch widget window (if enabled) ---
+                let settings_path = get_settings_path(&app.handle());
+                let notch_enabled = if settings_path.exists() {
+                    let data = fs::read_to_string(&settings_path).unwrap_or_default();
+                    serde_json::from_str::<AppSettings>(&data)
+                        .map(|s| s.notch_enabled)
+                        .unwrap_or(true)
+                } else {
+                    true
+                };
+
+                let widget_width: f64 = 440.0;
+                let widget_height: f64 = 140.0;
+
+                WebviewWindowBuilder::new(
+                    app,
+                    "notch-widget",
+                    tauri::WebviewUrl::App("notch.html".into()),
+                )
+                .title("")
+                .inner_size(widget_width, widget_height)
+                .position(0.0, 0.0) // repositioned below via NSWindow
+                .decorations(false)
+                .transparent(true)
+                .always_on_top(true)
+                .skip_taskbar(true)
+                .focused(false)
+                .visible(notch_enabled)
+                .resizable(false)
+                .shadow(false)
+                .disable_drag_drop_handler()
+                .build()?;
+
+                // Position at absolute top of screen (over the notch) + set up mouse passthrough
+                #[cfg(target_os = "macos")]
+                {
+                    use raw_window_handle::HasWindowHandle;
+                    if let Some(notch_win) = app.get_webview_window("notch-widget") {
+                        if let Ok(handle) = notch_win.window_handle() {
+                            if let raw_window_handle::RawWindowHandle::AppKit(appkit) =
+                                handle.as_raw()
+                            {
+                                configure_notch_window(appkit.ns_view, widget_width, widget_height);
+                            }
+                        }
                     }
                 }
-            });
 
-            // --- Main window close behavior ---
-            // If notch is active: hide the window (app stays alive for the notch)
-            // If notch is disabled: let the app quit normally
-            if let Some(main_win) = app.get_webview_window("main") {
-                let w = main_win.clone();
-                let handle = app.handle().clone();
-                main_win.on_window_event(move |event| {
-                    if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                        let notch_visible = handle.get_webview_window("notch-widget")
-                            .and_then(|nw| nw.is_visible().ok())
-                            .unwrap_or(false);
-                        if notch_visible {
-                            // Notch is running — just hide the main window
-                            api.prevent_close();
-                            w.hide().ok();
-                        }
-                        // Otherwise let the close proceed normally (app quits)
+                // --- Bridge: notch "+" click → show main window & create note ---
+                let app_handle = app.handle().clone();
+                app.listen("notch-create-note", move |_event| {
+                    if let Some(main_window) = app_handle.get_webview_window("main") {
+                        main_window.show().ok();
+                        main_window.set_focus().ok();
+                        main_window.emit("create-note-from-notch", ()).ok();
+                    }
+                });
+
+                // --- Bridge: notch note click → show main window & open note ---
+                let app_handle2 = app.handle().clone();
+                app.listen("notch-open-note", move |event| {
+                    if let Some(main_window) = app_handle2.get_webview_window("main") {
+                        main_window.show().ok();
+                        main_window.set_focus().ok();
+                        // Forward the note ID payload to the main window
+                        main_window.emit("open-note-from-notch", event.payload()).ok();
+                    }
+                });
+
+                // --- Bridge: notch markdown drop → show main window & import ---
+                let app_handle3 = app.handle().clone();
+                app.listen("notch-import-markdown", move |event| {
+                    if let Some(main_window) = app_handle3.get_webview_window("main") {
+                        main_window.show().ok();
+                        main_window.set_focus().ok();
+                        main_window.emit("import-markdown-from-notch", event.payload()).ok();
                     }
                 });
             }
 
-            // --- Create the notch widget window (if enabled) ---
-            let settings_path = get_settings_path(&app.handle());
-            let notch_enabled = if settings_path.exists() {
-                let data = fs::read_to_string(&settings_path).unwrap_or_default();
-                serde_json::from_str::<AppSettings>(&data)
-                    .map(|s| s.notch_enabled)
-                    .unwrap_or(true)
-            } else {
-                true
-            };
-
-            let widget_width: f64 = 440.0;
-            let widget_height: f64 = 140.0;
-
-            WebviewWindowBuilder::new(
-                app,
-                "notch-widget",
-                tauri::WebviewUrl::App("notch.html".into()),
-            )
-            .title("")
-            .inner_size(widget_width, widget_height)
-            .position(0.0, 0.0) // repositioned below via NSWindow
-            .decorations(false)
-            .transparent(true)
-            .always_on_top(true)
-            .skip_taskbar(true)
-            .focused(false)
-            .visible(notch_enabled)
-            .resizable(false)
-            .shadow(false)
-            .disable_drag_drop_handler()
-            .build()?;
-
-            // Position at absolute top of screen (over the notch) + set up mouse passthrough
-            #[cfg(target_os = "macos")]
-            {
-                use raw_window_handle::HasWindowHandle;
-                if let Some(notch_win) = app.get_webview_window("notch-widget") {
-                    if let Ok(handle) = notch_win.window_handle() {
-                        if let raw_window_handle::RawWindowHandle::AppKit(appkit) =
-                            handle.as_raw()
-                        {
-                            configure_notch_window(appkit.ns_view, widget_width, widget_height);
-                        }
-                    }
-                }
-            }
-
-            // --- Bridge: notch "+" click → show main window & create note ---
-            let app_handle = app.handle().clone();
-            app.listen("notch-create-note", move |_event| {
-                if let Some(main_window) = app_handle.get_webview_window("main") {
-                    main_window.show().ok();
-                    main_window.set_focus().ok();
-                    main_window.emit("create-note-from-notch", ()).ok();
-                }
-            });
-
-            // --- Bridge: notch note click → show main window & open note ---
-            let app_handle2 = app.handle().clone();
-            app.listen("notch-open-note", move |event| {
-                if let Some(main_window) = app_handle2.get_webview_window("main") {
-                    main_window.show().ok();
-                    main_window.set_focus().ok();
-                    // Forward the note ID payload to the main window
-                    main_window.emit("open-note-from-notch", event.payload()).ok();
-                }
-            });
-
-            // --- Bridge: notch markdown drop → show main window & import ---
-            let app_handle3 = app.handle().clone();
-            app.listen("notch-import-markdown", move |event| {
-                if let Some(main_window) = app_handle3.get_webview_window("main") {
-                    main_window.show().ok();
-                    main_window.set_focus().ok();
-                    main_window.emit("import-markdown-from-notch", event.payload()).ok();
-                }
-            });
-
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![
-            list_notes,
-            save_note,
-            load_note,
-            delete_note,
-            load_settings,
-            save_settings,
-            toggle_icloud_sync,
-            notch_poll_cursor,
-            notch_set_interactive,
-            set_notch_visible,
-        ])
+        .invoke_handler({
+            // On mobile, exclude desktop-only notch commands
+            #[cfg(not(mobile))]
+            {
+                tauri::generate_handler![
+                    list_notes,
+                    save_note,
+                    load_note,
+                    delete_note,
+                    load_settings,
+                    save_settings,
+                    toggle_icloud_sync,
+                    notch_poll_cursor,
+                    notch_set_interactive,
+                    set_notch_visible,
+                ]
+            }
+            #[cfg(mobile)]
+            {
+                tauri::generate_handler![
+                    list_notes,
+                    save_note,
+                    load_note,
+                    delete_note,
+                    load_settings,
+                    save_settings,
+                    toggle_icloud_sync,
+                ]
+            }
+        })
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
 

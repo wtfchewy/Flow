@@ -21,6 +21,7 @@ import {
   deleteNoteFromDisk,
 } from './persistence';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { isMobile } from '../platform';
 import {
   MarkdownTransformer,
   HtmlTransformer,
@@ -142,13 +143,20 @@ function attachAutoSave(store: Store) {
 }
 
 export async function selectNote(id: string) {
-  if (activeNoteId.value === id) return;
+  if (activeNoteId.value === id) {
+    // On mobile, still close the sidebar even if re-selecting the same note
+    if (isMobile) sidebarVisible.value = false;
+    return;
+  }
 
   // Save current note before switching
   await saveCurrentNote();
 
   activeNoteId.value = id;
   localStorage.setItem('peak-last-note', id);
+
+  // On mobile, auto-close sidebar after selecting a note
+  if (isMobile) sidebarVisible.value = false;
 
   // Remove old doc if it exists
   try {

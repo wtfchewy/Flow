@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { render } from 'lit';
 import { CloseIcon } from '@blocksuite/icons/lit';
+import { isMobile, isIOS, isMac as isMacPlatform } from '../platform';
 
 export interface AppSettings {
   theme: string;
@@ -14,15 +15,15 @@ export interface AppSettings {
 
 const defaults: AppSettings = {
   theme: 'dark',
-  vibrancy: true,
+  vibrancy: !isMobile, // disable vibrancy on mobile by default (not supported)
   vibrancyOpacity: 0.15,
   vibrancyBlur: 40,
   onboarded: false,
-  notchEnabled: true,
-  icloudSync: false,
+  notchEnabled: !isMobile, // notch widget is desktop-only
+  icloudSync: isIOS, // default to iCloud on iOS
 };
 
-const isMac = navigator.platform.toUpperCase().includes('MAC');
+const isMac = isMacPlatform;
 
 let overlay: HTMLElement | null = null;
 
@@ -106,47 +107,49 @@ export async function openSettings() {
   themeRow.appendChild(themeToggle);
   panel.appendChild(themeRow);
 
-  // Vibrancy toggle
-  const vibrancyRow = createSettingRow('Vibrancy');
-  const vibrancyToggle = createSwitch(settings.vibrancy, async (on) => {
-    settings.vibrancy = on;
-    applySettings(settings);
-    await saveSettingsImmediate(settings);
-  });
-  vibrancyRow.appendChild(vibrancyToggle);
-  panel.appendChild(vibrancyRow);
+  // Vibrancy settings (desktop only — not supported on mobile WebViews)
+  if (!isMobile) {
+    const vibrancyRow = createSettingRow('Vibrancy');
+    const vibrancyToggle = createSwitch(settings.vibrancy, async (on) => {
+      settings.vibrancy = on;
+      applySettings(settings);
+      await saveSettingsImmediate(settings);
+    });
+    vibrancyRow.appendChild(vibrancyToggle);
+    panel.appendChild(vibrancyRow);
 
-  // Blur slider
-  const blurRow = createSettingRow('Blur');
-  const blurSlider = createSlider(0, 80, settings.vibrancyBlur, (val) => {
-    settings.vibrancyBlur = val;
-    applySettings(settings);
-    saveSettingsDebounced(settings);
-  });
-  blurRow.appendChild(blurSlider);
-  panel.appendChild(blurRow);
+    // Blur slider
+    const blurRow = createSettingRow('Blur');
+    const blurSlider = createSlider(0, 80, settings.vibrancyBlur, (val) => {
+      settings.vibrancyBlur = val;
+      applySettings(settings);
+      saveSettingsDebounced(settings);
+    });
+    blurRow.appendChild(blurSlider);
+    panel.appendChild(blurRow);
 
-  // Opacity slider
-  const opacityRow = createSettingRow('Opacity');
-  const opacitySlider = createSlider(0, 0.6, settings.vibrancyOpacity, (val) => {
-    settings.vibrancyOpacity = Math.round(val * 100) / 100;
-    applySettings(settings);
-    saveSettingsDebounced(settings);
-  }, 0.01);
-  opacityRow.appendChild(opacitySlider);
-  panel.appendChild(opacityRow);
+    // Opacity slider
+    const opacityRow = createSettingRow('Opacity');
+    const opacitySlider = createSlider(0, 0.6, settings.vibrancyOpacity, (val) => {
+      settings.vibrancyOpacity = Math.round(val * 100) / 100;
+      applySettings(settings);
+      saveSettingsDebounced(settings);
+    }, 0.01);
+    opacityRow.appendChild(opacitySlider);
+    panel.appendChild(opacityRow);
 
-  // Notch widget toggle
-  const notchRow = createSettingRow('Notch Widget');
-  const notchToggle = createSwitch(settings.notchEnabled, async (on) => {
-    settings.notchEnabled = on;
-    await saveSettingsImmediate(settings);
-    invoke('set_notch_visible', { visible: on });
-  });
-  notchRow.appendChild(notchToggle);
-  panel.appendChild(notchRow);
+    // Notch widget toggle
+    const notchRow = createSettingRow('Notch Widget');
+    const notchToggle = createSwitch(settings.notchEnabled, async (on) => {
+      settings.notchEnabled = on;
+      await saveSettingsImmediate(settings);
+      invoke('set_notch_visible', { visible: on });
+    });
+    notchRow.appendChild(notchToggle);
+    panel.appendChild(notchRow);
+  }
 
-  // iCloud sync toggle (macOS only)
+  // iCloud sync toggle (macOS and iOS)
   if (isMac) {
     const icloudRow = createSettingRow('iCloud Sync');
     const icloudToggle = createSwitch(settings.icloudSync, async (on) => {

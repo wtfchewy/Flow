@@ -15,8 +15,10 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
 import { loadSettings, applySettings } from './settings/settings'; // also registers window.__openSettings
 import { showWelcome } from './welcome/welcome';
+import { isMobile } from './platform';
 
 function makeDraggable(el: HTMLElement) {
+  if (isMobile) return; // No window dragging on mobile
   el.addEventListener('mousedown', (e) => {
     if (e.button !== 0) return;
     // Don't drag if clicking on an interactive element
@@ -59,43 +61,63 @@ async function main() {
   // Build the UI
   const app = document.getElementById('app')!;
 
+  // Tag the root for mobile-specific CSS
+  if (isMobile) {
+    document.documentElement.classList.add('mobile');
+  }
+
   // Sidebar
   const sidebar = createSidebar();
-  makeDraggable(sidebar);
+  if (!isMobile) makeDraggable(sidebar);
   app.appendChild(sidebar);
 
-  // Resize handle between sidebar and editor
+  // Mobile overlay backdrop — click to close sidebar
+  let mobileBackdrop: HTMLElement | null = null;
+  if (isMobile) {
+    mobileBackdrop = document.createElement('div');
+    mobileBackdrop.className = 'peak-mobile-backdrop';
+    mobileBackdrop.addEventListener('click', () => {
+      noteStore.sidebarVisible.value = false;
+    });
+    app.appendChild(mobileBackdrop);
+  }
+
+  // Resize handle between sidebar and editor (desktop only)
   const resizeHandle = document.createElement('div');
   resizeHandle.className = 'peak-sidebar-resize';
+  if (isMobile) resizeHandle.style.display = 'none';
   app.appendChild(resizeHandle);
 
-  // Start with sidebar collapsed in new-window mode
-  if (openNoteId) {
+  // Start with sidebar collapsed in new-window mode or on mobile
+  if (openNoteId || isMobile) {
     noteStore.sidebarVisible.value = false;
   }
 
-  let isResizing = false;
-  resizeHandle.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-    isResizing = true;
-    document.body.style.cursor = 'col-resize';
-    document.body.style.userSelect = 'none';
-  });
+  // Sidebar resize handle (desktop only)
+  if (!isMobile) {
+    let isResizing = false;
+    resizeHandle.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      isResizing = true;
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    });
 
-  document.addEventListener('mousemove', (e) => {
-    if (!isResizing) return;
-    const width = Math.min(500, Math.max(200, e.clientX));
-    sidebar.style.width = width + 'px';
-    sidebar.style.minWidth = width + 'px';
-    sidebar.style.maxWidth = width + 'px';
-  });
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      const width = Math.min(500, Math.max(200, e.clientX));
+      sidebar.style.width = width + 'px';
+      sidebar.style.minWidth = width + 'px';
+      sidebar.style.maxWidth = width + 'px';
+    });
 
-  document.addEventListener('mouseup', () => {
-    if (!isResizing) return;
-    isResizing = false;
-    document.body.style.cursor = '';
-    document.body.style.userSelect = '';
-  });
+    document.addEventListener('mouseup', () => {
+      if (!isResizing) return;
+      isResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    });
+  }
 
   // Editor area
   const editorArea = document.createElement('div');
@@ -131,15 +153,26 @@ async function main() {
   // React to sidebar visibility
   effect(() => {
     const visible = noteStore.sidebarVisible.value;
-    if (!visible) {
-      const width = sidebar.getBoundingClientRect().width;
-      sidebar.style.marginLeft = `-${width}px`;
+
+    if (isMobile) {
+      // Mobile: sidebar overlays as a full-width panel
+      sidebar.classList.toggle('open', visible);
+      if (mobileBackdrop) {
+        mobileBackdrop.classList.toggle('visible', visible);
+      }
+      sidebarPill.classList.toggle('visible', !visible);
     } else {
-      sidebar.style.marginLeft = '';
+      // Desktop: sidebar slides via negative margin
+      if (!visible) {
+        const width = sidebar.getBoundingClientRect().width;
+        sidebar.style.marginLeft = `-${width}px`;
+      } else {
+        sidebar.style.marginLeft = '';
+      }
+      resizeHandle.classList.toggle('collapsed', !visible);
+      editorArea.classList.toggle('sidebar-hidden', !visible);
+      sidebarPill.classList.toggle('visible', !visible);
     }
-    resizeHandle.classList.toggle('collapsed', !visible);
-    editorArea.classList.toggle('sidebar-hidden', !visible);
-    sidebarPill.classList.toggle('visible', !visible);
   });
 
   // Floating mode toggle (top-right overlay)
@@ -233,27 +266,27 @@ async function main() {
   // Open external links (hyperlinks, bookmarks, embeds) in system browser
   noteStore.setupExternalLinkHandler();
 
-  // Listen for "create note" from the notch widget (same app, direct event)
-  listen('create-note-from-notch', async () => {
-    await noteStore.createNote();
-  });
+  // Listen for notch widget events (desktop only)
+  if (!isMobile) {
+    listen('create-note-from-notch', async () => {
+      await noteStore.createNote();
+    });
 
-  // Listen for "open note" from the notch widget
-  listen<string>('open-note-from-notch', async (event) => {
-    const noteId = JSON.parse(event.payload as unknown as string);
-    if (noteId && noteStore.notes.value.find(n => n.id === noteId)) {
-      await noteStore.selectNote(noteId);
-    }
-  });
+    listen<string>('open-note-from-notch', async (event) => {
+      const noteId = JSON.parse(event.payload as unknown as string);
+      if (noteId && noteStore.notes.value.find(n => n.id === noteId)) {
+        await noteStore.selectNote(noteId);
+      }
+    });
 
-  // Listen for markdown drop from the notch widget
-  listen<string>('import-markdown-from-notch', async (event) => {
-    const data = JSON.parse(JSON.parse(event.payload as unknown as string));
-    if (data?.markdown) {
-      const file = new File([data.markdown], `${data.fileName || 'Untitled'}.md`, { type: 'text/markdown' });
-      await noteStore.importMarkdownFile(file);
-    }
-  });
+    listen<string>('import-markdown-from-notch', async (event) => {
+      const data = JSON.parse(JSON.parse(event.payload as unknown as string));
+      if (data?.markdown) {
+        const file = new File([data.markdown], `${data.fileName || 'Untitled'}.md`, { type: 'text/markdown' });
+        await noteStore.importMarkdownFile(file);
+      }
+    });
+  }
 
   // Watch for active note changes to mount/unmount editor
   let editorMounted = noteStore.notes.value.length > 0;

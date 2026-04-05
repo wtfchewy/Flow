@@ -5,6 +5,12 @@ import { type AppSettings, applySettings, saveSettingsImmediate } from '../setti
  * Returns a promise that resolves when the user clicks "Get Started".
  */
 export function showWelcome(settings: AppSettings): Promise<void> {
+  // Load Kalam font for the "Draw," text
+  const fontLink = document.createElement('link');
+  fontLink.rel = 'stylesheet';
+  fontLink.href = 'https://fonts.googleapis.com/css2?family=Kalam:wght@400&display=swap';
+  document.head.appendChild(fontLink);
+
   return new Promise((resolve) => {
     const overlay = document.createElement('div');
     overlay.className = 'peak-welcome-overlay';
@@ -15,12 +21,25 @@ export function showWelcome(settings: AppSettings): Promise<void> {
     // Title
     const title = document.createElement('h1');
     title.className = 'peak-welcome-title';
-    title.textContent = 'Welcome to Peak';
+    title.innerHTML = `
+      <span class="peak-welcome-title-line">
+        <span class="peak-welcome-cursor"></span>Write,
+      </span>
+      <span class="peak-welcome-title-draw">Draw,</span>
+      <span class="peak-welcome-title-line">
+        <svg class="peak-welcome-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="5" fill="var(--affine-primary-color, #1e6fff)"/>
+          <path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>Plan,
+      </span>
+      <br/>
+      <span class="peak-welcome-title-peak">at your Peak.</span>
+    `;
     card.appendChild(title);
 
     const subtitle = document.createElement('p');
     subtitle.className = 'peak-welcome-subtitle';
-    subtitle.textContent = 'A minimal, powerful notes app. Configure your preferences below.';
+    subtitle.textContent = 'Configure your preferences to get started.';
     card.appendChild(subtitle);
 
     // Settings section
@@ -62,7 +81,17 @@ export function showWelcome(settings: AppSettings): Promise<void> {
     // Get Started button
     const btn = document.createElement('button');
     btn.className = 'peak-welcome-btn';
-    btn.textContent = 'Get Started';
+
+    const btnText = document.createElement('span');
+    btnText.className = 'peak-welcome-btn-text';
+    btnText.textContent = 'Get Started';
+    btn.appendChild(btnText);
+
+    const btnArrow = document.createElement('span');
+    btnArrow.className = 'peak-welcome-btn-arrow';
+    btnArrow.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>`;
+    btn.appendChild(btnArrow);
+
     btn.addEventListener('click', async () => {
       settings.onboarded = true;
       await saveSettingsImmediate(settings);

@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+/* ===== Peak Light Theme ===== */
+
+@theme {
+  /* Brand / Primary */
+  --color-brand: #1E96EB;
+  --color-primary: #1E96EB;
+  --color-secondary: rgb(125, 145, 255);
+  --color-tertiary: rgba(239, 250, 255, 1);
+
+  /* Blue scale */
+  --color-blue-50: rgba(239, 250, 255, 1);
+  --color-blue-100: rgba(219, 244, 254, 1);
+  --color-blue-200: rgba(191, 236, 254, 1);
+  --color-blue-300: rgba(147, 226, 253, 1);
+  --color-blue-400: rgba(96, 207, 250, 1);
+  --color-blue-500: rgba(58, 181, 247, 1);
+  --color-blue-600: rgba(30, 150, 235, 1);
+  --color-blue-700: rgba(28, 129, 217, 1);
+  --color-blue-800: rgba(30, 103, 175, 1);
+  --color-blue-900: rgba(30, 87, 138, 1);
+  --color-blue-950: rgba(23, 54, 84, 1);
+
+  /* Surfaces */
+  --color-surface: rgb(255, 255, 255);
+  --color-surface-secondary: rgba(244, 244, 245, 1);
+  --color-surface-tertiary: rgb(238, 238, 238);
+  --color-surface-overlay: rgb(251, 251, 252);
+
+  /* Text */
+  --color-text: rgb(18, 18, 18);
+  --color-text-secondary: rgb(142, 141, 145);
+  --color-text-disabled: rgb(169, 169, 173);
+
+  /* UI */
+  --color-border: rgb(227, 226, 228);
+  --color-icon: rgb(119, 117, 125);
+
+  /* Status */
+  --color-success: rgb(16, 203, 134);
+  --color-warning: rgb(235, 67, 53);
+  --color-error: rgb(235, 67, 53);
+
+  /* Shadows */
+  --shadow-sm: 0px 0px 4px 0px rgba(66, 65, 73, 0.14);
+  --shadow-md: 0px 0px 12px 0px rgba(66, 65, 73, 0.18);
+  --shadow-lg: 0px 0px 20px 0px rgba(66, 65, 73, 0.22);
+  --shadow-overlay: 0px 1px 6px rgba(0,0,0,.16), 0px 8px 14px rgba(0,0,0,.08);
+
+  /* Fonts */
+  --font-sans: "Inter", "Source Sans 3", Poppins, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Space Mono", Consolas, Menlo, monospace;
+}
+
+.gooey {
+  filter: url(#gooey);
+}

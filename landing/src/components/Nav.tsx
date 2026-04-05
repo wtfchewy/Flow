@@ -2,28 +2,28 @@ import { DownloadButton } from './DownloadButton'
 
 export function Nav() {
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-lg bg-surface/50">
+    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-lg bg-surface/50 border-b border-border">
       <div className="px-10 py-5 flex items-center justify-between">
         <a href="/" className="group flex items-center outline-hidden" aria-label="Go home">
           <div className="relative mr-3 size-10 overflow-hidden rounded-xl border-[2.5px] border-brand">
             <svg className="absolute inset-0 size-full origin-center transition delay-50 duration-300 ease-out group-hover:-translate-x-full group-hover:scale-x-50 group-hover:scale-y-75 group-hover:opacity-25 group-hover:delay-0" viewBox="0 0 8 8" preserveAspectRatio="none" shape-rendering="crispEdges" aria-hidden="true">
-              <rect width="8" height="8" fill="#93E2FD"/>
+              <rect width="8" height="8" fill="#93E2FD" />
               <g fill="#1E96EB">
                 {/* Row 0: 100% */}
-                <rect y="0" width="8" height="1"/>
+                <rect y="0" width="8" height="1" />
                 {/* Row 1: ~88% */}
-                <rect y="1" width="8" height="1"/>
-                <rect x="4" y="1" width="1" height="1" fill="#93E2FD"/>
+                <rect y="1" width="8" height="1" />
+                <rect x="4" y="1" width="1" height="1" fill="#93E2FD" />
                 {/* Row 2: 75% checkerboard */}
-                <rect x="0" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/>
+                <rect x="0" y="2" width="1" height="1" /><rect x="2" y="2" width="1" height="1" /><rect x="3" y="2" width="1" height="1" /><rect x="4" y="2" width="1" height="1" /><rect x="6" y="2" width="1" height="1" /><rect x="7" y="2" width="1" height="1" />
                 {/* Row 3: 50% checkerboard */}
-                <rect x="0" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/>
+                <rect x="0" y="3" width="1" height="1" /><rect x="2" y="3" width="1" height="1" /><rect x="4" y="3" width="1" height="1" /><rect x="6" y="3" width="1" height="1" />
                 {/* Row 4: 50% offset */}
-                <rect x="1" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="5" y="4" width="1" height="1"/><rect x="7" y="4" width="1" height="1"/>
+                <rect x="1" y="4" width="1" height="1" /><rect x="3" y="4" width="1" height="1" /><rect x="5" y="4" width="1" height="1" /><rect x="7" y="4" width="1" height="1" />
                 {/* Row 5: 25% */}
-                <rect x="0" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/>
+                <rect x="0" y="5" width="1" height="1" /><rect x="4" y="5" width="1" height="1" />
                 {/* Row 6: 12% */}
-                <rect x="2" y="6" width="1" height="1"/>
+                <rect x="2" y="6" width="1" height="1" />
                 {/* Row 7: 0% - all light */}
               </g>
             </svg>

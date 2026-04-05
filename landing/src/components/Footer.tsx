@@ -13,61 +13,153 @@ function applyTheme(theme: 'light' | 'dark' | 'system') {
   document.documentElement.classList.toggle('dark', isDark)
 }
 
+const S = 5
+const COLS = 8
+const ROWS = 20
+const PW = COLS * S
+const PH = ROWS * S
+
+// Dither gradient: 0% (top) → 100% (bottom)
+const DITHER: number[][] = [
+  [],
+  [],
+  [4],
+  [1],
+  [0, 4],
+  [2, 6],
+  [1, 4, 7],
+  [0, 2, 4, 6],
+  [1, 3, 5, 7],
+  [0, 2, 4, 5, 7],
+  [0, 2, 3, 4, 6, 7],
+  [0, 1, 2, 4, 5, 6, 7],
+]
+
+// 5×5 pixel-art icons
+const ICONS: Record<string, [number, number][]> = {
+  light: [
+    // Diamond / sun
+    [2, 0],
+    [1, 1], [2, 1], [3, 1],
+    [0, 2], [1, 2], [2, 2], [3, 2], [4, 2],
+    [1, 3], [2, 3], [3, 3],
+    [2, 4],
+  ],
+  dark: [
+    // Crescent moon
+    [2, 0], [3, 0],
+    [1, 1],
+    [1, 2],
+    [1, 3],
+    [2, 4], [3, 4],
+  ],
+  system: [
+    // Monitor
+    [0, 0], [1, 0], [2, 0], [3, 0], [4, 0],
+    [0, 1], [4, 1],
+    [0, 2], [1, 2], [2, 2], [3, 2], [4, 2],
+    [2, 3],
+    [1, 4], [2, 4], [3, 4],
+  ],
+}
+
+const OPTIONS = ['light', 'dark', 'system'] as const
+
 export function Footer() {
   const [theme, setTheme] = useState(getInitialTheme)
 
   useEffect(() => {
     applyTheme(theme)
-    if (theme === 'system') {
-      localStorage.removeItem('theme')
-    } else {
-      localStorage.setItem('theme', theme)
-    }
+    if (theme === 'system') localStorage.removeItem('theme')
+    else localStorage.setItem('theme', theme)
   }, [theme])
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const handler = () => { if (theme === 'system') applyTheme('system') }
+    const handler = () => {
+      if (theme === 'system') applyTheme('system')
+    }
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
   }, [theme])
 
-  const options = ['light', 'dark', 'system'] as const
-
   return (
-    <footer className="relative bg-surface border-t border-border px-10 py-5">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-text-secondary">Intuitive. Simple. Peak.</p>
-        <div className="flex items-center gap-1 rounded-xl bg-text/5 p-1">
-          {options.map((opt) => (
-            <button
-              key={opt}
-              onClick={() => setTheme(opt)}
-              className={`cursor-pointer group relative rounded-lg px-2.5 py-1.5 text-sm font-medium transition duration-200 outline-hidden ${theme === opt
-                ? 'bg-surface text-text shadow-sm'
-                : 'text-text-secondary hover:text-text'
-                }`}
-              aria-label={`Switch to ${opt} theme`}
-            >
-              {opt === 'light' && (
-                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="5" />
-                  <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-                </svg>
+    <footer className="relative" style={{ height: PH }}>
+      {/* Full-width dither background */}
+      <svg
+        className="absolute inset-0 w-full h-full text-border"
+        shapeRendering="crispEdges"
+        aria-hidden="true"
+      >
+        <defs>
+          <pattern id="dither-footer" patternUnits="userSpaceOnUse" width={PW} height={PH}>
+            <g fill="currentColor">
+              {DITHER.map((cols, row) =>
+                cols.map((col) => (
+                  <rect key={`${col}-${row}`} x={col * S} y={row * S} width={S} height={S} />
+                ))
               )}
-              {opt === 'dark' && (
-                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              {/* Solid band */}
+              <rect y={12 * S} width={PW} height={8 * S} />
+            </g>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#dither-footer)" />
+      </svg>
+
+      {/* Theme toggle — pixel buttons embedded in the solid band */}
+      <div
+        className="absolute inset-x-0 bottom-0 flex items-center justify-center"
+        style={{ height: 8 * S }}
+      >
+        <div className="flex" style={{ gap: S }}>
+          {OPTIONS.map((opt) => {
+            const active = theme === opt
+            return (
+              <button
+                key={opt}
+                onClick={() => setTheme(opt)}
+                className="group relative flex items-center justify-center cursor-pointer outline-hidden"
+                style={{ width: 7 * S, height: 7 * S }}
+                aria-label={`Switch to ${opt} theme`}
+              >
+                {/* Surface "window" — opens on active / hover */}
+                <div
+                  className={`absolute inset-0 bg-surface transition-all duration-300 ease-out ${
+                    active
+                      ? 'opacity-100 scale-100'
+                      : 'opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100'
+                  }`}
+                />
+
+                {/* Pixel-art icon:
+                    Active  → text color on surface window
+                    Inactive → surface color punched through dither (icon = tiny holes)
+                    Hover   → text color as window opens */}
+                <svg
+                  className={`relative transition-colors duration-300 ${
+                    active
+                      ? 'text-text'
+                      : 'text-surface group-hover:text-text'
+                  }`}
+                  style={{ width: 5 * 3, height: 5 * 3 }}
+                  viewBox="0 0 5 5"
+                  shapeRendering="crispEdges"
+                >
+                  {ICONS[opt].map(([x, y]) => (
+                    <rect
+                      key={`${x}-${y}`}
+                      x={x}
+                      y={y}
+                      width={1}
+                      height={1}
+                      fill="currentColor"
+                    />
+                  ))}
                 </svg>
-              )}
-              {opt === 'system' && (
-                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                  <path d="M8 21h8M12 17v4" />
-                </svg>
-              )}
-            </button>
-          ))}
+              </button>
+            )
+          })}
         </div>
       </div>
     </footer>

@@ -2,7 +2,7 @@ import { DownloadButton } from './DownloadButton'
 
 export function Hero() {
   return (
-    <section id="hero" className="sticky top-0 z-0 pt-44 pb-8 px-6 bg-surface">
+    <section id="hero" className="sticky top-0 z-0 pt-33 pb-8 px-6 bg-surface">
       <div className="max-w-5xl mx-auto text-center">
         <h1
           className="text-6xl sm:text-7xl lg:text-8xl text-text tracking-tight leading-[1.15] mb-12"
@@ -25,7 +25,7 @@ export function Hero() {
           <br />
           at your Peak.
         </h1>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 drop-shadow-lg">
           <DownloadButton variant="brand" />
         </div>
       </div>

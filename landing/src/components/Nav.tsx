@@ -2,29 +2,40 @@ import { DownloadButton } from './DownloadButton'
 
 export function Nav() {
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-lg bg-surface/50 border-b border-border">
+    <nav className=" inset-x-0 z-50 backdrop-blur-lg bg-surface/50">
       <div className="px-10 py-5 flex items-center justify-between">
-        <a href="/" className="group flex items-center outline-hidden" aria-label="Go home">
-          <div className="relative mr-3 size-10 overflow-hidden rounded-xl border-[2.5px] border-brand">
-            <svg className="absolute inset-0 size-full origin-center transition delay-50 duration-300 ease-out group-hover:-translate-x-full group-hover:scale-x-50 group-hover:scale-y-75 group-hover:opacity-25 group-hover:delay-0" viewBox="0 0 8 8" preserveAspectRatio="none" shape-rendering="crispEdges" aria-hidden="true">
-              <rect width="8" height="8" fill="#93E2FD" />
+        <a href="https://github.com/wtfchewy/Peak" className="group flex items-center outline-hidden" aria-label="GitHub">
+          <div className="relative mr-3 size-11 overflow-hidden rounded-xl border-[2.5px] border-brand p-[3px]">
+            <svg className="absolute inset-[3px] size-[calc(100%-6px)] rounded-lg origin-center transition delay-50 duration-300 ease-out group-hover:-translate-x-full group-hover:scale-x-50 group-hover:scale-y-75 group-hover:opacity-25 group-hover:delay-0" viewBox="0 0 12 12" preserveAspectRatio="none" shapeRendering="crispEdges" aria-hidden="true">
+              <rect width="12" height="12" fill="#93E2FD" />
               <g fill="#1E96EB">
-                {/* Row 0: 100% */}
-                <rect y="0" width="8" height="1" />
-                {/* Row 1: ~88% */}
-                <rect y="1" width="8" height="1" />
-                <rect x="4" y="1" width="1" height="1" fill="#93E2FD" />
-                {/* Row 2: 75% checkerboard */}
-                <rect x="0" y="2" width="1" height="1" /><rect x="2" y="2" width="1" height="1" /><rect x="3" y="2" width="1" height="1" /><rect x="4" y="2" width="1" height="1" /><rect x="6" y="2" width="1" height="1" /><rect x="7" y="2" width="1" height="1" />
-                {/* Row 3: 50% checkerboard */}
-                <rect x="0" y="3" width="1" height="1" /><rect x="2" y="3" width="1" height="1" /><rect x="4" y="3" width="1" height="1" /><rect x="6" y="3" width="1" height="1" />
-                {/* Row 4: 50% offset */}
-                <rect x="1" y="4" width="1" height="1" /><rect x="3" y="4" width="1" height="1" /><rect x="5" y="4" width="1" height="1" /><rect x="7" y="4" width="1" height="1" />
-                {/* Row 5: 25% */}
-                <rect x="0" y="5" width="1" height="1" /><rect x="4" y="5" width="1" height="1" />
-                {/* Row 6: 12% */}
-                <rect x="2" y="6" width="1" height="1" />
-                {/* Row 7: 0% - all light */}
+                {/* Row 0: 100% — solid */}
+                <rect y="0" width="12" height="1" />
+                {/* Row 1: 92% */}
+                <rect y="1" width="12" height="1" />
+                <rect x="5" y="1" width="1" height="1" fill="#93E2FD" />
+                {/* Row 2: 83% */}
+                <rect y="2" width="12" height="1" />
+                <rect x="3" y="2" width="1" height="1" fill="#93E2FD" /><rect x="9" y="2" width="1" height="1" fill="#93E2FD" />
+                {/* Row 3: 75% */}
+                <rect y="3" width="12" height="1" />
+                <rect x="2" y="3" width="1" height="1" fill="#93E2FD" /><rect x="7" y="3" width="1" height="1" fill="#93E2FD" /><rect x="10" y="3" width="1" height="1" fill="#93E2FD" />
+                {/* Row 4: 67% */}
+                <rect x="0" y="4" width="1" height="1" /><rect x="1" y="4" width="1" height="1" /><rect x="3" y="4" width="1" height="1" /><rect x="5" y="4" width="1" height="1" /><rect x="6" y="4" width="1" height="1" /><rect x="8" y="4" width="1" height="1" /><rect x="10" y="4" width="1" height="1" /><rect x="11" y="4" width="1" height="1" />
+                {/* Row 5: 58% */}
+                <rect x="0" y="5" width="1" height="1" /><rect x="2" y="5" width="1" height="1" /><rect x="4" y="5" width="1" height="1" /><rect x="6" y="5" width="1" height="1" /><rect x="8" y="5" width="1" height="1" /><rect x="10" y="5" width="1" height="1" /><rect x="11" y="5" width="1" height="1" />
+                {/* Row 6: 50% — even checkerboard */}
+                <rect x="0" y="6" width="1" height="1" /><rect x="2" y="6" width="1" height="1" /><rect x="4" y="6" width="1" height="1" /><rect x="6" y="6" width="1" height="1" /><rect x="8" y="6" width="1" height="1" /><rect x="10" y="6" width="1" height="1" />
+                {/* Row 7: 42% — odd checkerboard */}
+                <rect x="1" y="7" width="1" height="1" /><rect x="3" y="7" width="1" height="1" /><rect x="5" y="7" width="1" height="1" /><rect x="9" y="7" width="1" height="1" /><rect x="11" y="7" width="1" height="1" />
+                {/* Row 8: 33% */}
+                <rect x="0" y="8" width="1" height="1" /><rect x="4" y="8" width="1" height="1" /><rect x="7" y="8" width="1" height="1" /><rect x="10" y="8" width="1" height="1" />
+                {/* Row 9: 25% */}
+                <rect x="2" y="9" width="1" height="1" /><rect x="6" y="9" width="1" height="1" /><rect x="10" y="9" width="1" height="1" />
+                {/* Row 10: 17% */}
+                <rect x="1" y="10" width="1" height="1" /><rect x="8" y="10" width="1" height="1" />
+                {/* Row 11: 8% */}
+                <rect x="5" y="11" width="1" height="1" />
               </g>
             </svg>
             <svg className="absolute inset-0 m-auto size-5 fill-current text-brand ease origin-right translate-x-0.5 scale-50 opacity-0 blur-xs transition duration-300 group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100 group-hover:blur-none group-hover:delay-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -34,12 +45,11 @@ export function Nav() {
           <div className="text-2xl font-bold text-text">Peak</div>
         </a>
         <div className="flex items-center gap-2">
-          <a className="group inline-flex items-center justify-center outline-hidden transition duration-300 hover:bg-text/5 focus:ring-2 focus:ring-brand/90 rounded-2xl px-5 py-4 text-lg font-bold not-sm:bg-text/5" href="/faqs" aria-label="Frequently asked questions">
-            <svg className="size-[22px] origin-bottom fill-current transition duration-300 group-hover:-rotate-12 sm:mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" aria-hidden="true">
-              <path d="M13.8906 26.9805C14.418 26.9805 14.9102 26.7578 15.3789 25.9492L17.5469 22.3281H21.4609C24.9531 22.3281 26.8281 20.3945 26.8281 16.9609V7.98438C26.8281 4.55078 24.9531 2.61719 21.4609 2.61719H6.36719C2.875 2.61719 1 4.53906 1 7.98438V16.9609C1 20.4062 2.875 22.3281 6.36719 22.3281H10.2344L12.4023 25.9492C12.8711 26.7578 13.3633 26.9805 13.8906 26.9805Z" />
-              <path className="text-surface origin-top-left stroke-current stroke-2 transition duration-250 group-hover:-rotate-3 group-hover:delay-50" d="M8 14H16M8 10H20.25" strokeLinecap="round" />
+          <a className="group inline-flex items-center justify-center outline-hidden transition duration-300 hover:bg-text/5 focus:ring-2 focus:ring-brand/90 rounded-2xl px-5 py-4 text-lg font-bold not-sm:bg-text/5" href="/try" aria-label="New Note">
+            <svg className="h-6 w-6 fill-current transition duration-300 origin-bottom group-hover:-rotate-12 sm:mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" aria-hidden="true">
+              <path d="M160 544C124.7 544 96 515.3 96 480L96 160C96 124.7 124.7 96 160 96L480 96C515.3 96 544 124.7 544 160L544 373.5C544 390.5 537.3 406.8 525.3 418.8L418.7 525.3C406.7 537.3 390.4 544 373.4 544L160 544zM485.5 368L392 368C378.7 368 368 378.7 368 392L368 485.5L485.5 368z" />
             </svg>
-            <span className="hidden sm:block">FAQs</span>
+            <span className="hidden sm:block">New Note</span>
           </a>
           <DownloadButton className="not-sm:hidden" />
         </div>

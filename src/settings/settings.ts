@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { render } from 'lit';
 import { CloseIcon } from '@blocksuite/icons/lit';
+import { showWelcome } from '../welcome/welcome';
 
 export interface AppSettings {
   theme: string;
@@ -95,8 +96,14 @@ export async function openSettings() {
 
   panel.appendChild(header);
 
-  // Theme setting
-  const themeRow = createSettingRow('Appearance');
+  // Scrollable content
+  const content = document.createElement('div');
+  content.className = 'peak-settings-content';
+
+  // ===== Appearance section =====
+  content.appendChild(createSectionHeader('Appearance'));
+
+  const themeRow = createSettingRow('Theme', 'Choose your theme');
   const themeToggle = createSegmentedControl(
     ['Light', 'Dark'],
     settings.theme === 'dark' ? 1 : 0,
@@ -107,89 +114,123 @@ export async function openSettings() {
     }
   );
   themeRow.appendChild(themeToggle);
-  panel.appendChild(themeRow);
+  content.appendChild(themeRow);
 
-  // Vibrancy toggle
-  const vibrancyRow = createSettingRow('Vibrancy');
-  const vibrancyToggle = createSwitch(settings.vibrancy, async (on) => {
-    settings.vibrancy = on;
-    applySettings(settings);
-    await saveSettingsImmediate(settings);
-  });
-  vibrancyRow.appendChild(vibrancyToggle);
-  panel.appendChild(vibrancyRow);
-
-  // Blur slider
-  const blurRow = createSettingRow('Blur');
-  const blurSlider = createSlider(0, 80, settings.vibrancyBlur, (val) => {
-    settings.vibrancyBlur = val;
-    applySettings(settings);
-    saveSettingsDebounced(settings);
-  });
-  blurRow.appendChild(blurSlider);
-  panel.appendChild(blurRow);
-
-  // Opacity slider
-  const opacityRow = createSettingRow('Opacity');
-  const opacitySlider = createSlider(0, 0.6, settings.vibrancyOpacity, (val) => {
-    settings.vibrancyOpacity = Math.round(val * 100) / 100;
-    applySettings(settings);
-    saveSettingsDebounced(settings);
-  }, 0.01);
-  opacityRow.appendChild(opacitySlider);
-  panel.appendChild(opacityRow);
-
-  // Notch widget toggle
-  const notchRow = createSettingRow('Notch Widget');
-  const notchToggle = createSwitch(settings.notchEnabled, async (on) => {
-    settings.notchEnabled = on;
-    await saveSettingsImmediate(settings);
-    invoke('set_notch_visible', { visible: on });
-  });
-  notchRow.appendChild(notchToggle);
-  panel.appendChild(notchRow);
-
-  // iCloud sync toggle (macOS only)
-  if (isMac) {
-    const icloudRow = createSettingRow('iCloud Sync');
-    const icloudToggle = createSwitch(settings.icloudSync, async (on) => {
-      try {
-        await invoke('toggle_icloud_sync', { enable: on });
-        settings.icloudSync = on;
-        await saveSettingsImmediate(settings);
-      } catch (err) {
-        // Revert the toggle on failure
-        icloudToggle.classList.toggle('on', !on);
-        console.error('iCloud sync toggle failed:', err);
-      }
-    });
-    icloudRow.appendChild(icloudToggle);
-    panel.appendChild(icloudRow);
-  }
-
-  // Header bar toggle
-  const headerBarRow = createSettingRow('Header Bar');
+  const headerBarRow = createSettingRow('Header Bar', 'Show a header bar with title and controls above the editor');
   const headerBarToggle = createSwitch(settings.headerBar, async (on) => {
     settings.headerBar = on;
     document.documentElement.classList.toggle('peak-header-bar', on);
     await saveSettingsImmediate(settings);
   });
   headerBarRow.appendChild(headerBarToggle);
-  panel.appendChild(headerBarRow);
+  content.appendChild(headerBarRow);
 
+  // ===== Vibrancy section =====
+  content.appendChild(createSectionHeader('Vibrancy'));
+
+  const vibrancyRow = createSettingRow('Vibrancy', 'Enable translucent background effect');
+  const vibrancyToggle = createSwitch(settings.vibrancy, async (on) => {
+    settings.vibrancy = on;
+    applySettings(settings);
+    await saveSettingsImmediate(settings);
+  });
+  vibrancyRow.appendChild(vibrancyToggle);
+  content.appendChild(vibrancyRow);
+
+  const blurRow = createSettingRow('Blur', 'Adjust the vibrancy blur intensity');
+  const blurSlider = createSlider(0, 80, settings.vibrancyBlur, (val) => {
+    settings.vibrancyBlur = val;
+    applySettings(settings);
+    saveSettingsDebounced(settings);
+  });
+  blurRow.appendChild(blurSlider);
+  content.appendChild(blurRow);
+
+  const opacityRow = createSettingRow('Opacity', 'Adjust the vibrancy opacity');
+  const opacitySlider = createSlider(0, 0.6, settings.vibrancyOpacity, (val) => {
+    settings.vibrancyOpacity = Math.round(val * 100) / 100;
+    applySettings(settings);
+    saveSettingsDebounced(settings);
+  }, 0.01);
+  opacityRow.appendChild(opacitySlider);
+  content.appendChild(opacityRow);
+
+  // ===== Features section =====
+  content.appendChild(createSectionHeader('Features'));
+
+  const notchRow = createSettingRow('Notch Widget', 'Show the notch widget for quick access');
+  const notchToggle = createSwitch(settings.notchEnabled, async (on) => {
+    settings.notchEnabled = on;
+    await saveSettingsImmediate(settings);
+    invoke('set_notch_visible', { visible: on });
+  });
+  notchRow.appendChild(notchToggle);
+  content.appendChild(notchRow);
+
+  if (isMac) {
+    const icloudRow = createSettingRow('iCloud Sync', 'Sync your notes across devices via iCloud');
+    const icloudToggle = createSwitch(settings.icloudSync, async (on) => {
+      try {
+        await invoke('toggle_icloud_sync', { enable: on });
+        settings.icloudSync = on;
+        await saveSettingsImmediate(settings);
+      } catch (err) {
+        icloudToggle.classList.toggle('on', !on);
+        console.error('iCloud sync toggle failed:', err);
+      }
+    });
+    icloudRow.appendChild(icloudToggle);
+    content.appendChild(icloudRow);
+  }
+
+  // ===== Developer section =====
+  content.appendChild(createSectionHeader('Developer'));
+
+  const resetRow = createSettingRow('Reset Onboarding', 'Show the welcome screen on next launch');
+  const resetBtn = document.createElement('button');
+  resetBtn.className = 'peak-settings-reset-btn';
+  resetBtn.textContent = 'Reset';
+  resetBtn.addEventListener('click', async () => {
+    settings.onboarded = false;
+    await saveSettingsImmediate(settings);
+    closeSettings();
+    showWelcome(settings);
+  });
+  resetRow.appendChild(resetBtn);
+  content.appendChild(resetRow);
+
+  panel.appendChild(content);
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
 }
 
-function createSettingRow(label: string): HTMLElement {
+function createSectionHeader(title: string): HTMLElement {
+  const section = document.createElement('div');
+  section.className = 'peak-settings-section';
+  section.textContent = title;
+  return section;
+}
+
+function createSettingRow(label: string, description?: string): HTMLElement {
   const row = document.createElement('div');
   row.className = 'peak-settings-row';
+
+  const textWrap = document.createElement('div');
+  textWrap.className = 'peak-settings-row-text';
 
   const labelEl = document.createElement('span');
   labelEl.className = 'peak-settings-label';
   labelEl.textContent = label;
-  row.appendChild(labelEl);
+  textWrap.appendChild(labelEl);
 
+  if (description) {
+    const descEl = document.createElement('span');
+    descEl.className = 'peak-settings-description';
+    descEl.textContent = description;
+    textWrap.appendChild(descEl);
+  }
+
+  row.appendChild(textWrap);
   return row;
 }
 

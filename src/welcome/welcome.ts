@@ -1,8 +1,8 @@
 import { type AppSettings, applySettings, saveSettingsImmediate } from '../settings/settings';
 
 /**
- * Shows a full-screen welcome/onboarding overlay with settings configuration.
- * Returns a promise that resolves when the user clicks "Let's Go".
+ * Shows a full-screen welcome/onboarding overlay.
+ * Returns a promise that resolves when the user clicks "Get Started".
  */
 export function showWelcome(settings: AppSettings): Promise<void> {
   return new Promise((resolve) => {
@@ -20,7 +20,7 @@ export function showWelcome(settings: AppSettings): Promise<void> {
 
     const subtitle = document.createElement('p');
     subtitle.className = 'peak-welcome-subtitle';
-    subtitle.textContent = 'Set up your workspace before getting started.';
+    subtitle.textContent = 'A minimal, powerful notes app. Configure your preferences below.';
     card.appendChild(subtitle);
 
     // Settings section
@@ -28,7 +28,7 @@ export function showWelcome(settings: AppSettings): Promise<void> {
     settingsSection.className = 'peak-welcome-settings';
 
     // Theme
-    const themeRow = createRow('Appearance');
+    const themeRow = createRow('Theme', 'Choose light or dark mode');
     const themeControl = createSegmentedControl(
       ['Light', 'Dark'],
       settings.theme === 'dark' ? 1 : 0,
@@ -41,7 +41,7 @@ export function showWelcome(settings: AppSettings): Promise<void> {
     settingsSection.appendChild(themeRow);
 
     // Vibrancy
-    const vibrancyRow = createRow('Vibrancy');
+    const vibrancyRow = createRow('Vibrancy', 'Translucent background effect');
     const vibrancyToggle = createSwitch(settings.vibrancy, (on) => {
       settings.vibrancy = on;
       applySettings(settings);
@@ -49,30 +49,20 @@ export function showWelcome(settings: AppSettings): Promise<void> {
     vibrancyRow.appendChild(vibrancyToggle);
     settingsSection.appendChild(vibrancyRow);
 
-    // Blur
-    const blurRow = createRow('Blur');
-    const blurSlider = createSlider(0, 80, settings.vibrancyBlur, (val) => {
-      settings.vibrancyBlur = val;
-      applySettings(settings);
+    // iCloud Sync
+    const icloudRow = createRow('iCloud Sync', 'Sync your notes across devices');
+    const icloudToggle = createSwitch(settings.icloudSync, (on) => {
+      settings.icloudSync = on;
     });
-    blurRow.appendChild(blurSlider);
-    settingsSection.appendChild(blurRow);
-
-    // Opacity
-    const opacityRow = createRow('Opacity');
-    const opacitySlider = createSlider(0, 0.6, settings.vibrancyOpacity, (val) => {
-      settings.vibrancyOpacity = Math.round(val * 100) / 100;
-      applySettings(settings);
-    }, 0.01);
-    opacityRow.appendChild(opacitySlider);
-    settingsSection.appendChild(opacityRow);
+    icloudRow.appendChild(icloudToggle);
+    settingsSection.appendChild(icloudRow);
 
     card.appendChild(settingsSection);
 
-    // Let's Go button
+    // Get Started button
     const btn = document.createElement('button');
     btn.className = 'peak-welcome-btn';
-    btn.textContent = "Let's Go";
+    btn.textContent = 'Get Started';
     btn.addEventListener('click', async () => {
       settings.onboarded = true;
       await saveSettingsImmediate(settings);
@@ -89,15 +79,26 @@ export function showWelcome(settings: AppSettings): Promise<void> {
   });
 }
 
-function createRow(label: string): HTMLElement {
+function createRow(label: string, description?: string): HTMLElement {
   const row = document.createElement('div');
   row.className = 'peak-settings-row';
+
+  const textWrap = document.createElement('div');
+  textWrap.className = 'peak-settings-row-text';
 
   const labelEl = document.createElement('span');
   labelEl.className = 'peak-settings-label';
   labelEl.textContent = label;
-  row.appendChild(labelEl);
+  textWrap.appendChild(labelEl);
 
+  if (description) {
+    const descEl = document.createElement('span');
+    descEl.className = 'peak-settings-description';
+    descEl.textContent = description;
+    textWrap.appendChild(descEl);
+  }
+
+  row.appendChild(textWrap);
   return row;
 }
 
@@ -159,41 +160,4 @@ function createSwitch(
   });
 
   return sw;
-}
-
-function createSlider(
-  min: number,
-  max: number,
-  value: number,
-  onChange: (val: number) => void,
-  step?: number
-): HTMLElement {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'peak-slider-wrapper';
-
-  const input = document.createElement('input');
-  input.type = 'range';
-  input.className = 'peak-slider';
-  input.min = String(min);
-  input.max = String(max);
-  input.step = String(step ?? 1);
-  input.value = String(value);
-
-  updateSliderFill(input);
-
-  input.addEventListener('input', () => {
-    updateSliderFill(input);
-    onChange(parseFloat(input.value));
-  });
-
-  wrapper.appendChild(input);
-  return wrapper;
-}
-
-function updateSliderFill(input: HTMLInputElement) {
-  const min = parseFloat(input.min);
-  const max = parseFloat(input.max);
-  const val = parseFloat(input.value);
-  const pct = ((val - min) / (max - min)) * 100;
-  input.style.setProperty('--fill', `${pct}%`);
 }

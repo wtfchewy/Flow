@@ -10,6 +10,7 @@ export interface AppSettings {
   onboarded: boolean;
   notchEnabled: boolean;
   icloudSync: boolean;
+  headerBar: boolean;
 }
 
 const defaults: AppSettings = {
@@ -20,6 +21,7 @@ const defaults: AppSettings = {
   onboarded: false,
   notchEnabled: true,
   icloudSync: false,
+  headerBar: true,
 };
 
 const isMac = navigator.platform.toUpperCase().includes('MAC');
@@ -48,6 +50,7 @@ export async function saveSettingsImmediate(settings: AppSettings) {
 export function applySettings(settings: AppSettings) {
   document.documentElement.setAttribute('data-theme', settings.theme);
   document.documentElement.classList.toggle('vibrancy', settings.vibrancy);
+  document.documentElement.classList.toggle('peak-header-bar', settings.headerBar);
 
   const root = document.documentElement.style;
   const rgb = settings.theme === 'light' ? '255, 255, 255' : '0, 0, 0';
@@ -163,6 +166,16 @@ export async function openSettings() {
     icloudRow.appendChild(icloudToggle);
     panel.appendChild(icloudRow);
   }
+
+  // Header bar toggle
+  const headerBarRow = createSettingRow('Header Bar');
+  const headerBarToggle = createSwitch(settings.headerBar, async (on) => {
+    settings.headerBar = on;
+    document.documentElement.classList.toggle('peak-header-bar', on);
+    await saveSettingsImmediate(settings);
+  });
+  headerBarRow.appendChild(headerBarToggle);
+  panel.appendChild(headerBarRow);
 
   overlay.appendChild(panel);
   document.body.appendChild(overlay);

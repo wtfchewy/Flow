@@ -246,6 +246,7 @@ body {
   margin-bottom: 2px;
 }
 
+
 .peak-note-item-meta {
   display: flex;
   align-items: center;
@@ -408,7 +409,7 @@ html[data-theme='light'] .peak-note-item-folder {
   display: none;
 }
 
-/* Sidebar toggle pill (top-left, hidden when sidebar open) */
+/* ===== Floating overlays (original style, default) ===== */
 .peak-editor-sidebar-pill {
   position: absolute;
   top: 10px;
@@ -425,35 +426,157 @@ html[data-theme='light'] .peak-note-item-folder {
   display: flex;
 }
 
-/* Saving indicator (top-left, independent) */
-.peak-saving-text {
+.peak-float-saving-indicator {
   position: absolute;
-  top: 10px;
+  top: 12px;
   left: 16px;
   z-index: 20;
-  font-size: 12px;
-  color: var(--affine-text-secondary-color);
-  opacity: 0;
-  transition: opacity 0.15s ease;
-  white-space: nowrap;
-  line-height: 32px;
-  pointer-events: none;
 }
 
-.peak-editor-area.sidebar-hidden .peak-saving-text {
-  left: 60px;
+.peak-editor-area.sidebar-hidden .peak-float-saving-indicator {
+  left: 56px;
 }
 
-.peak-saving-text.visible {
-  opacity: 1;
-}
-
-/* Floating mode toggle - top right overlay */
-.peak-mode-toggle {
+.peak-mode-toggle.peak-float-mode-toggle {
   position: absolute;
   top: 10px;
   right: 16px;
   z-index: 20;
+  width: fit-content;
+}
+
+/* Hide floating overlays when header bar is enabled */
+html.peak-header-bar .peak-editor-sidebar-pill,
+html.peak-header-bar .peak-float-saving-indicator,
+html.peak-header-bar .peak-float-mode-toggle {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* ===== Editor Header Bar ===== */
+.peak-editor-header {
+  flex-shrink: 0;
+  display: none;
+  align-items: center;
+  height: 46px;
+  padding: 0 12px;
+  position: relative;
+  z-index: 20;
+  border-bottom: 0.5px solid var(--affine-border-color);
+}
+
+html.peak-header-bar .peak-editor-header {
+  display: flex;
+}
+
+.peak-editor-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.peak-mode-btn.peak-header-sidebar-btn {
+  display: none;
+}
+
+.peak-mode-btn.peak-header-sidebar-btn.visible {
+  display: flex;
+}
+
+.peak-editor-header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  max-width: 60%;
+}
+
+.peak-editor-header-title-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: inherit;
+  font-family: var(--affine-font-family);
+}
+
+.peak-editor-header-title-btn:hover {
+  background: var(--affine-hover-color);
+}
+
+.peak-editor-header-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--affine-text-primary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.peak-editor-header-chevron {
+  display: flex;
+  align-items: center;
+  color: var(--affine-text-secondary-color);
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.peak-editor-header-chevron.open {
+  transform: rotate(180deg);
+}
+
+
+.peak-editor-header-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Saving spinner */
+.peak-saving-indicator {
+  width: 32px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.peak-saving-indicator::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2.5px solid var(--affine-border-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  scale: 0;
+  opacity: 0;
+  transition: scale 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: peak-spin 0.6s linear infinite;
+}
+
+.peak-saving-indicator.visible::after {
+  scale: 1;
+  opacity: 1;
+}
+
+@keyframes peak-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Mode toggle - inline in header */
+.peak-mode-toggle {
+  position: relative;
   display: flex;
   gap: 2px;
   background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));

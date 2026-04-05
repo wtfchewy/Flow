@@ -792,6 +792,27 @@ html.vibrancy .peak-editor-drag-wrap {
   line-height: 1.4;
 }
 
+.peak-settings-scroll-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0 0;
+  color: var(--affine-text-secondary-color);
+  flex-shrink: 0;
+  transition: opacity 0.2s ease;
+  animation: peak-scroll-bounce 1.5s ease-in-out infinite;
+}
+
+.peak-settings-scroll-indicator.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes peak-scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
 .peak-settings-reset-btn {
   flex-shrink: 0;
   padding: 6px 16px;

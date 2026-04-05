@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import { render } from 'lit';
-import { CloseIcon } from '@blocksuite/icons/lit';
+import { CloseIcon, ArrowDownSmallIcon } from '@blocksuite/icons/lit';
 import { showWelcome } from '../welcome/welcome';
 
 export interface AppSettings {
@@ -199,9 +199,25 @@ export async function openSettings() {
   resetRow.appendChild(resetBtn);
   content.appendChild(resetRow);
 
+  // Scroll indicator arrow
+  const scrollIndicator = document.createElement('div');
+  scrollIndicator.className = 'peak-settings-scroll-indicator';
+  render(ArrowDownSmallIcon({ width: '20', height: '20' }), scrollIndicator);
+
+  function updateScrollIndicator() {
+    const atBottom = content.scrollHeight - content.scrollTop - content.clientHeight < 10;
+    scrollIndicator.classList.toggle('hidden', atBottom);
+  }
+
+  content.addEventListener('scroll', updateScrollIndicator);
+
   panel.appendChild(content);
+  panel.appendChild(scrollIndicator);
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
+
+  // Check after render
+  requestAnimationFrame(updateScrollIndicator);
 }
 
 function createSectionHeader(title: string): HTMLElement {

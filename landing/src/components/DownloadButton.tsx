@@ -1,7 +1,7 @@
 export function DownloadButton({ className = '', variant = 'default' }: { className?: string; variant?: 'default' | 'brand' }) {
   const base = variant === 'brand'
     ? 'bg-brand text-white'
-    : 'bg-orange-950/5 dark:bg-orange-75/5'
+    : 'bg-text/5'
 
   return (
     <a

@@ -2,7 +2,7 @@ import { DownloadButton } from './DownloadButton'
 
 export function Nav() {
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-lg bg-white/50">
+    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-lg bg-surface/50">
       <div className="px-10 py-5 flex items-center justify-between">
         <a href="/" className="group flex items-center outline-hidden" aria-label="Go home">
           <div className="relative mr-3 size-10 overflow-hidden rounded-xl border-[2.5px] border-brand">
@@ -34,10 +34,10 @@ export function Nav() {
           <div className="text-2xl font-bold text-text">Peak</div>
         </a>
         <div className="flex items-center gap-2">
-          <a className="group dark:hover:bg-orange-75/5 inline-flex items-center justify-center outline-hidden transition duration-300 hover:bg-primary/5 focus:ring-2 focus:ring-brand/90 rounded-2xl px-5 py-4 text-lg font-bold not-sm:bg-stone-800/5" href="/faqs" aria-label="Frequently asked questions">
+          <a className="group inline-flex items-center justify-center outline-hidden transition duration-300 hover:bg-text/5 focus:ring-2 focus:ring-brand/90 rounded-2xl px-5 py-4 text-lg font-bold not-sm:bg-text/5" href="/faqs" aria-label="Frequently asked questions">
             <svg className="size-[22px] origin-bottom fill-current transition duration-300 group-hover:-rotate-12 sm:mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" aria-hidden="true">
               <path d="M13.8906 26.9805C14.418 26.9805 14.9102 26.7578 15.3789 25.9492L17.5469 22.3281H21.4609C24.9531 22.3281 26.8281 20.3945 26.8281 16.9609V7.98438C26.8281 4.55078 24.9531 2.61719 21.4609 2.61719H6.36719C2.875 2.61719 1 4.53906 1 7.98438V16.9609C1 20.4062 2.875 22.3281 6.36719 22.3281H10.2344L12.4023 25.9492C12.8711 26.7578 13.3633 26.9805 13.8906 26.9805Z" />
-              <path className="text-orange-75 origin-top-left stroke-current stroke-2 transition duration-250 group-hover:-rotate-3 group-hover:text-[#f6e5d5] group-hover:delay-50 dark:text-stone-900 dark:group-hover:text-stone-900" d="M8 14H16M8 10H20.25" strokeLinecap="round" />
+              <path className="text-surface origin-top-left stroke-current stroke-2 transition duration-250 group-hover:-rotate-3 group-hover:delay-50" d="M8 14H16M8 10H20.25" strokeLinecap="round" />
             </svg>
             <span className="hidden sm:block">FAQs</span>
           </a>

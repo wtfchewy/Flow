@@ -46,8 +46,8 @@ export function Features() {
         <div className="group flex flex-col items-center justify-center text-center sm:col-span-2">
           <div className="mb-5 h-18">
             <div className="gooey flex h-full items-center justify-center space-x-2.5">
-              <div className="h-11 w-11 rounded-full bg-stone-800 transition duration-700 group-hover:translate-x-11" />
-              <div className="h-7 w-7 rounded-full bg-stone-800 transition duration-700 group-hover:-translate-x-12" />
+              <div className="h-11 w-11 rounded-full bg-text transition duration-700 group-hover:translate-x-11" />
+              <div className="h-7 w-7 rounded-full bg-text transition duration-700 group-hover:-translate-x-12" />
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="absolute">
               <defs>

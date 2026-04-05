@@ -53,6 +53,32 @@
   --font-mono: "IBM Plex Mono", "Space Mono", Consolas, Menlo, monospace;
 }
 
+/* ===== Peak Dark Theme (from BlockSuite) ===== */
+
+:root.dark {
+  --color-surface: #141414;
+  --color-surface-secondary: #252525;
+  --color-surface-tertiary: #565656;
+  --color-surface-overlay: #252525;
+
+  --color-text: #e6e6e6;
+  --color-text-secondary: #929292;
+  --color-text-disabled: #565656;
+
+  --color-border: #414141;
+  --color-icon: #cdcdcd;
+
+  --shadow-sm: 0px 0px 4px 0px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0px 0px 12px 0px rgba(0, 0, 0, 0.36);
+  --shadow-lg: 0px 0px 20px 0px rgba(0, 0, 0, 0.44);
+  --shadow-overlay: 0px 1px 6px rgba(0, 0, 0, 0.32), 0px 8px 14px rgba(0, 0, 0, 0.16);
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
 .gooey {
   filter: url(#gooey);
 }

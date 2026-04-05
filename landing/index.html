@@ -11,6 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kalam:wght@400&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <script>
+      (function() {
+        var t = localStorage.getItem('theme');
+        var d = t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches);
+        if (d) document.documentElement.classList.add('dark');
+      })();
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

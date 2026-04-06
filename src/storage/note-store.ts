@@ -509,6 +509,7 @@ export function openNoteInNewWindow(id: string) {
     height: 700,
     decorations: false,
     transparent: true,
+    visible: false,
   });
 }
 

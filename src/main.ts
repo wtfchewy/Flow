@@ -70,6 +70,11 @@ async function main() {
   const urlParams = new URLSearchParams(window.location.search);
   const openNoteId = urlParams.get('noteId');
 
+  // Start with sidebar collapsed in new-window mode (before creating DOM)
+  if (openNoteId) {
+    noteStore.sidebarVisible.value = false;
+  }
+
   // Build the UI
   const app = document.getElementById('app')!;
 
@@ -82,11 +87,6 @@ async function main() {
   const resizeHandle = document.createElement('div');
   resizeHandle.className = 'peak-sidebar-resize';
   app.appendChild(resizeHandle);
-
-  // Start with sidebar collapsed in new-window mode
-  if (openNoteId) {
-    noteStore.sidebarVisible.value = false;
-  }
 
   let isResizing = false;
   resizeHandle.addEventListener('mousedown', (e) => {
@@ -487,6 +487,9 @@ async function main() {
       await noteStore.importMarkdownFile(file);
     }
   });
+
+  // Show the main window now that the UI is fully ready
+  await getCurrentWindow().show();
 
   // Watch for active note changes to mount/unmount editor
   let editorMounted = noteStore.notes.value.length > 0;

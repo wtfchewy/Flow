@@ -132,6 +132,10 @@ async function main() {
   const sidebarBtn = document.createElement('button');
   sidebarBtn.className = 'peak-mode-btn sidebar-btn peak-header-sidebar-btn';
   render(SidebarIcon({ width: '20', height: '20' }), sidebarBtn);
+  const sidebarTooltip = document.createElement('affine-tooltip');
+  sidebarTooltip.setAttribute('tip-position', 'bottom-start');
+  sidebarTooltip.textContent = 'Show Sidebar';
+  sidebarBtn.appendChild(sidebarTooltip);
   sidebarBtn.addEventListener('click', () => noteStore.toggleSidebar());
   headerLeft.appendChild(sidebarBtn);
 

@@ -483,6 +483,10 @@ html.peak-header-bar .peak-editor-header {
 .peak-mode-btn.peak-header-sidebar-btn.visible {
   display: flex;
 }
+.peak-mode-btn.peak-header-sidebar-btn:hover {
+  background: var(--affine-hover-color);
+  border-radius: 8px;
+}
 
 .peak-editor-header-center {
   position: absolute;
@@ -583,6 +587,9 @@ html.peak-header-bar .peak-editor-header {
   border: 0.5px solid var(--affine-border-color);
   border-radius: 8px;
   padding: 2px;
+}
+.peak-editor-header .peak-mode-toggle {
+  border: none;
 }
 
 .peak-mode-slider {

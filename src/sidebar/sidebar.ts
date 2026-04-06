@@ -1,6 +1,7 @@
 import { render } from 'lit';
-import { NewPageIcon, SidebarIcon } from '@blocksuite/icons/lit';
-import { createNote, importMarkdownFile, toggleSidebar } from '../storage/note-store';
+import { NewPageIcon, SidebarIcon, SettingsIcon, OpenInNewIcon } from '@blocksuite/icons/lit';
+import { createNote, importMarkdownFile, toggleSidebar, openNoteInNewWindow, activeNoteId } from '../storage/note-store';
+import { openSettings } from '../settings/settings';
 import { renderNoteList } from './note-list';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
@@ -85,6 +86,60 @@ export function createSidebar(): HTMLElement {
 
   // Start rendering the note list reactively
   renderNoteList(noteListContainer);
+
+  // Right-click context menu on blank sidebar area
+  sidebar.addEventListener('contextmenu', (e) => {
+    // Don't override note-item context menus
+    if ((e.target as HTMLElement).closest('.peak-note-item')) return;
+    e.preventDefault();
+
+    // Remove any existing menu
+    document.querySelector('.peak-sidebar-context-menu')?.remove();
+
+    const menu = document.createElement('div');
+    menu.className = 'peak-context-menu peak-sidebar-context-menu';
+    menu.style.left = `${e.clientX}px`;
+    menu.style.top = `${e.clientY}px`;
+
+    function addItem(
+      iconFn: (opts: any) => any,
+      label: string,
+      onClick: () => void,
+    ) {
+      const item = document.createElement('div');
+      item.className = 'peak-context-menu-item';
+      const iconEl = document.createElement('span');
+      iconEl.className = 'peak-context-menu-icon';
+      render(iconFn({ width: '18', height: '18' }), iconEl);
+      const labelEl = document.createElement('span');
+      labelEl.textContent = label;
+      item.appendChild(iconEl);
+      item.appendChild(labelEl);
+      item.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        menu.remove();
+        onClick();
+      });
+      menu.appendChild(item);
+    }
+
+    addItem(NewPageIcon, 'New Note', () => createNote());
+    const noteId = activeNoteId.value;
+    if (noteId) {
+      addItem(OpenInNewIcon, 'Open in New Window', () => openNoteInNewWindow(noteId));
+    }
+    addItem(SettingsIcon, 'Settings', () => openSettings());
+
+    document.body.appendChild(menu);
+
+    const dismiss = (ev: MouseEvent) => {
+      if (!menu.contains(ev.target as Node)) {
+        menu.remove();
+        document.removeEventListener('mousedown', dismiss);
+      }
+    };
+    setTimeout(() => document.addEventListener('mousedown', dismiss));
+  });
 
   // Drag-and-drop markdown files to import
   sidebar.addEventListener('dragover', (e) => {

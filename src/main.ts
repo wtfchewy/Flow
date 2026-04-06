@@ -25,23 +25,27 @@ import { PeakEditorContainer } from './editor/editor-container';
 import { createSidebar } from './sidebar/sidebar';
 import * as noteStore from './storage/note-store';
 import { effect } from '@preact/signals-core';
-import { getCurrentWindow } from '@tauri-apps/api/window';
-import { listen } from '@tauri-apps/api/event';
 import { loadSettings, applySettings } from './settings/settings'; // also registers window.__openSettings
 import { showWelcome } from './welcome/welcome';
+import { isTauri, applyPlatformClasses } from './platform';
 
 function makeDraggable(el: HTMLElement) {
-  el.addEventListener('mousedown', (e) => {
+  if (!isTauri()) return; // No custom dragging in browser
+  el.addEventListener('mousedown', async (e) => {
     if (e.button !== 0) return;
     // Don't drag if clicking on an interactive element
     const target = e.target as HTMLElement;
     if (target.closest('button, input, textarea, select, a, [contenteditable], .peak-note-item, .peak-editor-container, .peak-sidebar-resize, .peak-traffic-lights')) return;
     e.preventDefault();
+    const { getCurrentWindow } = await import('@tauri-apps/api/window');
     getCurrentWindow().startDragging();
   });
 }
 
 async function main() {
+  // Apply platform classes (peak-browser or peak-desktop) immediately
+  applyPlatformClasses();
+
   // Load and apply saved settings (theme, vibrancy)
   const settings = await loadSettings();
   applySettings(settings);
@@ -290,7 +294,10 @@ async function main() {
       menu.appendChild(sep);
     }
 
-    addItem(OpenInNewIcon, 'Open in New Window', () => noteStore.openNoteInNewWindow(noteId));
+    // Only show "Open in New Window" in Tauri
+    if (isTauri()) {
+      addItem(OpenInNewIcon, 'Open in New Window', () => noteStore.openNoteInNewWindow(noteId));
+    }
     addItem(
       noteMeta.pinned ? PinedIcon : PinIcon,
       noteMeta.pinned ? 'Unpin Note' : 'Pin Note',
@@ -467,33 +474,39 @@ async function main() {
   // Wire up linked doc navigation
   noteStore.setupLinkedDocNavigation();
 
-  // Open external links (hyperlinks, bookmarks, embeds) in system browser
+  // Open external links in system browser (Tauri) or new tab (browser)
   noteStore.setupExternalLinkHandler();
 
-  // Listen for "create note" from the notch widget (same app, direct event)
-  listen('create-note-from-notch', async () => {
-    await noteStore.createNote();
-  });
+  // Tauri-specific event listeners
+  if (isTauri()) {
+    const { listen } = await import('@tauri-apps/api/event');
 
-  // Listen for "open note" from the notch widget
-  listen<string>('open-note-from-notch', async (event) => {
-    const noteId = JSON.parse(event.payload as unknown as string);
-    if (noteId && noteStore.notes.value.find(n => n.id === noteId)) {
-      await noteStore.selectNote(noteId);
-    }
-  });
+    // Listen for "create note" from the notch widget (same app, direct event)
+    listen('create-note-from-notch', async () => {
+      await noteStore.createNote();
+    });
 
-  // Listen for markdown drop from the notch widget
-  listen<string>('import-markdown-from-notch', async (event) => {
-    const data = JSON.parse(JSON.parse(event.payload as unknown as string));
-    if (data?.markdown) {
-      const file = new File([data.markdown], `${data.fileName || 'Untitled'}.md`, { type: 'text/markdown' });
-      await noteStore.importMarkdownFile(file);
-    }
-  });
+    // Listen for "open note" from the notch widget
+    listen<string>('open-note-from-notch', async (event) => {
+      const noteId = JSON.parse(event.payload as unknown as string);
+      if (noteId && noteStore.notes.value.find(n => n.id === noteId)) {
+        await noteStore.selectNote(noteId);
+      }
+    });
 
-  // Show the main window now that the UI is fully ready
-  await getCurrentWindow().show();
+    // Listen for markdown drop from the notch widget
+    listen<string>('import-markdown-from-notch', async (event) => {
+      const data = JSON.parse(JSON.parse(event.payload as unknown as string));
+      if (data?.markdown) {
+        const file = new File([data.markdown], `${data.fileName || 'Untitled'}.md`, { type: 'text/markdown' });
+        await noteStore.importMarkdownFile(file);
+      }
+    });
+
+    // Show the main window now that the UI is fully ready
+    const { getCurrentWindow } = await import('@tauri-apps/api/window');
+    await getCurrentWindow().show();
+  }
 
   // Watch for active note changes to mount/unmount editor
   let editorMounted = noteStore.notes.value.length > 0;

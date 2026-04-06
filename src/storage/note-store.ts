@@ -20,7 +20,7 @@ import {
   loadNote,
   deleteNoteFromDisk,
 } from './persistence';
-import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { isTauri } from '../platform';
 import {
   MarkdownTransformer,
   HtmlTransformer,
@@ -439,8 +439,31 @@ export function setupLinkedDocNavigation() {
 /**
  * Intercept external link clicks and window.open calls so they open
  * in the system browser instead of navigating the Tauri webview.
+ * In browser mode, external links open in new tabs naturally.
  */
 export function setupExternalLinkHandler() {
+  if (!isTauri()) {
+    // In browser, just ensure external links open in new tabs
+    document.addEventListener('click', (e) => {
+      const anchor = (e.target as HTMLElement)?.closest?.('a[href]') as HTMLAnchorElement | null;
+      if (!anchor) return;
+      const href = anchor.getAttribute('href');
+      if (!href) return;
+      if (href.startsWith('#') || href.startsWith('javascript:')) return;
+      try {
+        const url = new URL(href, window.location.href);
+        if (url.origin !== window.location.origin) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.open(url.href, '_blank', 'noopener');
+        }
+      } catch {
+        // not a valid URL
+      }
+    }, true);
+    return;
+  }
+
   const { openUrl } = await_import_opener();
 
   // Intercept clicks on <a> tags with external hrefs
@@ -500,7 +523,13 @@ function await_import_opener() {
   };
 }
 
-export function openNoteInNewWindow(id: string) {
+export async function openNoteInNewWindow(id: string) {
+  if (!isTauri()) {
+    // In browser, open in a new tab
+    window.open(`${window.location.pathname}?noteId=${id}`, '_blank');
+    return;
+  }
+  const { WebviewWindow } = await import('@tauri-apps/api/webviewWindow');
   const label = `note-${id}-${Date.now()}`;
   new WebviewWindow(label, {
     url: `index.html?noteId=${id}`,

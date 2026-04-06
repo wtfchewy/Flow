@@ -1,7 +1,7 @@
-import { invoke } from '@tauri-apps/api/core';
 import { render } from 'lit';
 import { CloseIcon, ArrowDownSmallIcon } from '@blocksuite/icons/lit';
 import { showWelcome } from '../welcome/welcome';
+import { isTauri, isMacOS } from '../platform';
 
 export interface AppSettings {
   theme: string;
@@ -25,11 +25,27 @@ const defaults: AppSettings = {
   headerBar: true,
 };
 
-const isMac = navigator.platform.toUpperCase().includes('MAC');
+const isMac = isMacOS();
 
 let overlay: HTMLElement | null = null;
 
+const BROWSER_SETTINGS_KEY = 'peak-settings';
+
 export async function loadSettings(): Promise<AppSettings> {
+  if (!isTauri()) {
+    // Browser: load from localStorage
+    try {
+      const raw = localStorage.getItem(BROWSER_SETTINGS_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw) as Partial<AppSettings>;
+        // In browser, vibrancy defaults off (no OS compositor) and no notch
+        return { ...defaults, vibrancy: false, notchEnabled: false, ...saved };
+      }
+    } catch { /* ignore */ }
+    return { ...defaults, vibrancy: false, notchEnabled: false };
+  }
+
+  const { invoke } = await import('@tauri-apps/api/core');
   const saved = await invoke<Partial<AppSettings>>('load_settings');
   return { ...defaults, ...saved };
 }
@@ -39,12 +55,26 @@ let saveTimer: ReturnType<typeof setTimeout> | null = null;
 function saveSettingsDebounced(settings: AppSettings) {
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    invoke('save_settings', { settings: { ...settings } });
+    saveSettingsToBackend(settings);
   }, 300);
+}
+
+async function saveSettingsToBackend(settings: AppSettings) {
+  if (!isTauri()) {
+    localStorage.setItem(BROWSER_SETTINGS_KEY, JSON.stringify(settings));
+    return;
+  }
+  const { invoke } = await import('@tauri-apps/api/core');
+  invoke('save_settings', { settings: { ...settings } });
 }
 
 export async function saveSettingsImmediate(settings: AppSettings) {
   if (saveTimer) clearTimeout(saveTimer);
+  if (!isTauri()) {
+    localStorage.setItem(BROWSER_SETTINGS_KEY, JSON.stringify(settings));
+    return;
+  }
+  const { invoke } = await import('@tauri-apps/api/core');
   await invoke('save_settings', { settings });
 }
 
@@ -125,62 +155,68 @@ export async function openSettings() {
   headerBarRow.appendChild(headerBarToggle);
   content.appendChild(headerBarRow);
 
-  // ===== Vibrancy section =====
-  content.appendChild(createSectionHeader('Vibrancy'));
+  // ===== Vibrancy section (desktop only — requires OS compositor) =====
+  if (isTauri()) {
+    content.appendChild(createSectionHeader('Vibrancy'));
 
-  const vibrancyRow = createSettingRow('Vibrancy', 'Enable translucent background effect');
-  const vibrancyToggle = createSwitch(settings.vibrancy, async (on) => {
-    settings.vibrancy = on;
-    applySettings(settings);
-    await saveSettingsImmediate(settings);
-  });
-  vibrancyRow.appendChild(vibrancyToggle);
-  content.appendChild(vibrancyRow);
-
-  const blurRow = createSettingRow('Blur', 'Adjust the vibrancy blur intensity');
-  const blurSlider = createSlider(0, 80, settings.vibrancyBlur, (val) => {
-    settings.vibrancyBlur = val;
-    applySettings(settings);
-    saveSettingsDebounced(settings);
-  });
-  blurRow.appendChild(blurSlider);
-  content.appendChild(blurRow);
-
-  const opacityRow = createSettingRow('Opacity', 'Adjust the vibrancy opacity');
-  const opacitySlider = createSlider(0, 0.6, settings.vibrancyOpacity, (val) => {
-    settings.vibrancyOpacity = Math.round(val * 100) / 100;
-    applySettings(settings);
-    saveSettingsDebounced(settings);
-  }, 0.01);
-  opacityRow.appendChild(opacitySlider);
-  content.appendChild(opacityRow);
-
-  // ===== Features section =====
-  content.appendChild(createSectionHeader('Features'));
-
-  const notchRow = createSettingRow('Notch Widget', 'Show the notch widget for quick access');
-  const notchToggle = createSwitch(settings.notchEnabled, async (on) => {
-    settings.notchEnabled = on;
-    await saveSettingsImmediate(settings);
-    invoke('set_notch_visible', { visible: on });
-  });
-  notchRow.appendChild(notchToggle);
-  content.appendChild(notchRow);
-
-  if (isMac) {
-    const icloudRow = createSettingRow('iCloud Sync', 'Sync your notes across devices via iCloud');
-    const icloudToggle = createSwitch(settings.icloudSync, async (on) => {
-      try {
-        await invoke('toggle_icloud_sync', { enable: on });
-        settings.icloudSync = on;
-        await saveSettingsImmediate(settings);
-      } catch (err) {
-        icloudToggle.classList.toggle('on', !on);
-        console.error('iCloud sync toggle failed:', err);
-      }
+    const vibrancyRow = createSettingRow('Vibrancy', 'Enable translucent background effect');
+    const vibrancyToggle = createSwitch(settings.vibrancy, async (on) => {
+      settings.vibrancy = on;
+      applySettings(settings);
+      await saveSettingsImmediate(settings);
     });
-    icloudRow.appendChild(icloudToggle);
-    content.appendChild(icloudRow);
+    vibrancyRow.appendChild(vibrancyToggle);
+    content.appendChild(vibrancyRow);
+
+    const blurRow = createSettingRow('Blur', 'Adjust the vibrancy blur intensity');
+    const blurSlider = createSlider(0, 80, settings.vibrancyBlur, (val) => {
+      settings.vibrancyBlur = val;
+      applySettings(settings);
+      saveSettingsDebounced(settings);
+    });
+    blurRow.appendChild(blurSlider);
+    content.appendChild(blurRow);
+
+    const opacityRow = createSettingRow('Opacity', 'Adjust the vibrancy opacity');
+    const opacitySlider = createSlider(0, 0.6, settings.vibrancyOpacity, (val) => {
+      settings.vibrancyOpacity = Math.round(val * 100) / 100;
+      applySettings(settings);
+      saveSettingsDebounced(settings);
+    }, 0.01);
+    opacityRow.appendChild(opacitySlider);
+    content.appendChild(opacityRow);
+  }
+
+  // ===== Features section (desktop-only features) =====
+  if (isTauri()) {
+    content.appendChild(createSectionHeader('Features'));
+
+    const notchRow = createSettingRow('Notch Widget', 'Show the notch widget for quick access');
+    const notchToggle = createSwitch(settings.notchEnabled, async (on) => {
+      settings.notchEnabled = on;
+      await saveSettingsImmediate(settings);
+      const { invoke } = await import('@tauri-apps/api/core');
+      invoke('set_notch_visible', { visible: on });
+    });
+    notchRow.appendChild(notchToggle);
+    content.appendChild(notchRow);
+
+    if (isMac) {
+      const icloudRow = createSettingRow('iCloud Sync', 'Sync your notes across devices via iCloud');
+      const icloudToggle = createSwitch(settings.icloudSync, async (on) => {
+        try {
+          const { invoke } = await import('@tauri-apps/api/core');
+          await invoke('toggle_icloud_sync', { enable: on });
+          settings.icloudSync = on;
+          await saveSettingsImmediate(settings);
+        } catch (err) {
+          icloudToggle.classList.toggle('on', !on);
+          console.error('iCloud sync toggle failed:', err);
+        }
+      });
+      icloudRow.appendChild(icloudToggle);
+      content.appendChild(icloudRow);
+    }
   }
 
   // ===== Developer section =====

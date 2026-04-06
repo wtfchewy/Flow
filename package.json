@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:web": "vite --open",
     "build": "vite build",
+    "build:web": "vite build",
     "preview": "vite preview",
     "tauri": "tauri"
   },

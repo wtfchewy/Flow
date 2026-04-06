@@ -3,28 +3,31 @@ import { NewPageIcon, SidebarIcon, SettingsIcon, OpenInNewIcon } from '@blocksui
 import { createNote, importMarkdownFile, toggleSidebar, openNoteInNewWindow, activeNoteId } from '../storage/note-store';
 import { openSettings } from '../settings/settings';
 import { renderNoteList } from './note-list';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { isTauri } from '../platform';
 
-function createTrafficLights(): HTMLElement {
+function createTrafficLights(): HTMLElement | null {
+  if (!isTauri()) return null; // No traffic lights in browser
+
   const container = document.createElement('div');
   container.className = 'peak-traffic-lights';
 
-  const win = getCurrentWindow();
+  // Lazy-load Tauri window API
+  const winPromise = import('@tauri-apps/api/window').then(m => m.getCurrentWindow());
 
   const close = document.createElement('button');
   close.className = 'peak-traffic-btn peak-traffic-close';
   close.title = 'Close';
-  close.addEventListener('click', () => win.close());
+  close.addEventListener('click', async () => (await winPromise).close());
 
   const minimize = document.createElement('button');
   minimize.className = 'peak-traffic-btn peak-traffic-minimize';
   minimize.title = 'Minimize';
-  minimize.addEventListener('click', () => win.minimize());
+  minimize.addEventListener('click', async () => (await winPromise).minimize());
 
   const fullscreen = document.createElement('button');
   fullscreen.className = 'peak-traffic-btn peak-traffic-fullscreen';
   fullscreen.title = 'Fullscreen';
-  fullscreen.addEventListener('click', () => win.toggleMaximize());
+  fullscreen.addEventListener('click', async () => (await winPromise).toggleMaximize());
 
   container.appendChild(close);
   container.appendChild(minimize);
@@ -45,7 +48,10 @@ export function createSidebar(): HTMLElement {
   const leftGroup = document.createElement('div');
   leftGroup.className = 'peak-topbar-left';
 
-  leftGroup.appendChild(createTrafficLights());
+  const trafficLights = createTrafficLights();
+  if (trafficLights) {
+    leftGroup.appendChild(trafficLights);
+  }
 
   const sidebarBtn = document.createElement('button');
   sidebarBtn.className = 'peak-sidebar-toggle-btn';
@@ -124,9 +130,11 @@ export function createSidebar(): HTMLElement {
     }
 
     addItem(NewPageIcon, 'New Note', () => createNote());
-    const noteId = activeNoteId.value;
-    if (noteId) {
-      addItem(OpenInNewIcon, 'Open in New Window', () => openNoteInNewWindow(noteId));
+    if (isTauri()) {
+      const noteId = activeNoteId.value;
+      if (noteId) {
+        addItem(OpenInNewIcon, 'Open in New Window', () => openNoteInNewWindow(noteId));
+      }
     }
     addItem(SettingsIcon, 'Settings', () => openSettings());
 

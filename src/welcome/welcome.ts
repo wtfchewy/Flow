@@ -1,4 +1,5 @@
 import { type AppSettings, applySettings, saveSettingsImmediate } from '../settings/settings';
+import { isTauri } from '../platform';
 
 /**
  * Shows a full-screen welcome/onboarding overlay.
@@ -59,22 +60,26 @@ export function showWelcome(settings: AppSettings): Promise<void> {
     themeRow.appendChild(themeControl);
     settingsSection.appendChild(themeRow);
 
-    // Vibrancy
-    const vibrancyRow = createRow('Vibrancy', 'Translucent background effect');
-    const vibrancyToggle = createSwitch(settings.vibrancy, (on) => {
-      settings.vibrancy = on;
-      applySettings(settings);
-    });
-    vibrancyRow.appendChild(vibrancyToggle);
-    settingsSection.appendChild(vibrancyRow);
+    // Vibrancy (desktop only)
+    if (isTauri()) {
+      const vibrancyRow = createRow('Vibrancy', 'Translucent background effect');
+      const vibrancyToggle = createSwitch(settings.vibrancy, (on) => {
+        settings.vibrancy = on;
+        applySettings(settings);
+      });
+      vibrancyRow.appendChild(vibrancyToggle);
+      settingsSection.appendChild(vibrancyRow);
+    }
 
-    // iCloud Sync
-    const icloudRow = createRow('iCloud Sync', 'Sync your notes across devices');
-    const icloudToggle = createSwitch(settings.icloudSync, (on) => {
-      settings.icloudSync = on;
-    });
-    icloudRow.appendChild(icloudToggle);
-    settingsSection.appendChild(icloudRow);
+    // iCloud Sync (desktop only)
+    if (isTauri()) {
+      const icloudRow = createRow('iCloud Sync', 'Sync your notes across devices');
+      const icloudToggle = createSwitch(settings.icloudSync, (on) => {
+        settings.icloudSync = on;
+      });
+      icloudRow.appendChild(icloudToggle);
+      settingsSection.appendChild(icloudRow);
+    }
 
     card.appendChild(settingsSection);
 

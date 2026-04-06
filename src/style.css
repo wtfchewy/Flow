@@ -1095,3 +1095,59 @@ html.vibrancy .peak-welcome-overlay {
   opacity: 1;
   filter: blur(0);
 }
+
+/* ===== Browser Mode Overrides ===== */
+/* Remove rounded corners, notch, traffic lights, and desktop-specific chrome */
+
+html.peak-browser #app {
+  border-radius: 0;
+}
+
+html.peak-browser .peak-editor-area {
+  border-radius: 0;
+}
+
+html.peak-browser .peak-welcome-overlay {
+  border-radius: 0;
+}
+
+html.peak-browser .peak-editor-drag-wrap {
+  padding: 0;
+}
+
+html.peak-browser .peak-editor-drag-wrap:has(.peak-editor-area.sidebar-hidden) {
+  padding-left: 0;
+}
+
+html.peak-browser .peak-traffic-lights {
+  display: none;
+}
+
+html.peak-browser .peak-editor-drag-region {
+  display: none;
+}
+
+/* In browser, give sidebar a solid background instead of transparent */
+html.peak-browser .peak-sidebar {
+  background: var(--affine-background-secondary-color);
+}
+
+/* Ensure body fills the viewport with no transparency artifacts */
+html.peak-browser,
+html.peak-browser body {
+  background: var(--affine-background-secondary-color);
+}
+
+/* Adjust sidebar topbar padding — no traffic lights means less left padding needed */
+html.peak-browser .peak-sidebar-topbar {
+  padding-top: 8px;
+}
+
+/* Settings and welcome panels keep their border-radius (they're overlays, not the app shell) */
+
+/* Vibrancy in browser uses a subtler effect since there's no OS compositor */
+html.peak-browser.vibrancy #app {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--affine-background-secondary-color);
+}

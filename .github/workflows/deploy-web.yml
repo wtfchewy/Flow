@@ -1,0 +1,75 @@
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      # Build landing page
+      - name: Install landing dependencies
+        run: npm install
+        working-directory: landing
+
+      - name: Build landing
+        run: npm run build
+        working-directory: landing
+
+      # Build web app
+      - name: Install app dependencies
+        run: pnpm install
+
+      - name: Build web app
+        run: pnpm build:web
+        env:
+          VITE_BASE: /app/
+
+      # Combine: landing at root, app at /app
+      - name: Combine outputs
+        run: |
+          mkdir -p _site
+          cp -r landing/dist/* _site/
+          cp -r dist _site/app
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

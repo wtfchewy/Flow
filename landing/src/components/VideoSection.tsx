@@ -59,7 +59,7 @@ export function VideoSection() {
       <div className="flex justify-center pt-16">
         <div ref={containerRef} className="relative z-10 overflow-hidden" style={style}>
           <video ref={videoRef} className="w-full block" loop muted playsInline>
-            <source src="/video.mp4" type="video/mp4" />
+            <source src={`${import.meta.env.BASE_URL}video.mp4`} type="video/mp4" />
           </video>
         </div>
       </div>

@@ -41,6 +41,8 @@ jobs:
       - name: Build landing
         run: npm run build
         working-directory: landing
+        env:
+          VITE_BASE: /Peak/
 
       # Build web app
       - name: Install app dependencies
@@ -49,7 +51,7 @@ jobs:
       - name: Build web app
         run: pnpm build:web
         env:
-          VITE_BASE: /app/
+          VITE_BASE: /Peak/app/
 
       # Combine: landing at root, app at /app
       - name: Combine outputs

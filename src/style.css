@@ -1103,20 +1103,16 @@ html.peak-browser #app {
   border-radius: 0;
 }
 
-html.peak-browser .peak-editor-area {
-  border-radius: 0;
-}
-
 html.peak-browser .peak-welcome-overlay {
   border-radius: 0;
 }
 
 html.peak-browser .peak-editor-drag-wrap {
-  padding: 0;
+  padding: 8px 8px 8px 0;
 }
 
 html.peak-browser .peak-editor-drag-wrap:has(.peak-editor-area.sidebar-hidden) {
-  padding-left: 0;
+  padding-left: 8px;
 }
 
 html.peak-browser .peak-traffic-lights {

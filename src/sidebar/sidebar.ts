@@ -60,7 +60,7 @@ export function createSidebar(): HTMLElement {
   render(SidebarIcon({ width: '20', height: '20' }), sidebarIconSpan);
   sidebarBtn.appendChild(sidebarIconSpan);
   const sidebarTooltip = document.createElement('affine-tooltip');
-  sidebarTooltip.setAttribute('tip-position', 'bottom');
+  sidebarTooltip.setAttribute('tip-position', isTauri() ? 'bottom' : 'bottom-start');
   sidebarTooltip.textContent = 'Hide Sidebar';
   sidebarBtn.appendChild(sidebarTooltip);
   sidebarBtn.addEventListener('click', () => toggleSidebar());

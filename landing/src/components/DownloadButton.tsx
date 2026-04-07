@@ -1,12 +1,34 @@
+import { useEffect, useState } from 'react'
+
+const REPO = 'wtfchewy/peak'
+
+function useLatestRelease() {
+  const [url, setUrl] = useState(`https://github.com/${REPO}/releases/latest`)
+
+  useEffect(() => {
+    fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
+      .then(r => r.json())
+      .then(data => {
+        const dmg = data.assets?.find((a: { name: string }) => a.name.endsWith('.dmg'))
+        if (dmg) setUrl(dmg.browser_download_url)
+      })
+      .catch(() => {})
+  }, [])
+
+  return url
+}
+
 export function DownloadButton({ className = '', variant = 'default' }: { className?: string; variant?: 'default' | 'brand' }) {
   const base = variant === 'brand'
     ? 'bg-brand text-white'
     : 'bg-text/5'
 
+  const downloadUrl = useLatestRelease()
+
   return (
     <a
       className={`group relative inline-flex max-h-15 items-center justify-center rounded-2xl px-5 py-4 text-lg font-bold outline-hidden transition duration-300 focus:ring-2 focus:ring-brand pl-13 ${base} ${className}`}
-      href="/download"
+      href={downloadUrl}
       aria-label="Download for Mac"
     >
       <div className="ease absolute left-5 translate-x-0 opacity-100 transition duration-300 group-hover:-translate-x-full group-hover:scale-x-50 group-hover:opacity-0 group-hover:blur-sm">

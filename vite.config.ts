@@ -5,6 +5,7 @@ import wasm from 'vite-plugin-wasm';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: process.env.VITE_BASE ?? '/',
   plugins: [wasm(), vanillaExtractPlugin()],
   clearScreen: false,
   envPrefix: ['VITE_', 'TAURI_'],

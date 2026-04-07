@@ -45,7 +45,7 @@ export function Nav() {
           <div className="text-2xl font-bold text-text">Peak</div>
         </a>
         <div className="flex items-center gap-2">
-          <a className="group inline-flex items-center justify-center outline-hidden transition duration-300 hover:bg-text/5 focus:ring-2 focus:ring-brand/90 rounded-2xl px-5 py-4 text-lg font-bold not-sm:bg-text/5" href="/try" aria-label="New Note">
+          <a className="group inline-flex items-center justify-center outline-hidden transition duration-300 hover:bg-text/5 focus:ring-2 focus:ring-brand/90 rounded-2xl px-5 py-4 text-lg font-bold not-sm:bg-text/5" href="/app" aria-label="New Note">
             <svg className="h-6 w-6 fill-current transition duration-300 origin-bottom group-hover:-rotate-12 sm:mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" aria-hidden="true">
               <path d="M160 544C124.7 544 96 515.3 96 480L96 160C96 124.7 124.7 96 160 96L480 96C515.3 96 544 124.7 544 160L544 373.5C544 390.5 537.3 406.8 525.3 418.8L418.7 525.3C406.7 537.3 390.4 544 373.4 544L160 544zM485.5 368L392 368C378.7 368 368 378.7 368 392L368 485.5L485.5 368z" />
             </svg>

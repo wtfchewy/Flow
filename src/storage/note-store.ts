@@ -104,6 +104,15 @@ export function setMode(mode: 'page' | 'edgeless') {
   scheduleAutoSave();
 }
 
+async function updateWindowTitle(title: string) {
+  const displayTitle = title || 'Untitled';
+  document.title = displayTitle;
+  if (isTauri()) {
+    const { getCurrentWindow } = await import('@tauri-apps/api/window');
+    getCurrentWindow().setTitle(displayTitle);
+  }
+}
+
 function scheduleAutoSave() {
   if (autoSaveTimer) clearTimeout(autoSaveTimer);
   saving.value = true;
@@ -122,6 +131,8 @@ function scheduleAutoSave() {
       );
       updated.sort((a, b) => b.updatedAt - a.updatedAt);
       notes.value = updated;
+
+      updateWindowTitle(title);
     }
     saving.value = false;
   }, 500);
@@ -174,6 +185,7 @@ export async function selectNote(id: string) {
   editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
   editorEl.mode = mode;
 
+  updateWindowTitle(noteMeta?.title || 'Untitled');
   attachAutoSave(store);
 }
 
@@ -219,6 +231,7 @@ export async function createNote() {
   editorEl.autofocus = true;
 
   attachAutoSave(store);
+  updateWindowTitle('Untitled');
 
   // Save initial empty state
   const ydoc = getYDoc(store);
@@ -529,11 +542,13 @@ export async function openNoteInNewWindow(id: string) {
     window.open(`${window.location.pathname}?noteId=${id}`, '_blank');
     return;
   }
+  const noteMeta = notes.value.find(n => n.id === id);
+  const title = noteMeta?.title || 'Untitled';
   const { WebviewWindow } = await import('@tauri-apps/api/webviewWindow');
   const label = `note-${id}-${Date.now()}`;
   new WebviewWindow(label, {
     url: `index.html?noteId=${id}`,
-    title: '',
+    title,
     width: 900,
     height: 700,
     decorations: false,
@@ -546,7 +561,7 @@ export async function openNoteInNewWindow(id: string) {
  * Get a Store for the given note id.
  * Returns the active store if it matches, otherwise loads a temporary one.
  */
-async function getStoreForNote(id: string): Promise<{ store: Store; temporary: boolean }> {
+export async function getStoreForNote(id: string): Promise<{ store: Store; temporary: boolean }> {
   if (activeNoteId.value === id && activeStore) {
     return { store: activeStore, temporary: false };
   }
@@ -556,7 +571,7 @@ async function getStoreForNote(id: string): Promise<{ store: Store; temporary: b
   return { store, temporary: true };
 }
 
-function cleanupTemporaryStore(id: string) {
+export function cleanupTemporaryStore(id: string) {
   try {
     workspace.removeDoc(`export-${id}`);
   } catch {

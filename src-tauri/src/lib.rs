@@ -1,10 +1,198 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use std::sync::Mutex;
+use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
+use std::sync::{Mutex, OnceLock};
 use tauri::{Emitter, Listener, Manager};
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
 use tauri::webview::WebviewWindowBuilder;
+
+static APP_HANDLE: OnceLock<tauri::AppHandle> = OnceLock::new();
+static WINDOW_COUNTER: AtomicU32 = AtomicU32::new(2);
+
+#[cfg(target_os = "macos")]
+static DOCK_HANDLER_PTR: AtomicUsize = AtomicUsize::new(0);
+
+/// Create a new main application window (multi-window support).
+fn create_new_main_window(handle: &tauri::AppHandle) {
+    let id = WINDOW_COUNTER.fetch_add(1, Ordering::SeqCst);
+    let label = format!("main-{}", id);
+    if let Ok(win) = WebviewWindowBuilder::new(
+        handle,
+        &label,
+        tauri::WebviewUrl::App("index.html".into()),
+    )
+    .title("Untitled")
+    .inner_size(1200.0, 800.0)
+    .min_inner_size(800.0, 600.0)
+    .title_bar_style(tauri::TitleBarStyle::Overlay)
+    .hidden_title(true)
+    .decorations(false)
+    .transparent(true)
+    .visible(false)
+    .build()
+    {
+        // Window will be shown by the frontend once the UI is ready
+        let _ = win;
+    }
+}
+
+/// Objective-C callback for the "New Window" dock menu item.
+#[cfg(target_os = "macos")]
+extern "C" fn handle_new_window(
+    _self: *const std::ffi::c_void,
+    _cmd: *const std::ffi::c_void,
+    _sender: *const std::ffi::c_void,
+) {
+    if let Some(handle) = APP_HANDLE.get() {
+        create_new_main_window(handle);
+    }
+}
+
+/// Objective-C callback for applicationDockMenu: — builds the dock menu dynamically.
+#[cfg(target_os = "macos")]
+extern "C" fn dock_menu_imp(
+    _self: *const std::ffi::c_void,
+    _cmd: *const std::ffi::c_void,
+    _app: *const std::ffi::c_void,
+) -> *const std::ffi::c_void {
+    use std::ffi::c_void;
+
+    extern "C" {
+        fn sel_registerName(name: *const i8) -> *const c_void;
+        fn objc_msgSend();
+        fn objc_getClass(name: *const i8) -> *const c_void;
+    }
+
+    unsafe {
+        type Msg0 = extern "C" fn(*const c_void, *const c_void) -> *const c_void;
+        type Msg1 = extern "C" fn(*const c_void, *const c_void, *const c_void) -> *const c_void;
+        type Msg3 = extern "C" fn(*const c_void, *const c_void, *const c_void, *const c_void, *const c_void) -> *const c_void;
+        type MsgIdx = extern "C" fn(*const c_void, *const c_void, usize) -> *const c_void;
+        type MsgUsize = extern "C" fn(*const c_void, *const c_void) -> usize;
+        type MsgBool = extern "C" fn(*const c_void, *const c_void) -> bool;
+
+        let m0: Msg0 = std::mem::transmute(objc_msgSend as *const c_void);
+        let m1: Msg1 = std::mem::transmute(objc_msgSend as *const c_void);
+        let m3: Msg3 = std::mem::transmute(objc_msgSend as *const c_void);
+        let m_idx: MsgIdx = std::mem::transmute(objc_msgSend as *const c_void);
+        let m_usize: MsgUsize = std::mem::transmute(objc_msgSend as *const c_void);
+        let m_bool: MsgBool = std::mem::transmute(objc_msgSend as *const c_void);
+
+        let sel = |s: &[u8]| sel_registerName(s.as_ptr() as *const i8);
+        let cls = |s: &[u8]| objc_getClass(s.as_ptr() as *const i8);
+
+        // [[NSMenu alloc] init]
+        let menu = m0(m0(cls(b"NSMenu\0"), sel(b"alloc\0")), sel(b"init\0"));
+
+        // Get NSApp windows
+        let ns_app = m0(cls(b"NSApplication\0"), sel(b"sharedApplication\0"));
+        let windows = m0(ns_app, sel(b"windows\0"));
+        let count = m_usize(windows, sel(b"count\0"));
+
+        // NSString helpers
+        let ns_string = cls(b"NSString\0");
+        let str_sel = sel(b"stringWithUTF8String:\0");
+        let empty_key = m1(ns_string, str_sel, b"\0".as_ptr() as *const c_void);
+
+        let ns_menu_item = cls(b"NSMenuItem\0");
+        let alloc_sel = sel(b"alloc\0");
+        let init_title_sel = sel(b"initWithTitle:action:keyEquivalent:\0");
+        let set_target_sel = sel(b"setTarget:\0");
+        let add_item_sel = sel(b"addItem:\0");
+        let make_key_sel = sel(b"makeKeyAndOrderFront:\0");
+        let obj_at_sel = sel(b"objectAtIndex:\0");
+        let title_sel = sel(b"title\0");
+        let length_sel = sel(b"length\0");
+        let is_visible_sel = sel(b"isVisible\0");
+
+        let mut window_count = 0u32;
+
+        for i in 0..count {
+            let win = m_idx(windows, obj_at_sel, i);
+            let title = m0(win, title_sel);
+            let title_len = m_usize(title, length_sel);
+            let visible = m_bool(win, is_visible_sel);
+
+            // Show windows with a title (excludes the notch widget which has title "")
+            if title_len > 0 && visible {
+                window_count += 1;
+                let item = m3(m0(ns_menu_item, alloc_sel), init_title_sel, title, make_key_sel, empty_key);
+                m1(item, set_target_sel, win);
+                m1(menu, add_item_sel, item);
+            }
+        }
+
+        if window_count > 0 {
+            let sep = m0(ns_menu_item, sel(b"separatorItem\0"));
+            m1(menu, add_item_sel, sep);
+        }
+
+        // "New Window" item
+        let new_title = m1(ns_string, str_sel, b"New Window\0".as_ptr() as *const c_void);
+        let new_win_action = sel(b"newWindow:\0");
+        let new_item = m3(m0(ns_menu_item, alloc_sel), init_title_sel, new_title, new_win_action, empty_key);
+        let handler = DOCK_HANDLER_PTR.load(Ordering::SeqCst) as *const c_void;
+        m1(new_item, set_target_sel, handler);
+        m1(menu, add_item_sel, new_item);
+
+        m0(menu, sel(b"autorelease\0"));
+        menu
+    }
+}
+
+/// Register the dock right-click menu via Objective-C runtime.
+#[cfg(target_os = "macos")]
+fn setup_dock_menu() {
+    use std::ffi::c_void;
+
+    extern "C" {
+        fn sel_registerName(name: *const i8) -> *const c_void;
+        fn objc_msgSend();
+        fn objc_getClass(name: *const i8) -> *const c_void;
+        fn objc_allocateClassPair(super_cls: *const c_void, name: *const i8, extra: usize) -> *mut c_void;
+        fn objc_registerClassPair(cls: *mut c_void);
+        fn object_getClass(obj: *const c_void) -> *mut c_void;
+        fn class_addMethod(cls: *mut c_void, sel: *const c_void, imp: *const c_void, types: *const i8) -> bool;
+    }
+
+    unsafe {
+        type Msg0 = extern "C" fn(*const c_void, *const c_void) -> *const c_void;
+        let m0: Msg0 = std::mem::transmute(objc_msgSend as *const c_void);
+
+        let sel = |s: &[u8]| sel_registerName(s.as_ptr() as *const i8);
+        let cls = |s: &[u8]| objc_getClass(s.as_ptr() as *const i8);
+
+        // Create PeakDockHandler class with newWindow: method
+        let ns_object = cls(b"NSObject\0");
+        let handler_cls = objc_allocateClassPair(ns_object, b"PeakDockHandler\0".as_ptr() as *const i8, 0);
+        if handler_cls.is_null() {
+            return;
+        }
+        class_addMethod(
+            handler_cls,
+            sel(b"newWindow:\0"),
+            handle_new_window as *const c_void,
+            b"v@:@\0".as_ptr() as *const i8,
+        );
+        objc_registerClassPair(handler_cls);
+
+        // [[PeakDockHandler alloc] init]
+        let handler = m0(m0(handler_cls as *const c_void, sel(b"alloc\0")), sel(b"init\0"));
+        DOCK_HANDLER_PTR.store(handler as usize, Ordering::SeqCst);
+
+        // Add applicationDockMenu: to Tauri's app delegate
+        let ns_app = m0(cls(b"NSApplication\0"), sel(b"sharedApplication\0"));
+        let delegate = m0(ns_app, sel(b"delegate\0"));
+        let delegate_cls = object_getClass(delegate);
+        class_addMethod(
+            delegate_cls,
+            sel(b"applicationDockMenu:\0"),
+            dock_menu_imp as *const c_void,
+            b"@@:@\0".as_ptr() as *const i8,
+        );
+    }
+}
 
 /// Position the notch window at the absolute top of the screen and set its
 /// level above the macOS menu bar so it overlaps the notch.
@@ -554,6 +742,13 @@ pub fn run() {
                 }
             });
 
+            // Store app handle for dock menu / multi-window
+            APP_HANDLE.set(app.handle().clone()).ok();
+
+            // Register macOS dock right-click menu
+            #[cfg(target_os = "macos")]
+            setup_dock_menu();
+
             // --- Main window close behavior ---
             // If notch is active: hide the window (app stays alive for the notch)
             // If notch is disabled: let the app quit normally
@@ -674,10 +869,12 @@ pub fn run() {
     // Run with event handler — reshow main window when Dock icon clicked
     app.run(|app_handle, event| {
         if let tauri::RunEvent::Reopen { .. } = event {
-            // Always show the main window on dock click, even if the notch is visible
             if let Some(window) = app_handle.get_webview_window("main") {
                 window.show().ok();
                 window.set_focus().ok();
+            } else {
+                // All main windows closed — create a fresh one
+                create_new_main_window(app_handle);
             }
         }
     });

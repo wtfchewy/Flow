@@ -12,6 +12,7 @@ import {
   ExportToPdfIcon,
 } from '@blocksuite/icons/lit';
 
+import { isTauri } from '../platform';
 import type { NoteMeta } from '../types';
 import {
   notes,

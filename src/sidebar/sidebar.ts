@@ -1,5 +1,5 @@
 import { render } from 'lit';
-import { NewPageIcon, SidebarIcon, SettingsIcon, OpenInNewIcon } from '@blocksuite/icons/lit';
+import { NewPageIcon, SidebarIcon, SettingsIcon, OpenInNewIcon, DownloadIcon } from '@blocksuite/icons/lit';
 import { createNote, importMarkdownFile, toggleSidebar, openNoteInNewWindow, activeNoteId } from '../storage/note-store';
 import { openSettings } from '../settings/settings';
 import { renderNoteList } from './note-list';
@@ -93,6 +93,41 @@ export function createSidebar(): HTMLElement {
   // Start rendering the note list reactively
   renderNoteList(noteListContainer);
 
+  // Download App button (browser only) — overlays bottom of sidebar
+  if (!isTauri()) {
+    const downloadBtn = document.createElement('a');
+    downloadBtn.className = 'peak-download-btn';
+    downloadBtn.href = 'https://github.com/wtfchewy/peak/releases/latest';
+    downloadBtn.target = '_blank';
+    downloadBtn.rel = 'noopener noreferrer';
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'peak-download-stars';
+    downloadBtn.appendChild(canvas);
+
+    const icon = document.createElement('span');
+    icon.className = 'peak-download-icon';
+    render(DownloadIcon({ width: '22', height: '22' }), icon);
+    downloadBtn.appendChild(icon);
+
+    const label = document.createElement('span');
+    label.className = 'peak-download-label';
+    label.textContent = 'Download App';
+    downloadBtn.appendChild(label);
+
+    // Upgrade to direct .dmg link
+    fetch('https://api.github.com/repos/wtfchewy/peak/releases/latest')
+      .then(r => r.json())
+      .then(data => {
+        const dmg = data.assets?.find((a: any) => a.name.endsWith('.dmg'));
+        if (dmg) downloadBtn.href = dmg.browser_download_url;
+      })
+      .catch(() => {});
+
+    initStarfield(canvas, downloadBtn);
+    sidebar.appendChild(downloadBtn);
+  }
+
   // Right-click context menu on blank sidebar area
   sidebar.addEventListener('contextmenu', (e) => {
     // Don't override note-item context menus
@@ -176,4 +211,85 @@ export function createSidebar(): HTMLElement {
   });
 
   return sidebar;
+}
+
+function initStarfield(canvas: HTMLCanvasElement, trigger: HTMLElement) {
+  const ctx = canvas.getContext('2d')!;
+  let animId = 0;
+  let active = false;
+
+  interface Star { x: number; y: number; z: number }
+  const STAR_COUNT = 80;
+  const stars: Star[] = [];
+
+  function resetStar(s: Star) {
+    s.x = (Math.random() - 0.5) * 2;
+    s.y = (Math.random() - 0.5) * 2;
+    s.z = Math.random() * 0.8 + 0.2;
+  }
+
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const s = { x: 0, y: 0, z: 0 };
+    resetStar(s);
+    s.z = Math.random(); // spread initial depth
+    stars.push(s);
+  }
+
+  function draw() {
+    const dpr = devicePixelRatio;
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    const cx = w / 2;
+    const cy = h / 2;
+
+    ctx.clearRect(0, 0, w, h);
+
+    for (const s of stars) {
+      const prevZ = s.z;
+      s.z -= 0.02;
+      if (s.z <= 0) { resetStar(s); continue; }
+
+      const scale = 1 / s.z;
+      const sx = cx + s.x * scale * cx * 0.5;
+      const sy = cy + s.y * scale * cy * 0.5;
+      const r = Math.max(0.5, (1 - s.z) * 2.5);
+      const alpha = 1 - s.z;
+
+      // Motion blur streak
+      const prevScale = 1 / prevZ;
+      const px = cx + s.x * prevScale * cx * 0.5;
+      const py = cy + s.y * prevScale * cy * 0.5;
+
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(sx, sy);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
+      ctx.lineWidth = r * 0.7;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(sx, sy, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.fill();
+    }
+
+    if (active) animId = requestAnimationFrame(draw);
+  }
+
+  trigger.addEventListener('mouseenter', () => {
+    active = true;
+    const rect = canvas.getBoundingClientRect();
+    const dpr = devicePixelRatio;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    draw();
+  });
+
+  trigger.addEventListener('mouseleave', () => {
+    active = false;
+    cancelAnimationFrame(animId);
+    const dpr = devicePixelRatio;
+    ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+  });
 }

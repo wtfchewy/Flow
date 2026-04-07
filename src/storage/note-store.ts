@@ -338,11 +338,28 @@ export async function deleteNote(id: string) {
   notes.value = updated;
 
   if (activeNoteId.value === id) {
-    activeNoteId.value = null;
     activeStore = null;
 
     if (updated.length > 0) {
       await selectNote(updated[0].id);
+    } else {
+      // Last note deleted — create a fresh one inline to avoid null flash
+      const newId = generateId();
+      const now = Date.now();
+      const meta: NoteMeta = { id: newId, title: 'Untitled', createdAt: now, updatedAt: now, preview: '' };
+      notes.value = [meta];
+      activeNoteId.value = newId;
+      activeStore = createNewDoc(workspace, newId);
+      activeMode.value = 'page';
+      editorEl.doc = activeStore;
+      editorEl.pageSpecs = getPageSpecs(editorEl);
+      editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+      editorEl.mode = 'page';
+      editorEl.autofocus = true;
+      attachAutoSave(activeStore);
+      updateWindowTitle('Untitled');
+      const ydoc = getYDoc(activeStore);
+      await saveNote(newId, 'Untitled', '', 'page', ydoc, false);
     }
   }
 }

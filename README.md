@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src-tauri/icons/128x128@2x.png" width="128" height="128" alt="Peak" />
+  <img src="src-tauri/icons/128x128@2x.png" width="128" height="128" alt="Peak" style="border-radius: 30px;" />
 </p>
 
 <h1 align="center">Peak</h1>
@@ -11,7 +11,7 @@
 <br />
 
 <p align="center">
-  <video src="landing/public/video.mp4" width="720" autoplay loop muted></video>
+  <video src="https://github-production-user-asset-6210df.s3.amazonaws.com/52513072/574506307-57681ae3-04e9-49c0-9f6b-37a18e45fd81.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA/20260407/us-east-1/s3/aws4_request&X-Amz-Date=20260407T064811Z&X-Amz-Expires=300&X-Amz-Signature=58b95a3995439fcdcfecf6e3200f154b35679aaeb7dbb03239e0637d84660e70&X-Amz-SignedHeaders=host" width="720" autoplay loop muted></video>
 </p>
 
 <br />

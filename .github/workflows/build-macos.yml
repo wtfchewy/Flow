@@ -94,15 +94,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BUNDLE_DIR="src-tauri/target/universal-apple-darwin/release/bundle"
-          SIG_FILE="$BUNDLE_DIR/macos/Peak.app.tar.gz.sig"
-          TAR_FILE="$BUNDLE_DIR/macos/Peak.app.tar.gz"
+          # Search for the .sig file anywhere under the target directory
+          echo "Searching for .sig file..."
+          find "$GITHUB_WORKSPACE/src-tauri/target" -name "*.app.tar.gz.sig" -type f 2>/dev/null || true
+          SIG_FILE=$(find "$GITHUB_WORKSPACE/src-tauri/target" -name "*.app.tar.gz.sig" -type f 2>/dev/null | head -1)
 
-          if [ ! -f "$SIG_FILE" ]; then
+          if [ -z "$SIG_FILE" ]; then
             echo "No .sig file found, skipping updater manifest"
             exit 0
           fi
 
+          echo "Found sig file: $SIG_FILE"
           SIGNATURE=$(cat "$SIG_FILE")
           VERSION=$(grep '"version"' src-tauri/tauri.conf.json | head -1 | sed 's/.*"\([0-9.]*\)".*/\1/')
           TAG="v$VERSION"
@@ -113,26 +115,36 @@ jobs:
           gh release upload "$TAG" "$SIG_FILE#Peak_universal.app.tar.gz.sig" --repo wtfchewy/Peak --clobber
 
           # Generate and upload latest.json
-          cat > latest.json << EOF
+          cat > latest.json << 'ENDJSON'
           {
-            "version": "$VERSION",
-            "notes": "Peak v$VERSION",
-            "pub_date": "$PUB_DATE",
+            "version": "PLACEHOLDER_VERSION",
+            "notes": "PLACEHOLDER_NOTES",
+            "pub_date": "PLACEHOLDER_DATE",
             "platforms": {
               "darwin-universal": {
-                "signature": "$SIGNATURE",
-                "url": "$TAR_URL"
+                "signature": "PLACEHOLDER_SIG",
+                "url": "PLACEHOLDER_URL"
               },
               "darwin-aarch64": {
-                "signature": "$SIGNATURE",
-                "url": "$TAR_URL"
+                "signature": "PLACEHOLDER_SIG",
+                "url": "PLACEHOLDER_URL"
               },
               "darwin-x86_64": {
-                "signature": "$SIGNATURE",
-                "url": "$TAR_URL"
+                "signature": "PLACEHOLDER_SIG",
+                "url": "PLACEHOLDER_URL"
               }
             }
           }
-          EOF
+          ENDJSON
+
+          # Replace placeholders (avoids heredoc variable expansion issues)
+          sed -i '' "s|PLACEHOLDER_VERSION|$VERSION|g" latest.json
+          sed -i '' "s|PLACEHOLDER_NOTES|Peak v$VERSION|g" latest.json
+          sed -i '' "s|PLACEHOLDER_DATE|$PUB_DATE|g" latest.json
+          sed -i '' "s|PLACEHOLDER_SIG|$SIGNATURE|g" latest.json
+          sed -i '' "s|PLACEHOLDER_URL|$TAR_URL|g" latest.json
+
+          echo "Generated latest.json:"
+          cat latest.json
 
           gh release upload "$TAG" latest.json --repo wtfchewy/Peak --clobber

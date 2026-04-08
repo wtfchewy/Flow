@@ -90,59 +90,46 @@ jobs:
           includeUpdaterJson: false
           args: ${{ matrix.args }}
 
-      - name: Upload updater signature and manifest
+      - name: Generate and upload latest.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Search for the .sig file anywhere under the target directory
-          echo "Searching for .sig file..."
-          find "$GITHUB_WORKSPACE/src-tauri/target" -name "*.app.tar.gz.sig" -type f 2>/dev/null || true
-          SIG_FILE=$(find "$GITHUB_WORKSPACE/src-tauri/target" -name "*.app.tar.gz.sig" -type f 2>/dev/null | head -1)
-
-          if [ -z "$SIG_FILE" ]; then
-            echo "No .sig file found, skipping updater manifest"
-            exit 0
-          fi
-
-          echo "Found sig file: $SIG_FILE"
-          SIGNATURE=$(cat "$SIG_FILE")
           VERSION=$(grep '"version"' src-tauri/tauri.conf.json | head -1 | sed 's/.*"\([0-9.]*\)".*/\1/')
           TAG="v$VERSION"
           PUB_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           TAR_URL="https://github.com/wtfchewy/Peak/releases/download/$TAG/Peak_universal.app.tar.gz"
 
-          # Upload the .sig file to the release
-          gh release upload "$TAG" "$SIG_FILE#Peak_universal.app.tar.gz.sig" --repo wtfchewy/Peak --clobber
+          # Download the .sig from the release assets (tauri-action already uploaded it)
+          echo "Downloading signature from release assets..."
+          gh release download "$TAG" --pattern "*.app.tar.gz.sig" --repo wtfchewy/Peak --dir . || true
 
-          # Generate and upload latest.json
-          cat > latest.json << 'ENDJSON'
-          {
-            "version": "PLACEHOLDER_VERSION",
-            "notes": "PLACEHOLDER_NOTES",
-            "pub_date": "PLACEHOLDER_DATE",
-            "platforms": {
-              "darwin-universal": {
-                "signature": "PLACEHOLDER_SIG",
-                "url": "PLACEHOLDER_URL"
-              },
-              "darwin-aarch64": {
-                "signature": "PLACEHOLDER_SIG",
-                "url": "PLACEHOLDER_URL"
-              },
-              "darwin-x86_64": {
-                "signature": "PLACEHOLDER_SIG",
-                "url": "PLACEHOLDER_URL"
+          SIG_FILE=$(ls *.app.tar.gz.sig 2>/dev/null | head -1)
+
+          if [ -z "$SIG_FILE" ]; then
+            echo "No .sig asset found in release $TAG, skipping updater manifest"
+            exit 0
+          fi
+
+          echo "Found sig asset: $SIG_FILE"
+          SIGNATURE=$(cat "$SIG_FILE")
+
+          # Generate latest.json using jq for proper JSON encoding
+          jq -n \
+            --arg version "$VERSION" \
+            --arg notes "Peak v$VERSION" \
+            --arg pub_date "$PUB_DATE" \
+            --arg sig "$SIGNATURE" \
+            --arg url "$TAR_URL" \
+            '{
+              version: $version,
+              notes: $notes,
+              pub_date: $pub_date,
+              platforms: {
+                "darwin-universal": { signature: $sig, url: $url },
+                "darwin-aarch64": { signature: $sig, url: $url },
+                "darwin-x86_64": { signature: $sig, url: $url }
               }
-            }
-          }
-          ENDJSON
-
-          # Replace placeholders (avoids heredoc variable expansion issues)
-          sed -i '' "s|PLACEHOLDER_VERSION|$VERSION|g" latest.json
-          sed -i '' "s|PLACEHOLDER_NOTES|Peak v$VERSION|g" latest.json
-          sed -i '' "s|PLACEHOLDER_DATE|$PUB_DATE|g" latest.json
-          sed -i '' "s|PLACEHOLDER_SIG|$SIGNATURE|g" latest.json
-          sed -i '' "s|PLACEHOLDER_URL|$TAR_URL|g" latest.json
+            }' > latest.json
 
           echo "Generated latest.json:"
           cat latest.json

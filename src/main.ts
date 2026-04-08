@@ -30,6 +30,9 @@ import { openImportModal } from './import/import-modal';
 import { openExportModal } from './export/export-modal';
 import { GfxControllerIdentifier } from '@blocksuite/affine/std/gfx';
 import { PresentTool } from '@blocksuite/affine/blocks/frame';
+import { EdgelessTemplatePanel } from '@blocksuite/affine/gfx/template';
+import { peakEdgelessTemplates } from './templates/edgeless-templates';
+import { peakStickerTemplates } from './templates/sticker-templates';
 
 function makeDraggable(el: HTMLElement) {
   if (!isTauri()) return; // No custom dragging in browser
@@ -60,6 +63,10 @@ async function main() {
 
   // Initialize BlockSuite (register custom elements)
   initBlockSuite();
+
+  // Register edgeless templates and stickers
+  EdgelessTemplatePanel.templates.extend(peakStickerTemplates);
+  EdgelessTemplatePanel.templates.extend(peakEdgelessTemplates);
 
   // Create workspace
   const workspace = createWorkspace();

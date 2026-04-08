@@ -1,0 +1,656 @@
+{
+  "name": "4P Marketing Matrix",
+  "type": "template",
+  "preview": "<svg width=\"135\" height=\"80\" viewBox=\"0 0 135 80\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"135\" height=\"80\" fill=\"currentColor\"/><rect x=\"6\" y=\"7\" width=\"56\" height=\"30\" rx=\"1\" fill=\"#DFF4E8\"/><rect x=\"72\" y=\"7\" width=\"56\" height=\"30\" rx=\"1\" fill=\"#E1EFFF\"/><rect x=\"6\" y=\"44\" width=\"56\" height=\"30\" rx=\"1\" fill=\"#FFEACA\"/><rect x=\"72\" y=\"44\" width=\"56\" height=\"30\" rx=\"1\" fill=\"#FFE1E1\"/><rect x=\"9\" y=\"11\" width=\"10\" height=\"9\" fill=\"#9DD194\"/><rect x=\"9.05\" y=\"11.05\" width=\"9.9\" height=\"8.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"9\" y=\"24\" width=\"10\" height=\"9\" fill=\"#9DD194\"/><rect x=\"9.05\" y=\"24.05\" width=\"9.9\" height=\"8.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"22\" y=\"11\" width=\"10\" height=\"9\" fill=\"#9DD194\"/><rect x=\"22.05\" y=\"11.05\" width=\"9.9\" height=\"8.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"84\" y=\"17\" width=\"10\" height=\"11\" fill=\"#84CFFF\"/><rect x=\"84.05\" y=\"17.05\" width=\"9.9\" height=\"10.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"99\" y=\"17\" width=\"10\" height=\"11\" fill=\"#84CFFF\"/><rect x=\"99.05\" y=\"17.05\" width=\"9.9\" height=\"10.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"113\" y=\"17\" width=\"10\" height=\"11\" fill=\"#84CFFF\"/><rect x=\"113.05\" y=\"17.05\" width=\"9.9\" height=\"10.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"76\" y=\"47\" width=\"10\" height=\"8\" fill=\"#F16F6F\"/><rect x=\"76.05\" y=\"47.05\" width=\"9.9\" height=\"7.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"89\" y=\"47\" width=\"10\" height=\"8\" fill=\"#F16F6F\"/><rect x=\"89.05\" y=\"47.05\" width=\"9.9\" height=\"7.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"102\" y=\"47\" width=\"10\" height=\"8\" fill=\"#F16F6F\"/><rect x=\"102.05\" y=\"47.05\" width=\"9.9\" height=\"7.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"115\" y=\"47\" width=\"10\" height=\"8\" fill=\"#F16F6F\"/><rect x=\"115.05\" y=\"47.05\" width=\"9.9\" height=\"7.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"115\" y=\"57\" width=\"10\" height=\"8\" fill=\"#F16F6F\"/><rect x=\"115.05\" y=\"57.05\" width=\"9.9\" height=\"7.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"102\" y=\"57\" width=\"10\" height=\"8\" fill=\"#F16F6F\"/><rect x=\"102.05\" y=\"57.05\" width=\"9.9\" height=\"7.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"89\" y=\"57\" width=\"10\" height=\"8\" fill=\"#F16F6F\"/><rect x=\"89.05\" y=\"57.05\" width=\"9.9\" height=\"7.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"76\" y=\"57\" width=\"10\" height=\"8\" fill=\"#F16F6F\"/><rect x=\"76.05\" y=\"57.05\" width=\"9.9\" height=\"7.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"35\" y=\"11\" width=\"10\" height=\"9\" fill=\"#9DD194\"/><rect x=\"35.05\" y=\"11.05\" width=\"9.9\" height=\"8.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><line x1=\"6\" y1=\"40.85\" x2=\"128\" y2=\"40.85\" stroke=\"#E3E2E4\" stroke-width=\"0.3\"/><line x1=\"67.15\" y1=\"7\" x2=\"67.15\" y2=\"74\" stroke=\"#E3E2E4\" stroke-width=\"0.3\"/><rect x=\"9\" y=\"48\" width=\"10\" height=\"10\" fill=\"#FFC46B\"/><rect x=\"9.05\" y=\"48.05\" width=\"9.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"22\" y=\"55\" width=\"10\" height=\"10\" fill=\"#FFC46B\"/><rect x=\"22.05\" y=\"55.05\" width=\"9.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"35\" y=\"50\" width=\"10\" height=\"10\" fill=\"#FFC46B\"/><rect x=\"35.05\" y=\"50.05\" width=\"9.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/></svg>",
+  "content": {
+    "type": "page",
+    "meta": {
+      "id": "page:home",
+      "title": "BlockSuite Playground",
+      "createDate": 1704262825908,
+      "tags": []
+    },
+    "blocks": {
+      "type": "block",
+      "id": "block:wKkJVqs2Uh",
+      "flavour": "affine:page",
+      "props": {
+        "title": {
+          "$blocksuite:internal:text$": true,
+          "delta": [
+            {
+              "insert": "BlockSuite Playground"
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "type": "block",
+          "id": "block:9obeHwvQlc",
+          "flavour": "affine:surface",
+          "props": {
+            "elements": {
+              "G8sDm7LjU9": {
+                "type": "shape",
+                "xywh": "[-324.38214096820366,-550.5359796779505,2010.0706106372572,1391.3102868343653]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-blue",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-transparent",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "G8sDm7LjU9",
+                "index": "a1",
+                "seed": 571658708,
+                "color": "--affine-palette-line-black"
+              },
+              "hbRQlS-CgA": {
+                "type": "shape",
+                "xywh": "[1679.8574653793985,-551.0759492174957,2010.0706106372572,1392.0164063453992]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-green",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-black",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "hbRQlS-CgA",
+                "index": "a0",
+                "seed": 1793267126,
+                "color": "--affine-palette-line-black"
+              },
+              "n8wq78w2AW": {
+                "type": "shape",
+                "xywh": "[-324.38214096820366,836.7816674783276,2010.0706106372572,1387.2481329875468]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-yellow",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-transparent",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "n8wq78w2AW",
+                "index": "Zz",
+                "seed": 549546192,
+                "color": "--affine-palette-line-black"
+              },
+              "pckcetI3H2": {
+                "type": "shape",
+                "xywh": "[1676.7423122088705,831.9557168319184,2017.2776666250006,1395.8041126754724]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-tangerine",
+                "strokeWidth": 12,
+                "strokeColor": "--affine-palette-line-tangerine",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "pckcetI3H2",
+                "index": "Zy",
+                "seed": 2034782310,
+                "color": "--affine-palette-line-black",
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "fontFamily": "blocksuite:surface:Inter"
+              },
+              "G3RWS7P-_D": {
+                "type": "text",
+                "xywh": "[-263.92954192315847,-499.2355323811801,241.47195434570312,105]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Product"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-blue",
+                "fontSize": 88,
+                "fontFamily": "blocksuite:surface:BebasNeue",
+                "fontWeight": "400",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "G3RWS7P-_D",
+                "index": "aD",
+                "seed": 10085810
+              },
+              "fiESd_cAMf": {
+                "type": "text",
+                "xywh": "[1742.3329219139223,-499.7355323811801,153,105]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "PrICE"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-navy",
+                "fontSize": 88,
+                "fontFamily": "blocksuite:surface:BebasNeue",
+                "fontWeight": "400",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "fiESd_cAMf",
+                "index": "aE",
+                "seed": 1574527816
+              },
+              "EsHAiR0yBi": {
+                "type": "text",
+                "xywh": "[1730.6756596208468,884.5632875897456,166,106]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "PLACE"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-red",
+                "fontSize": 88,
+                "fontFamily": "blocksuite:surface:BebasNeue",
+                "fontWeight": "400",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "EsHAiR0yBi",
+                "index": "aF",
+                "seed": 941927626
+              },
+              "qe3DSPrYdf": {
+                "type": "text",
+                "xywh": "[-275.586804216234,885.0632875897456,310,106]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "ProMOTION"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-tangerine",
+                "fontSize": 88,
+                "fontFamily": "blocksuite:surface:BebasNeue",
+                "fontWeight": "400",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "qe3DSPrYdf",
+                "index": "aG",
+                "seed": 744618643
+              },
+              "xe5Yoe_9Ym": {
+                "type": "text",
+                "xywh": "[-1545.6298523435441,-308.51674361350143,732.9849149269639,504]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "A 4P Marketing Matrix template organizes key marketing strategies around four elements: Product, Price, Place, and Promotion. \n\nIt provides a structured approach to define and analyze each aspect, ensuring a comprehensive marketing plan."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 40,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "xe5Yoe_9Ym",
+                "index": "ae",
+                "seed": 1275152160,
+                "hasMaxWidth": true
+              },
+              "00egphyHQ0": {
+                "type": "text",
+                "xywh": "[-1545.6298523435441,-437.4272826856303,651.4558715820312,89]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "4P Marketing Matrix"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 64,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "00egphyHQ0",
+                "index": "af",
+                "seed": 1698133562
+              },
+              "LNDgtMxSx2": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "pckcetI3H2": true,
+                    "n8wq78w2AW": true,
+                    "hbRQlS-CgA": true,
+                    "G8sDm7LjU9": true,
+                    "G3RWS7P-_D": true,
+                    "fiESd_cAMf": true,
+                    "EsHAiR0yBi": true,
+                    "qe3DSPrYdf": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Group 1"
+                    }
+                  ]
+                },
+                "id": "LNDgtMxSx2",
+                "index": "aG",
+                "seed": 876949189
+              },
+              "UDIFiRbLEx": {
+                "type": "shape",
+                "xywh": "[-1645.2017607713228,-550.1481725901164,932.1287317825213,860.6645951785647]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0.1,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-white",
+                "strokeWidth": 12,
+                "strokeColor": "--affine-palette-line-black",
+                "strokeStyle": "solid",
+                "roughness": 1.4,
+                "color": "--affine-palette-line-black",
+                "id": "UDIFiRbLEx",
+                "index": "aF",
+                "seed": 499378524
+              }
+            }
+          },
+          "children": []
+        },
+        {
+          "type": "block",
+          "id": "block:uStvHzbo_0",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[-47.65483438164483,-152.35566874448068,364,350.42578125]",
+            "background": "--affine-tag-blue",
+            "index": "aR",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:IGcP0YepF2",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:yI5JejXYkO",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[352.32566504563056,64.19414482024047,364,350.42578125]",
+            "background": "--affine-tag-blue",
+            "index": "aS",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:Owf1ifVNz1",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:DIjSAufGEL",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[892.912994588858,-165.18985185378477,364,350.42578125]",
+            "background": "--affine-tag-blue",
+            "index": "aT",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:62lqOBsxvb",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:DWK6GhYlBY",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[2152.3785001752194,-45.780025366743075,364,350.42578125]",
+            "background": "--affine-tag-green",
+            "index": "aU",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:1g2EsVeGlP",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:EnlV_5bR5H",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[2657.263549538395,-227.09494996130474,364,350.42578125]",
+            "background": "--affine-tag-green",
+            "index": "aV",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:R3v_ruiteR",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:DcxuiQm8fX",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[-11.674334954369453,1205.4178310224202,364,350.42578125]",
+            "background": "--affine-tag-yellow",
+            "index": "aW",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:mWyJ-m7iam",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:JVsfHdO3yZ",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[590.2686764639566,1461.5599669243923,364,350.42578125]",
+            "background": "--affine-tag-yellow",
+            "index": "aX",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:fkj3dYM-5u",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:1XO8CVBjRS",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[2006.4604780976342,1247.0200381308277,364,350.42578125]",
+            "background": "--affine-tag-orange",
+            "index": "aY",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:1-Vf5hZEwC",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:bOaMGO9IvG",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[2628.9752347495414,1205.4178310224202,364,350.42578125]",
+            "background": "--affine-tag-orange",
+            "index": "aZ",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:448i6V2K0y",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:MTn83hg25G",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[3078.4659279251755,1259.3587141642702,364,350.42578125]",
+            "background": "--affine-tag-orange",
+            "index": "aa",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:6ZPjzctxeh",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

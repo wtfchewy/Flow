@@ -1,0 +1,622 @@
+{
+  "name": "Project Tracking Kanban",
+  "type": "template",
+  "preview": "<svg width=\"135\" height=\"80\" viewBox=\"0 0 135 80\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"135\" height=\"80\" fill=\"currentColor\"/><rect x=\"8\" y=\"15\" width=\"36\" height=\"57\" rx=\"1\" fill=\"#F3F0FF\"/><rect x=\"49\" y=\"15\" width=\"37\" height=\"57\" rx=\"1\" fill=\"#FFF4D8\"/><rect x=\"91\" y=\"15\" width=\"36\" height=\"57\" rx=\"1\" fill=\"#F5F5F5\"/><rect x=\"13\" y=\"19\" width=\"11\" height=\"10\" fill=\"#937EE7\"/><rect x=\"13.05\" y=\"19.05\" width=\"10.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"55\" y=\"19\" width=\"11\" height=\"10\" fill=\"#FFC46B\"/><rect x=\"55.05\" y=\"19.05\" width=\"10.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"27\" y=\"19\" width=\"11\" height=\"10\" fill=\"#937EE7\"/><rect x=\"27.05\" y=\"19.05\" width=\"10.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"69\" y=\"19\" width=\"11\" height=\"10\" fill=\"#FFC46B\"/><rect x=\"69.05\" y=\"19.05\" width=\"10.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"96\" y=\"19\" width=\"11\" height=\"10\" fill=\"#B8E3FF\"/><rect x=\"96.05\" y=\"19.05\" width=\"10.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"96\" y=\"34\" width=\"11\" height=\"10\" fill=\"#B8E3FF\"/><rect x=\"96.05\" y=\"34.05\" width=\"10.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"112\" y=\"26\" width=\"11\" height=\"10\" fill=\"#B8E3FF\"/><rect x=\"112.05\" y=\"26.05\" width=\"10.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"13\" y=\"32\" width=\"11\" height=\"10\" fill=\"#937EE7\"/><rect x=\"13.05\" y=\"32.05\" width=\"10.9\" height=\"9.9\" stroke=\"black\" stroke-opacity=\"0.1\" stroke-width=\"0.1\"/><rect x=\"8\" y=\"7\" width=\"15\" height=\"4\" rx=\"2\" fill=\"#937EE7\"/><rect x=\"49\" y=\"7\" width=\"15\" height=\"4\" rx=\"2\" fill=\"#FFC46B\"/><rect x=\"91\" y=\"7\" width=\"15\" height=\"4\" rx=\"2\" fill=\"#B8E3FF\"/></svg>",
+  "content": {
+    "type": "page",
+    "meta": {
+      "id": "page:home",
+      "title": "",
+      "createDate": 1704266794558,
+      "tags": []
+    },
+    "blocks": {
+      "type": "block",
+      "id": "block:WiCmFgkKur",
+      "flavour": "affine:page",
+      "props": {
+        "title": {
+          "$blocksuite:internal:text$": true,
+          "delta": []
+        }
+      },
+      "children": [
+        {
+          "type": "block",
+          "id": "block:4RjYTv3Irh",
+          "flavour": "affine:surface",
+          "props": {
+            "elements": {
+              "xT4fgp2NtV": {
+                "type": "text",
+                "xywh": "[13.899034754585273,-2559.4600038004746,582.2957763671875,65]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Project tracking Kanban"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-white",
+                "fontSize": 52,
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "xT4fgp2NtV",
+                "index": "aKG",
+                "seed": 748310487
+              },
+              "jI95H1t5RT": {
+                "type": "text",
+                "xywh": "[13.899034754585273,-2448.0761288820563,603,600]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "A Kanban template for project tracking typically includes a visual board divided into columns representing different stages of a project, such as \"planned,\" \"ongoing,\" and \"Complete.\"\n\nThis template allows tasks to be added as cards under these columns. As work progresses, cards are moved along the columns, offering a clear, real-time view of the project's progress.\n\nThis template is useful for managing workflow, prioritizing tasks, and ensuring efficient project execution."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-white",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "jI95H1t5RT",
+                "index": "aKV",
+                "seed": 810997411,
+                "hasMaxWidth": true
+              },
+              "R0lbJ812KP": {
+                "type": "shape",
+                "xywh": "[2359.7864665997167,-2644.5509442882258,1432.172670952085,148]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-orange",
+                "strokeWidth": 12,
+                "strokeColor": "--affine-palette-transparent",
+                "strokeStyle": "solid",
+                "roughness": 1.4,
+                "id": "R0lbJ812KP",
+                "index": "aM",
+                "seed": 1163884762,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "This column shows tasks that are currently in progress."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-white",
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "italic",
+                "fontSize": 36
+              },
+              "8RfNxzDFte": {
+                "type": "shape",
+                "xywh": "[903.6314320451293,-2644.5509442882258,1390.5813627628827,142]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-purple",
+                "strokeWidth": 12,
+                "strokeColor": "--affine-palette-transparent",
+                "strokeStyle": "solid",
+                "roughness": 1.4,
+                "id": "8RfNxzDFte",
+                "index": "aN",
+                "seed": 502096122,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "This column represents tasks that are scheduled but not yet started."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-white",
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "italic",
+                "fontSize": 36
+              },
+              "n6d192TXUr": {
+                "type": "shape",
+                "xywh": "[3856.793927576062,-2644.5509442882258,1402.0730831808123,148]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-navy",
+                "strokeWidth": 12,
+                "strokeColor": "--affine-palette-transparent",
+                "strokeStyle": "solid",
+                "roughness": 1.4,
+                "id": "n6d192TXUr",
+                "index": "aO",
+                "seed": 832931538,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "This column shows tasks that are currently in progress."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-white",
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "italic",
+                "fontSize": 36
+              },
+              "F956ronTe8": {
+                "type": "shape",
+                "xywh": "[-68.56985606216267,-2644.5509442882258,767.9377816334959,931.3051132674514]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0.1,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-black",
+                "strokeWidth": 10,
+                "strokeColor": "--affine-palette-line-white",
+                "strokeStyle": "solid",
+                "roughness": 1.4,
+                "color": "--affine-palette-line-white",
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "italic",
+                "fontSize": 36,
+                "id": "F956ronTe8",
+                "index": "a0",
+                "seed": 1083238361
+              },
+              "A1-5wqgVLj": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "F956ronTe8": true,
+                    "xT4fgp2NtV": true,
+                    "jI95H1t5RT": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Instruction"
+                    }
+                  ]
+                },
+                "id": "A1-5wqgVLj",
+                "index": "aP",
+                "seed": 1413193802
+              }
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:lkN5hk-maV",
+              "flavour": "affine:frame",
+              "props": {
+                "title": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": [
+                    {
+                      "insert": "Planned"
+                    }
+                  ]
+                },
+                "background": "--affine-tag-purple",
+                "xywh": "[903.6314320451293,-2646.170782828957,1392.4777890462692,2009.7726069909259]",
+                "index": "a0"
+              },
+              "children": []
+            },
+            {
+              "type": "block",
+              "id": "block:jYc3sAF203",
+              "flavour": "affine:frame",
+              "props": {
+                "title": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": [
+                    {
+                      "insert": "Ongoing"
+                    }
+                  ]
+                },
+                "background": "--affine-tag-yellow",
+                "xywh": "[2359.7864665997167,-2646.170782828957,1433.3302154680273,1987.9080784643184]",
+                "index": "a1"
+              },
+              "children": []
+            },
+            {
+              "type": "block",
+              "id": "block:pK-c0q3FKT",
+              "flavour": "affine:frame",
+              "props": {
+                "title": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": [
+                    {
+                      "insert": "Complete"
+                    }
+                  ]
+                },
+                "background": "--affine-tag-blue",
+                "xywh": "[3856.793927576062,-2646.170782828957,1403.513161212757,1987.9080784643184]",
+                "index": "a2"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:ARdbMSGA6F",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[1006.3673687752464,-2396.9441818570995,364,346.0533208983238]",
+            "background": "--affine-tag-green",
+            "index": "a1",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 8,
+                "borderSize": 2,
+                "borderStyle": "solid",
+                "shadowType": "--affine-note-shadow-paper"
+              },
+              "collapse": true,
+              "collapsedHeight": 362.53729127607653
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:i18H4EDVSa",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "h1",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            },
+            {
+              "type": "block",
+              "id": "block:e7jwGFx6h-",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            },
+            {
+              "type": "block",
+              "id": "block:6oN79y-eoz",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            },
+            {
+              "type": "block",
+              "id": "block:i0HG8snTRn",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            },
+            {
+              "type": "block",
+              "id": "block:Qw_oMklmlE",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:9cokXXA85z",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[1469.2382949333223,-2396.9441818570995,364,345.6208786944021]",
+            "background": "--affine-tag-green",
+            "index": "a2",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 8,
+                "borderSize": 2,
+                "borderStyle": "solid",
+                "shadowType": "--affine-note-shadow-paper"
+              },
+              "collapse": true,
+              "collapsedHeight": 342.4265140043026
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:4OI6eiz_C1",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "h1",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:7Qwe7V3lNz",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[2470.356710227984,-2396.9441818570995,364,360.690320348461]",
+            "background": "--affine-tag-red",
+            "index": "a3",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 8,
+                "borderSize": 2,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-paper"
+              },
+              "collapse": true,
+              "collapsedHeight": 362.53729127607653
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:B7u9koNnHq",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "h1",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            },
+            {
+              "type": "block",
+              "id": "block:o8lZfMyjG8",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:ABjD3pyR1M",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[2949.7366961478638,-2396.9441818570995,364,362.53729127607653]",
+            "background": "--affine-tag-red",
+            "index": "a4",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 8,
+                "borderSize": 2,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-paper"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:RCD-sChtHO",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "h1",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:viFUOamIio",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[2470.356710227984,-1875.4049073554643,364,362.53729127607653]",
+            "background": "--affine-tag-red",
+            "index": "a5",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 8,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-paper"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:tyCZ6vxAnB",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "h3",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:qwk55Z_R6Y",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[3974.3195766719255,-2396.9441818570995,364,360.690320348461]",
+            "background": "--affine-tag-yellow",
+            "index": "a6",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 8,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-paper"
+              },
+              "collapse": true,
+              "collapsedHeight": 362.53729127607653
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:qBSewlvzZx",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "h1",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            },
+            {
+              "type": "block",
+              "id": "block:r4zBuxQmSD",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:KsSuGA33Fz",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[4449.409800606875,-2396.9441818570995,364,360.690320348461]",
+            "background": "--affine-tag-yellow",
+            "index": "aC",
+            "displayMode": "edgeless",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 8,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-paper"
+              },
+              "collapse": true,
+              "collapsedHeight": 362.53729127607653
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:Wfbucq7AK2",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "h1",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            },
+            {
+              "type": "block",
+              "id": "block:-QvrhoT91b",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

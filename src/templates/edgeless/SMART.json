@@ -1,0 +1,1255 @@
+{
+  "name": "SMART",
+  "type": "template",
+  "preview": "<svg width=\"135\" height=\"80\" viewBox=\"0 0 135 80\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"135\" height=\"80\" fill=\"currentColor\"/><rect x=\"9\" y=\"25\" width=\"21\" height=\"30\" fill=\"#9DD194\"/><rect x=\"33\" y=\"25\" width=\"21\" height=\"30\" fill=\"#ED8CBD\"/><rect x=\"57\" y=\"25\" width=\"21\" height=\"30\" fill=\"#937EE7\"/><rect x=\"81\" y=\"25\" width=\"21\" height=\"30\" fill=\"#FFDE6B\"/><rect x=\"105\" y=\"25\" width=\"21\" height=\"30\" fill=\"#FFC46B\"/><path d=\"M19.32 47.14C18.2933 47.14 17.3733 46.9733 16.56 46.64C15.7467 46.3067 15.0933 45.8133 14.6 45.16C14.12 44.5067 13.8667 43.72 13.84 42.8H17.48C17.5333 43.32 17.7133 43.72 18.02 44C18.3267 44.2667 18.7267 44.4 19.22 44.4C19.7267 44.4 20.1267 44.2867 20.42 44.06C20.7133 43.82 20.86 43.4933 20.86 43.08C20.86 42.7333 20.74 42.4467 20.5 42.22C20.2733 41.9933 19.9867 41.8067 19.64 41.66C19.3067 41.5133 18.8267 41.3467 18.2 41.16C17.2933 40.88 16.5533 40.6 15.98 40.32C15.4067 40.04 14.9133 39.6267 14.5 39.08C14.0867 38.5333 13.88 37.82 13.88 36.94C13.88 35.6333 14.3533 34.6133 15.3 33.88C16.2467 33.1333 17.48 32.76 19 32.76C20.5467 32.76 21.7933 33.1333 22.74 33.88C23.6867 34.6133 24.1933 35.64 24.26 36.96H20.56C20.5333 36.5067 20.3667 36.1533 20.06 35.9C19.7533 35.6333 19.36 35.5 18.88 35.5C18.4667 35.5 18.1333 35.6133 17.88 35.84C17.6267 36.0533 17.5 36.3667 17.5 36.78C17.5 37.2333 17.7133 37.5867 18.14 37.84C18.5667 38.0933 19.2333 38.3667 20.14 38.66C21.0467 38.9667 21.78 39.26 22.34 39.54C22.9133 39.82 23.4067 40.2267 23.82 40.76C24.2333 41.2933 24.44 41.98 24.44 42.82C24.44 43.62 24.2333 44.3467 23.82 45C23.42 45.6533 22.8333 46.1733 22.06 46.56C21.2867 46.9467 20.3733 47.14 19.32 47.14Z\" fill=\"#7CC270\"/><path d=\"M51.14 32.96V47H47.72V38.58L44.58 47H41.82L38.66 38.56V47H35.24V32.96H39.28L43.22 42.68L47.12 32.96H51.14Z\" fill=\"#E660A4\"/><path d=\"M69.98 44.52H64.74L63.9 47H60.32L65.4 32.96H69.36L74.44 47H70.82L69.98 44.52ZM69.1 41.88L67.36 36.74L65.64 41.88H69.1Z\" fill=\"#6E52DF\"/><path d=\"M93.4 47L90.48 41.7H89.66V47H86.24V32.96H91.98C93.0867 32.96 94.0267 33.1533 94.8 33.54C95.5867 33.9267 96.1733 34.46 96.56 35.14C96.9467 35.8067 97.14 36.5533 97.14 37.38C97.14 38.3133 96.8733 39.1467 96.34 39.88C95.82 40.6133 95.0467 41.1333 94.02 41.44L97.26 47H93.4ZM89.66 39.28H91.78C92.4067 39.28 92.8733 39.1267 93.18 38.82C93.5 38.5133 93.66 38.08 93.66 37.52C93.66 36.9867 93.5 36.5667 93.18 36.26C92.8733 35.9533 92.4067 35.8 91.78 35.8H89.66V39.28Z\" fill=\"#FFD338\"/><path d=\"M121.34 32.96V35.7H117.62V47H114.2V35.7H110.48V32.96H121.34Z\" fill=\"#FF8C38\"/></svg>",
+  "content": {
+    "type": "page",
+    "meta": {
+      "id": "page:home",
+      "title": "",
+      "createDate": 1704351991537,
+      "tags": []
+    },
+    "blocks": {
+      "type": "block",
+      "id": "block:MbQYI7Q04H",
+      "flavour": "affine:page",
+      "props": {
+        "title": {
+          "$blocksuite:internal:text$": true,
+          "delta": []
+        }
+      },
+      "children": [
+        {
+          "type": "block",
+          "id": "block:2HnKEly-CM",
+          "flavour": "affine:surface",
+          "props": {
+            "elements": {
+              "1QDySqs3Rn": {
+                "type": "shape",
+                "xywh": "[-3351.0058452256562,-193.49281224272409,1208.450254579689,271]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-green",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "1QDySqs3Rn",
+                "index": "Zt",
+                "seed": 1658518971,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 24
+              },
+              "y_4lCmJrRB": {
+                "type": "text",
+                "xywh": "[-2998.213531614515,123.77868158453771,501.8040785351991,1153.5726457174703]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "S"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-green",
+                "fontSize": 823.9804612267642,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "y_4lCmJrRB",
+                "index": "a9",
+                "seed": 1020737877
+              },
+              "puCp5lQe3b": {
+                "type": "shape",
+                "xywh": "[-3351.0058452256562,121.16593109577366,1207.3887057574816,1158.7981466949982]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-green",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "puCp5lQe3b",
+                "index": "Zy",
+                "seed": 2113251578,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 200
+              },
+              "MHCaikTesH": {
+                "type": "text",
+                "xywh": "[-3298.7807179358115,-99.9648970050714,1104,143]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "The goal should be clear and specific, avoiding vagueness or generalities. This helps to focus efforts and clearly define what is to be achieved."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "400",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "MHCaikTesH",
+                "index": "a0V",
+                "seed": 1773635052,
+                "hasMaxWidth": true
+              },
+              "mgxXuFywTQ": {
+                "type": "shape",
+                "xywh": "[-2085.320761846566,121.1659310957732,1207.3887057574816,1158.7981466949982]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-magenta",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "mgxXuFywTQ",
+                "index": "aQ",
+                "seed": 81413652,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 200
+              },
+              "ypxoplzQy-": {
+                "type": "text",
+                "xywh": "[-1852.6264089678255,123.77868158453771,742,1236]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "M"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-magenta",
+                "fontSize": 823.9804612267642,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "ypxoplzQy-",
+                "index": "aR",
+                "seed": 796986841
+              },
+              "W_6B2aKnr2": {
+                "type": "shape",
+                "xywh": "[-819.6356784674756,121.16593109577366,1207.3887057574816,1158.7981466949982]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-purple",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "W_6B2aKnr2",
+                "index": "aT",
+                "seed": 167876713,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 200
+              },
+              "GKOPhIA6Tu": {
+                "type": "text",
+                "xywh": "[-511.4413255887348,123.77868158453816,591,1236]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "A"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-purple",
+                "fontSize": 823.9804612267642,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "GKOPhIA6Tu",
+                "index": "aU",
+                "seed": 1736175608
+              },
+              "Ru42Hu4e0u": {
+                "type": "shape",
+                "xywh": "[446.0494049116146,121.16593109577366,1207.3887057574816,1158.7981466949982]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-yellow",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "Ru42Hu4e0u",
+                "index": "aW",
+                "seed": 1685399219,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 200
+              },
+              "EZbrO-lDMZ": {
+                "type": "text",
+                "xywh": "[785.2437577903554,123.77868158453816,529,1236]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "R"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-yellow",
+                "fontSize": 823.9804612267642,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "EZbrO-lDMZ",
+                "index": "aX",
+                "seed": 1272467178
+              },
+              "TagfO4oe8H": {
+                "type": "shape",
+                "xywh": "[1711.7344882907043,121.16593109577366,1207.3887057574816,1158.7981466949982]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-orange",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "TagfO4oe8H",
+                "index": "aZ",
+                "seed": 2126278060,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 200
+              },
+              "JmKmrjx39K": {
+                "type": "text",
+                "xywh": "[2077.428841169445,123.77868158453816,476,1236]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "T"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-orange",
+                "fontSize": 823.9804612267642,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "JmKmrjx39K",
+                "index": "aa",
+                "seed": 1879860187
+              },
+              "G8VBBiISv-": {
+                "type": "text",
+                "xywh": "[-3298.7807179358115,-159.02072748037654,128.3199462890625,45]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Specific"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "G8VBBiISv-",
+                "index": "a1",
+                "seed": 963242182
+              },
+              "mcDiIiDqLj": {
+                "type": "shape",
+                "xywh": "[-2085.320761846566,-193.49281224272409,1208.450254579689,271]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-magenta",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "mcDiIiDqLj",
+                "index": "a2",
+                "seed": 1675439228,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 24
+              },
+              "F9NE8j7qIC": {
+                "type": "text",
+                "xywh": "[-2033.095634556721,-99.96489700507118,1104,143]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "The goal must have criteria for measuring progress and success. This allows for tracking of progress and knowing when the objective has been achieved."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "400",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "F9NE8j7qIC",
+                "index": "a3",
+                "seed": 1994121851,
+                "hasMaxWidth": true
+              },
+              "zhqKBcT62N": {
+                "type": "text",
+                "xywh": "[-2033.095634556721,-159.02072748037654,195,48]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Measurable"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "zhqKBcT62N",
+                "index": "a4",
+                "seed": 2117656022
+              },
+              "Aovw-TPOmQ": {
+                "type": "shape",
+                "xywh": "[-819.6356784674756,-193.49281224272409,1208.450254579689,271]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-purple",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "Aovw-TPOmQ",
+                "index": "a6",
+                "seed": 1324901350,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 24
+              },
+              "EFx8WCqJu6": {
+                "type": "text",
+                "xywh": "[-767.4105511776313,-99.96489700507118,1104,143]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "The goal should be attainable; that is, realistically within the reach of the individual or team. It should challenge skills but remain possible."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "400",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "EFx8WCqJu6",
+                "index": "a7",
+                "seed": 1043066726,
+                "hasMaxWidth": true
+              },
+              "MXdj2Cgst3": {
+                "type": "text",
+                "xywh": "[-767.4105511776313,-159.02072748037654,173,48]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Attainable"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "MXdj2Cgst3",
+                "index": "a8",
+                "seed": 1392138820
+              },
+              "sXvnPLY07a": {
+                "type": "shape",
+                "xywh": "[446.0494049116146,-193.49281224272409,1208.450254579689,271]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-yellow",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "sXvnPLY07a",
+                "index": "aA",
+                "seed": 2145441580,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 24
+              },
+              "gzgTXcaxNS": {
+                "type": "text",
+                "xywh": "[498.274532201459,-99.96489700507072,1104,143]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "The goal should be relevant to the direction you want your career, business, or project to head. This means that it aligns with other relevant goals and fits into your immediate and long-term plans."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "400",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "gzgTXcaxNS",
+                "index": "aB",
+                "seed": 435820474,
+                "hasMaxWidth": true
+              },
+              "xenAnHbkL-": {
+                "type": "text",
+                "xywh": "[498.2745322014589,-159.02072748037654,144,48]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Relevant"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "xenAnHbkL-",
+                "index": "aC",
+                "seed": 1120374089
+              },
+              "r3JxbHa_Ob": {
+                "type": "shape",
+                "xywh": "[1711.7344882907043,-193.49281224272409,1208.450254579689,271]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-orange",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "r3JxbHa_Ob",
+                "index": "aE",
+                "seed": 276312892,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": []
+                },
+                "color": "--affine-palette-line-black",
+                "fontFamily": "blocksuite:surface:Satoshi",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "fontSize": 24
+              },
+              "j2RsuHl8X9": {
+                "type": "text",
+                "xywh": "[1763.959615580549,-99.96489700507072,1104,143]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "The goal should have a defined timeline, including a starting date and a target date. The purpose is to create urgency and prompt action."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "400",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "j2RsuHl8X9",
+                "index": "aF",
+                "seed": 1167709234,
+                "hasMaxWidth": true
+              },
+              "J5uV-hxtWn": {
+                "type": "text",
+                "xywh": "[1763.9596155805486,-159.02072748037654,206,48]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Time-bound"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 32,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "italic",
+                "textAlign": "left",
+                "id": "J5uV-hxtWn",
+                "index": "aG",
+                "seed": 523238549
+              },
+              "C4NrvhHi-X": {
+                "type": "text",
+                "xywh": "[-4298.775068430707,-13.057358174548908,829,486]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "A SMART principle template is designed to help in setting effective goals or objectives by ensuring they are Specific, Measurable, Achievable, Relevant, and Time-bound. \n\nThis template typically includes sections or prompts for each of these criteria, guiding you to refine your goals to be clear, trackable, realistic, significant, and timely."
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 36,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "400",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "C4NrvhHi-X",
+                "index": "aL",
+                "seed": 1898609963,
+                "hasMaxWidth": true
+              },
+              "cOMStQe7U6": {
+                "type": "text",
+                "xywh": "[-4298.775068430707,-120.88857739879005,392.8319091796875,67.5]",
+                "rotate": 0,
+                "text": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "SMART principle"
+                    }
+                  ]
+                },
+                "color": "--affine-palette-line-black",
+                "fontSize": 48,
+                "fontFamily": "blocksuite:surface:Poppins",
+                "fontWeight": "600",
+                "fontStyle": "normal",
+                "textAlign": "left",
+                "id": "cOMStQe7U6",
+                "index": "aM",
+                "seed": 1251120640
+              },
+              "CV_gspBaEM": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "puCp5lQe3b": true,
+                    "y_4lCmJrRB": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Specific"
+                    }
+                  ]
+                },
+                "id": "CV_gspBaEM",
+                "index": "Zy",
+                "seed": 1204682767
+              },
+              "9nvbwSWc_X": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "mgxXuFywTQ": true,
+                    "ypxoplzQy-": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Measurable"
+                    }
+                  ]
+                },
+                "id": "9nvbwSWc_X",
+                "index": "Zx",
+                "seed": 292574324,
+                "xywh": "[-1152.4771618726809,1113.4513332126337,1207.3887057574816,1158.7981466949984]"
+              },
+              "hwMx2i04Of": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "W_6B2aKnr2": true,
+                    "GKOPhIA6Tu": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Attainable"
+                    }
+                  ]
+                },
+                "id": "hwMx2i04Of",
+                "index": "Zw",
+                "seed": 1524523375,
+                "xywh": "[118.29908958978649,1116.0640837013977,1207.3887057574816,1158.798146694998]"
+              },
+              "GX1eCc-iCu": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "Ru42Hu4e0u": true,
+                    "EZbrO-lDMZ": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Relevent"
+                    }
+                  ]
+                },
+                "id": "GX1eCc-iCu",
+                "index": "Zv",
+                "seed": 1665773977,
+                "xywh": "[1389.0753410522548,1101.3271266282566,1207.3887057574816,1158.7981466949984]"
+              },
+              "ZyhSUjNC6E": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "TagfO4oe8H": true,
+                    "JmKmrjx39K": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Time-bound"
+                    }
+                  ]
+                },
+                "id": "ZyhSUjNC6E",
+                "index": "Zu",
+                "seed": 488603175,
+                "xywh": "[2659.851592514723,1103.939877117021,1207.3887057574816,1158.7981466949984]"
+              },
+              "6V-nFaHPEW": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "1QDySqs3Rn": true,
+                    "MHCaikTesH": true,
+                    "G8VBBiISv-": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Specific"
+                    }
+                  ]
+                },
+                "id": "6V-nFaHPEW",
+                "index": "a1",
+                "seed": 681263561
+              },
+              "dknft2sJDF": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "mcDiIiDqLj": true,
+                    "F9NE8j7qIC": true,
+                    "zhqKBcT62N": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Measurable"
+                    }
+                  ]
+                },
+                "id": "dknft2sJDF",
+                "index": "a5",
+                "seed": 1137197974,
+                "xywh": "[-914.7524361865326,1259.971277553842,1208.450254579689,271]"
+              },
+              "bZgkuQ4K53": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "Aovw-TPOmQ": true,
+                    "EFx8WCqJu6": true,
+                    "MXdj2Cgst3": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Measurable"
+                    }
+                  ]
+                },
+                "id": "bZgkuQ4K53",
+                "index": "a9",
+                "seed": 990615727,
+                "xywh": "[343.81424374502603,1279.136236898279,1208.450254579689,271]"
+              },
+              "1VZ4pgGLEn": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "sXvnPLY07a": true,
+                    "gzgTXcaxNS": true,
+                    "xenAnHbkL-": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Measurable"
+                    }
+                  ]
+                },
+                "id": "1VZ4pgGLEn",
+                "index": "aD",
+                "seed": 1287003439,
+                "xywh": "[1623.8355831302415,1272.136182495278,1208.450254579689,271]"
+              },
+              "XCXywpxPqd": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "r3JxbHa_Ob": true,
+                    "j2RsuHl8X9": true,
+                    "J5uV-hxtWn": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Time-bound"
+                    }
+                  ]
+                },
+                "id": "XCXywpxPqd",
+                "index": "aH",
+                "seed": 222388655,
+                "xywh": "[2889.65386881657,1266.969332380398,1208.450254579689,271]"
+              },
+              "cZySU1pha0": {
+                "type": "shape",
+                "xywh": "[-4359.247914014149,-193.49281224272409,949.945691166884,733.1179128756745]",
+                "rotate": 0,
+                "shapeType": "rect",
+                "shapeStyle": "General",
+                "radius": 0,
+                "filled": true,
+                "fillColor": "--affine-palette-shape-blue",
+                "strokeWidth": 4,
+                "strokeColor": "--affine-palette-line-yellow",
+                "strokeStyle": "none",
+                "roughness": 1.4,
+                "id": "cZySU1pha0",
+                "index": "Zt",
+                "seed": 1576972728,
+                "color": "--affine-palette-line-black"
+              },
+              "CYvEmp-0vG": {
+                "type": "group",
+                "children": {
+                  "affine:surface:ymap": true,
+                  "json": {
+                    "cZySU1pha0": true,
+                    "C4NrvhHi-X": true,
+                    "cOMStQe7U6": true
+                  }
+                },
+                "title": {
+                  "affine:surface:text": true,
+                  "delta": [
+                    {
+                      "insert": "Instruction"
+                    }
+                  ]
+                },
+                "id": "CYvEmp-0vG",
+                "index": "aN",
+                "seed": 768191476
+              }
+            }
+          },
+          "children": []
+        },
+        {
+          "type": "block",
+          "id": "block:PgR0iPetsE",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[-3223.3589643662244,339.75646448917877,364,347.93359375]",
+            "background": "--affine-tag-green",
+            "index": "aC",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:DfRjUqKlD7",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:HDAgRoOpoa",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[-2617.79493007147,595.3326572305407,364,347.93359375]",
+            "background": "--affine-tag-green",
+            "index": "aD",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:Gbw8ZrRPcV",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:R1J_wEaLPE",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[-1989.6804700600383,831.1723973608521,364,347.93359375]",
+            "background": "--affine-tag-red",
+            "index": "a2",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:JZq0PkbIaL",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:m_GEIu6_Vb",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[-1343.4990461792797,211.11551460456477,364,347.93359375]",
+            "background": "--affine-tag-red",
+            "index": "a3",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:bxSgjeg9sr",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:C-DT18AndQ",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[-709.4578878641801,240.00984558562732,364,347.93359375]",
+            "background": "--affine-tag-purple",
+            "index": "a4",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:n76qoBtayi",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:oT2fcJLM3N",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[-39.05825514573803,526.5982075682728,364,347.93359375]",
+            "background": "--affine-tag-purple",
+            "index": "a5",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:WxhmbMOVCP",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:1RpEyz-yIQ",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[517.7720751423635,595.3326572305407,364,347.93359375]",
+            "background": "--affine-tag-yellow",
+            "index": "a6",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:ca0b2aY3lx",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:SM0ADK8cZJ",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[1246.7638970121116,240.00984558562732,364,347.93359375]",
+            "background": "--affine-tag-yellow",
+            "index": "a7",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:Z1mMUtU6vl",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block:fihJM2cf8g",
+          "flavour": "affine:note",
+          "props": {
+            "xywh": "[2442.2113962118606,651.1518547540968,364,347.93359375]",
+            "background": "--affine-tag-yellow",
+            "index": "a8",
+            "hidden": false,
+            "edgeless": {
+              "style": {
+                "borderRadius": 0,
+                "borderSize": 4,
+                "borderStyle": "none",
+                "shadowType": "--affine-note-shadow-sticker"
+              },
+              "collapse": true
+            }
+          },
+          "children": [
+            {
+              "type": "block",
+              "id": "block:YgN4FnTDGu",
+              "flavour": "affine:paragraph",
+              "props": {
+                "type": "text",
+                "text": {
+                  "$blocksuite:internal:text$": true,
+                  "delta": []
+                }
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

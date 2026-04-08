@@ -4,6 +4,7 @@ import { createNote, importMarkdownFile, toggleSidebar, openNoteInNewWindow, act
 import { openSettings } from '../settings/settings';
 import { renderNoteList } from './note-list';
 import { isTauri } from '../platform';
+import { checkForUpdate } from '../updater';
 
 function createTrafficLights(): HTMLElement | null {
   if (!isTauri()) return null; // No traffic lights in browser
@@ -93,7 +94,7 @@ export function createSidebar(): HTMLElement {
   // Start rendering the note list reactively
   renderNoteList(noteListContainer);
 
-  // Download App button (browser only) — overlays bottom of sidebar
+  // Download App button (browser) / Update button (desktop)
   if (!isTauri()) {
     const downloadBtn = document.createElement('a');
     downloadBtn.className = 'peak-download-btn';
@@ -126,6 +127,62 @@ export function createSidebar(): HTMLElement {
 
     initStarfield(canvas, downloadBtn);
     sidebar.appendChild(downloadBtn);
+  } else {
+    // Desktop: show update button when an update is available
+    const updateBtn = document.createElement('button');
+    updateBtn.className = 'peak-download-btn peak-update-btn';
+    updateBtn.style.display = 'none';
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'peak-download-stars';
+    updateBtn.appendChild(canvas);
+
+    const icon = document.createElement('span');
+    icon.className = 'peak-download-icon';
+    render(DownloadIcon({ width: '22', height: '22' }), icon);
+    updateBtn.appendChild(icon);
+
+    const label = document.createElement('span');
+    label.className = 'peak-download-label';
+    label.textContent = 'Update Available';
+    updateBtn.appendChild(label);
+
+    initStarfield(canvas, updateBtn);
+    sidebar.appendChild(updateBtn);
+
+    // Check for updates and show button if available
+    checkForUpdate().then(update => {
+      if (update) {
+        updateBtn.style.display = '';
+        label.textContent = `Update to v${update.version}`;
+        updateBtn.addEventListener('click', async () => {
+          label.textContent = 'Downloading...';
+          updateBtn.disabled = true;
+          try {
+            let downloaded = 0;
+            let total = 0;
+            await update.downloadAndInstall((event: any) => {
+              if (event.event === 'Started' && event.data?.contentLength) {
+                total = event.data.contentLength;
+              } else if (event.event === 'Progress') {
+                downloaded += event.data?.chunkLength ?? 0;
+                if (total > 0) {
+                  const pct = Math.round((downloaded / total) * 100);
+                  label.textContent = `Downloading... ${pct}%`;
+                }
+              } else if (event.event === 'Finished') {
+                label.textContent = 'Restarting...';
+              }
+            });
+            // The update will be applied on next app launch
+            label.textContent = 'Restart to Update';
+          } catch {
+            label.textContent = 'Update Failed';
+            updateBtn.disabled = false;
+          }
+        });
+      }
+    });
   }
 
   // Right-click context menu on blank sidebar area

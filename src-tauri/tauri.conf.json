@@ -42,6 +42,12 @@
     ]
   },
   "plugins": {
-    "fs": {}
+    "fs": {},
+    "updater": {
+      "endpoints": [
+        "https://github.com/wtfchewy/Peak/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDI2NUQ0MDEwRjVDM0Y2NEMKUldSTTlzUDFFRUJkSnY4VnVYdDA4VloxcDdEbFdPa0c5VzhnZG5XU2ZFcGZzdDFrWG93NFZxVUQK"
+    }
   }
 }

@@ -41,6 +41,9 @@ importers:
       '@tauri-apps/plugin-opener':
         specifier: ^2.5.3
         version: 2.5.3
+      '@tauri-apps/plugin-updater':
+        specifier: ^2
+        version: 2.10.1
       '@toeverything/theme':
         specifier: ^1.1.15
         version: 1.1.23
@@ -5961,6 +5964,9 @@ packages:
   '@tauri-apps/plugin-opener@2.5.3':
     resolution: {integrity: sha512-CCcUltXMOfUEArbf3db3kCE7Ggy1ExBEBl51Ko2ODJ6GDYHRp1nSNlQm5uNCFY5k7/ufaK5Ib3Du/Zir19IYQQ==}
 
+  '@tauri-apps/plugin-updater@2.10.1':
+    resolution: {integrity: sha512-NFYMg+tWOZPJdzE/PpFj2qfqwAWwNS3kXrb1tm1gnBJ9mYzZ4WDRrwy8udzWoAnfGCHLuePNLY1WVCNHnh3eRA==}
+
   '@toeverything/pdf-viewer-types@0.1.1':
     resolution: {integrity: sha512-KEnUs22AzC6aAvSxDxOHDXYQ3jO5vqun3Os0ksaVvbALkC6h1mM9YOezp7NnaQC4O3g4po+56YED9CvvYBxEVA==}
 
@@ -8518,6 +8524,10 @@ snapshots:
       '@tauri-apps/api': 2.10.1
 
   '@tauri-apps/plugin-opener@2.5.3':
+    dependencies:
+      '@tauri-apps/api': 2.10.1
+
+  '@tauri-apps/plugin-updater@2.10.1':
     dependencies:
       '@tauri-apps/api': 2.10.1
 

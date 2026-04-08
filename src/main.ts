@@ -14,6 +14,7 @@ import {
   DeleteIcon,
   ExportIcon,
   ImportIcon,
+  PresentationIcon,
 } from '@blocksuite/icons/lit';
 import {
   initBlockSuite,
@@ -28,6 +29,8 @@ import { showWelcome } from './welcome/welcome';
 import { isTauri, applyPlatformClasses } from './platform';
 import { openImportModal } from './import/import-modal';
 import { openExportModal } from './export/export-modal';
+import { GfxControllerIdentifier } from '@blocksuite/affine/std/gfx';
+import { PresentTool } from '@blocksuite/affine/blocks/frame';
 
 function makeDraggable(el: HTMLElement) {
   if (!isTauri()) return; // No custom dragging in browser
@@ -304,6 +307,19 @@ async function main() {
       () => noteStore.togglePinNote(noteId)
     );
     addItem(DuplicateIcon, 'Duplicate Note', () => noteStore.duplicateNote(noteId));
+    addSeparator();
+    addItem(PresentationIcon, 'Present', async () => {
+      // Switch to edgeless mode first if not already
+      if (noteStore.activeMode.value !== 'edgeless') {
+        noteStore.setMode('edgeless');
+        // Wait for the editor to switch modes
+        await new Promise(r => setTimeout(r, 200));
+      }
+      const std = editor.std;
+      if (!std) return;
+      const gfx = std.get(GfxControllerIdentifier);
+      gfx.tool.setTool(PresentTool, { mode: 'fit' });
+    });
     addSeparator();
     addItem(ImportIcon, 'Import', () => openImportModal());
     addItem(ExportIcon, 'Export', () => openExportModal(noteId));

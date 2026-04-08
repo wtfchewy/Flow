@@ -424,6 +424,8 @@ pub struct AppSettings {
     pub notch_enabled: bool,
     #[serde(default)]
     pub icloud_sync: bool,
+    #[serde(default = "default_header_bar")]
+    pub header_bar: bool,
 }
 
 fn default_theme() -> String {
@@ -446,6 +448,10 @@ fn default_notch_enabled() -> bool {
     true
 }
 
+fn default_header_bar() -> bool {
+    true
+}
+
 impl Default for AppSettings {
     fn default() -> Self {
         Self {
@@ -456,6 +462,7 @@ impl Default for AppSettings {
             onboarded: false,
             notch_enabled: default_notch_enabled(),
             icloud_sync: false,
+            header_bar: default_header_bar(),
         }
     }
 }

@@ -753,6 +753,10 @@ html.peak-header-bar .peak-editor-header {
   transform: translateY(-50%);
 }
 
+.peak-outline-viewer .outline-viewer-panel {
+  max-height: min(60vh, 400px);
+}
+
 .peak-editor-container peak-editor-container {
   height: 100%;
 }

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/nicehash/tauri/refs/heads/main/crates/tauri-config-schema/schema.json",
+  "$schema": "https://schema.tauri.app/config/2",
   "productName": "Peak",
   "version": "0.1.0",
   "identifier": "com.peak.notes",

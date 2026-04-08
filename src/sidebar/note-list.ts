@@ -7,9 +7,7 @@ import {
   DuplicateIcon,
   DeleteIcon,
   ExportIcon,
-  ExportToMarkdownIcon,
-  ExportToHtmlIcon,
-  ExportToPdfIcon,
+  ImportIcon,
 } from '@blocksuite/icons/lit';
 
 import { isTauri } from '../platform';
@@ -22,10 +20,9 @@ import {
   duplicateNote,
   togglePinNote,
   openNoteInNewWindow,
-  exportNoteAsMarkdown,
-  exportNoteAsHtml,
-  exportNoteAsPdf,
 } from '../storage/note-store';
+import { openImportModal } from '../import/import-modal';
+import { openExportModal } from '../export/export-modal';
 
 interface NoteGroup {
   label: string;
@@ -224,11 +221,8 @@ function showContextMenu(e: MouseEvent, note: NoteMeta) {
   );
   addItem(DuplicateIcon, 'Duplicate Note', () => duplicateNote(note.id));
   addSeparator();
-  addSubmenu(ExportIcon, 'Export', [
-    { icon: ExportToMarkdownIcon, label: 'Markdown', onClick: () => exportNoteAsMarkdown(note.id) },
-    { icon: ExportToHtmlIcon, label: 'HTML', onClick: () => exportNoteAsHtml(note.id) },
-    { icon: ExportToPdfIcon, label: 'PDF', onClick: () => exportNoteAsPdf(note.id) },
-  ]);
+  addItem(ImportIcon, 'Import', () => openImportModal());
+  addItem(ExportIcon, 'Export', () => openExportModal(note.id));
   addSeparator();
   addItem(DeleteIcon, 'Delete Note', () => deleteNote(note.id), true);
 

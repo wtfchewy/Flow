@@ -771,6 +771,100 @@ html.vibrancy .peak-editor-drag-wrap {
   background: transparent;
 }
 
+/* ===== Import Modal ===== */
+
+.peak-import-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--affine-font-family);
+}
+
+.peak-import-panel {
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 14px;
+  padding: 24px 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.peak-import-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--affine-text-primary-color);
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.peak-import-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--affine-text-secondary-color);
+  cursor: pointer;
+}
+
+.peak-import-close:hover {
+  background: var(--affine-hover-color);
+  color: var(--affine-text-primary-color);
+}
+
+.peak-import-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.peak-import-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 16px;
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--affine-text-primary-color);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--affine-font-family);
+  cursor: pointer;
+}
+
+.peak-import-option:hover {
+  background: var(--affine-hover-color);
+}
+
+.peak-import-option-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--affine-text-secondary-color);
+}
+
+.peak-import-option-label {
+  flex: 1;
+  text-align: left;
+}
+
 /* ===== Settings ===== */
 
 .peak-settings-overlay {

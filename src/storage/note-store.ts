@@ -24,6 +24,7 @@ import { isTauri } from '../platform';
 import {
   MarkdownTransformer,
   HtmlTransformer,
+  NotionHtmlTransformer,
 } from '@blocksuite/affine/widgets/linked-doc';
 import { ExportManager } from '@blocksuite/affine/blocks/surface';
 
@@ -626,3 +627,93 @@ export async function exportNoteAsPdf(id: string) {
     await exportManager.exportPdf();
   }
 }
+
+// ===== Import functions =====
+
+/** Helper: after importing a doc into the workspace, register it in Peak's note list. */
+async function registerImportedDoc(store: Store) {
+  const { title, preview } = extractTitleAndPreview(store);
+  const now = Date.now();
+  const id = store.id;
+
+  const meta: NoteMeta = { id, title, createdAt: now, updatedAt: now, preview };
+  notes.value = [meta, ...notes.value];
+
+  activeStore = store;
+  activeNoteId.value = id;
+  activeMode.value = 'page';
+
+  editorEl.doc = store;
+  editorEl.pageSpecs = getPageSpecs(editorEl);
+  editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+  editorEl.mode = 'page';
+
+  attachAutoSave(store);
+
+  const ydoc = getYDoc(store);
+  await saveNote(id, title, preview, 'page', ydoc, false);
+}
+
+export async function importHtmlFile(file: File) {
+  await saveCurrentNote();
+
+  const html = await file.text();
+  const fileName = file.name.replace(/\.html?$/i, '') || 'Untitled';
+  const schema = workspace.schema;
+
+  const docId = await HtmlTransformer.importHTMLToDoc({
+    collection: workspace,
+    schema,
+    html,
+    fileName,
+    extensions: getStoreExtensions(),
+  });
+
+  if (!docId) return;
+
+  const doc = workspace.getDoc(docId);
+  if (!doc) return;
+  const store = doc.getStore({ id: docId });
+  await registerImportedDoc(store);
+}
+
+export async function importMarkdownZip(file: File) {
+  await saveCurrentNote();
+
+  const schema = workspace.schema;
+  const docIds = await MarkdownTransformer.importMarkdownZip({
+    collection: workspace,
+    schema,
+    imported: file,
+    extensions: getStoreExtensions(),
+  });
+
+  // Register each imported doc
+  for (const id of docIds) {
+    const doc = workspace.getDoc(id);
+    if (!doc) continue;
+    const store = doc.getStore({ id });
+    await registerImportedDoc(store);
+  }
+}
+
+export async function importNotionZip(file: File) {
+  await saveCurrentNote();
+
+  const schema = workspace.schema;
+  const result = await NotionHtmlTransformer.importNotionZip({
+    collection: workspace,
+    schema,
+    imported: file,
+    extensions: getStoreExtensions(),
+  });
+
+  // Register each imported doc
+  for (const id of result.pageIds) {
+    const doc = workspace.getDoc(id);
+    if (!doc) continue;
+    const store = doc.getStore({ id });
+    await registerImportedDoc(store);
+  }
+}
+

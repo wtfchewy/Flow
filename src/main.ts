@@ -13,9 +13,7 @@ import {
   DuplicateIcon,
   DeleteIcon,
   ExportIcon,
-  ExportToMarkdownIcon,
-  ExportToHtmlIcon,
-  ExportToPdfIcon,
+  ImportIcon,
 } from '@blocksuite/icons/lit';
 import {
   initBlockSuite,
@@ -28,6 +26,8 @@ import { effect } from '@preact/signals-core';
 import { loadSettings, applySettings } from './settings/settings'; // also registers window.__openSettings
 import { showWelcome } from './welcome/welcome';
 import { isTauri, applyPlatformClasses } from './platform';
+import { openImportModal } from './import/import-modal';
+import { openExportModal } from './export/export-modal';
 
 function makeDraggable(el: HTMLElement) {
   if (!isTauri()) return; // No custom dragging in browser
@@ -305,11 +305,8 @@ async function main() {
     );
     addItem(DuplicateIcon, 'Duplicate Note', () => noteStore.duplicateNote(noteId));
     addSeparator();
-    addSubmenu(ExportIcon, 'Export', [
-      { icon: ExportToMarkdownIcon, label: 'Markdown', onClick: () => noteStore.exportNoteAsMarkdown(noteId) },
-      { icon: ExportToHtmlIcon, label: 'HTML', onClick: () => noteStore.exportNoteAsHtml(noteId) },
-      { icon: ExportToPdfIcon, label: 'PDF', onClick: () => noteStore.exportNoteAsPdf(noteId) },
-    ]);
+    addItem(ImportIcon, 'Import', () => openImportModal());
+    addItem(ExportIcon, 'Export', () => openExportModal(noteId));
     addSeparator();
     addItem(DeleteIcon, 'Delete Note', () => noteStore.deleteNote(noteId), true);
 

@@ -137,15 +137,30 @@ document.addEventListener('drop', async (e) => {
   island.classList.remove('notch-drop-target');
 
   const files = Array.from(e.dataTransfer?.files ?? []);
-  const mdFiles = files.filter(f => f.name.toLowerCase().endsWith('.md'));
+  const importable = files.filter(f => {
+    const name = f.name.toLowerCase();
+    return name.endsWith('.md') || name.endsWith('.html') || name.endsWith('.htm') || name.endsWith('.zip');
+  });
 
-  if (mdFiles.length > 0) {
+  if (importable.length > 0) {
     island.classList.add('notch-drop-success');
 
-    for (const file of mdFiles) {
-      const markdown = await file.text();
-      const fileName = file.name.replace(/\.md$/i, '');
-      await emit('notch-import-markdown', JSON.stringify({ markdown, fileName }));
+    for (const file of importable) {
+      const name = file.name.toLowerCase();
+      if (name.endsWith('.md')) {
+        const markdown = await file.text();
+        const fileName = file.name.replace(/\.md$/i, '');
+        await emit('notch-import-markdown', JSON.stringify({ markdown, fileName }));
+      } else if (name.endsWith('.html') || name.endsWith('.htm')) {
+        const html = await file.text();
+        const fileName = file.name.replace(/\.html?$/i, '');
+        await emit('notch-import-html', JSON.stringify({ html, fileName }));
+      } else if (name.endsWith('.zip')) {
+        const buffer = await file.arrayBuffer();
+        const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+        const fileName = file.name;
+        await emit('notch-import-zip', JSON.stringify({ base64, fileName }));
+      }
     }
 
     setTimeout(() => {

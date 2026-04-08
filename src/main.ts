@@ -491,12 +491,31 @@ async function main() {
       }
     });
 
-    // Listen for markdown drop from the notch widget
+    // Listen for file drops from the notch widget
     listen<string>('import-markdown-from-notch', async (event) => {
       const data = JSON.parse(JSON.parse(event.payload as unknown as string));
       if (data?.markdown) {
         const file = new File([data.markdown], `${data.fileName || 'Untitled'}.md`, { type: 'text/markdown' });
         await noteStore.importMarkdownFile(file);
+      }
+    });
+
+    listen<string>('import-html-from-notch', async (event) => {
+      const data = JSON.parse(JSON.parse(event.payload as unknown as string));
+      if (data?.html) {
+        const file = new File([data.html], `${data.fileName || 'Untitled'}.html`, { type: 'text/html' });
+        await noteStore.importHtmlFile(file);
+      }
+    });
+
+    listen<string>('import-zip-from-notch', async (event) => {
+      const data = JSON.parse(JSON.parse(event.payload as unknown as string));
+      if (data?.base64) {
+        const binary = atob(data.base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        const file = new File([bytes], data.fileName || 'import.zip', { type: 'application/zip' });
+        await noteStore.importMarkdownZip(file);
       }
     });
 

@@ -1,6 +1,6 @@
 import { render } from 'lit';
 import { NewPageIcon, SidebarIcon, SettingsIcon, OpenInNewIcon, DownloadIcon } from '@blocksuite/icons/lit';
-import { createNote, importMarkdownFile, toggleSidebar, openNoteInNewWindow, activeNoteId } from '../storage/note-store';
+import { createNote, importMarkdownFile, importHtmlFile, importMarkdownZip, importNotionZip, toggleSidebar, openNoteInNewWindow, activeNoteId } from '../storage/note-store';
 import { openSettings } from '../settings/settings';
 import { renderNoteList } from './note-list';
 import { isTauri } from '../platform';
@@ -241,7 +241,7 @@ export function createSidebar(): HTMLElement {
     setTimeout(() => document.addEventListener('mousedown', dismiss));
   });
 
-  // Drag-and-drop markdown files to import
+  // Drag-and-drop files to import (.md, .html, .htm, .zip)
   sidebar.addEventListener('dragover', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -260,10 +260,16 @@ export function createSidebar(): HTMLElement {
     sidebar.classList.remove('peak-sidebar-dragover');
 
     const files = Array.from(e.dataTransfer?.files ?? []);
-    const mdFiles = files.filter(f => f.name.toLowerCase().endsWith('.md'));
 
-    for (const file of mdFiles) {
-      await importMarkdownFile(file);
+    for (const file of files) {
+      const name = file.name.toLowerCase();
+      if (name.endsWith('.md')) {
+        await importMarkdownFile(file);
+      } else if (name.endsWith('.html') || name.endsWith('.htm')) {
+        await importHtmlFile(file);
+      } else if (name.endsWith('.zip')) {
+        await importMarkdownZip(file);
+      }
     }
   });
 

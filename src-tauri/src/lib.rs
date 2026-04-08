@@ -850,6 +850,26 @@ pub fn run() {
                 }
             });
 
+            // --- Bridge: notch HTML drop → show main window & import ---
+            let app_handle4 = app.handle().clone();
+            app.listen("notch-import-html", move |event| {
+                if let Some(main_window) = app_handle4.get_webview_window("main") {
+                    main_window.show().ok();
+                    main_window.set_focus().ok();
+                    main_window.emit("import-html-from-notch", event.payload()).ok();
+                }
+            });
+
+            // --- Bridge: notch zip drop → show main window & import ---
+            let app_handle5 = app.handle().clone();
+            app.listen("notch-import-zip", move |event| {
+                if let Some(main_window) = app_handle5.get_webview_window("main") {
+                    main_window.show().ok();
+                    main_window.set_focus().ok();
+                    main_window.emit("import-zip-from-notch", event.payload()).ok();
+                }
+            });
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

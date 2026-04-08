@@ -68,8 +68,9 @@ jobs:
           echo "APPLE_SIGNING_IDENTITY=$CERT_ID" >> $GITHUB_ENV
           echo "Certificate imported successfully."
 
-      - name: Build and release
+      - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0.6
+        id: tauri-build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
@@ -86,5 +87,52 @@ jobs:
           releaseBody: "See the assets to download and install."
           releaseDraft: true
           prerelease: false
-          updaterJsonKeepUniversal: true
+          includeUpdaterJson: false
           args: ${{ matrix.args }}
+
+      - name: Upload updater signature and manifest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BUNDLE_DIR="src-tauri/target/universal-apple-darwin/release/bundle"
+          SIG_FILE="$BUNDLE_DIR/macos/Peak.app.tar.gz.sig"
+          TAR_FILE="$BUNDLE_DIR/macos/Peak.app.tar.gz"
+
+          if [ ! -f "$SIG_FILE" ]; then
+            echo "No .sig file found, skipping updater manifest"
+            exit 0
+          fi
+
+          SIGNATURE=$(cat "$SIG_FILE")
+          VERSION=$(grep '"version"' src-tauri/tauri.conf.json | head -1 | sed 's/.*"\([0-9.]*\)".*/\1/')
+          TAG="v$VERSION"
+          PUB_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          TAR_URL="https://github.com/wtfchewy/Peak/releases/download/$TAG/Peak_universal.app.tar.gz"
+
+          # Upload the .sig file to the release
+          gh release upload "$TAG" "$SIG_FILE#Peak_universal.app.tar.gz.sig" --repo wtfchewy/Peak --clobber
+
+          # Generate and upload latest.json
+          cat > latest.json << EOF
+          {
+            "version": "$VERSION",
+            "notes": "Peak v$VERSION",
+            "pub_date": "$PUB_DATE",
+            "platforms": {
+              "darwin-universal": {
+                "signature": "$SIGNATURE",
+                "url": "$TAR_URL"
+              },
+              "darwin-aarch64": {
+                "signature": "$SIGNATURE",
+                "url": "$TAR_URL"
+              },
+              "darwin-x86_64": {
+                "signature": "$SIGNATURE",
+                "url": "$TAR_URL"
+              }
+            }
+          }
+          EOF
+
+          gh release upload "$TAG" latest.json --repo wtfchewy/Peak --clobber

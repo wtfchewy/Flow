@@ -125,6 +125,24 @@ export function createSidebar(): HTMLElement {
       })
       .catch(() => {});
 
+    // When clicked, export all web notes as .peak-export first, then download the app
+    downloadBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const href = downloadBtn.href;
+
+      try {
+        const { exportAllNotesForDesktop } = await import('../storage/peak-export');
+        await exportAllNotesForDesktop();
+      } catch (err) {
+        console.error('Failed to export notes:', err);
+      }
+
+      // Brief delay so the export download starts, then open the app download
+      setTimeout(() => {
+        window.open(href, '_blank', 'noopener');
+      }, 500);
+    });
+
     initStarfield(canvas, downloadBtn);
     sidebar.appendChild(downloadBtn);
   } else {

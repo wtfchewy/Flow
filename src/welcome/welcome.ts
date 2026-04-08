@@ -83,6 +83,97 @@ export function showWelcome(settings: AppSettings): Promise<void> {
 
     card.appendChild(settingsSection);
 
+    // Import Web Notes section (desktop only)
+    if (isTauri()) {
+      const importSection = document.createElement('div');
+      importSection.className = 'peak-welcome-import';
+
+      const importHeader = document.createElement('div');
+      importHeader.className = 'peak-welcome-import-header';
+      importHeader.textContent = 'Import Web Notes';
+      importSection.appendChild(importHeader);
+
+      const importDesc = document.createElement('p');
+      importDesc.className = 'peak-welcome-import-desc';
+      importDesc.textContent = 'Have notes from the web version? Drop your .peak-export file here.';
+      importSection.appendChild(importDesc);
+
+      const dropZone = document.createElement('div');
+      dropZone.className = 'peak-welcome-dropzone';
+
+      const dropIcon = document.createElement('span');
+      dropIcon.className = 'peak-welcome-dropzone-icon';
+      dropIcon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+      dropZone.appendChild(dropIcon);
+
+      const dropLabel = document.createElement('span');
+      dropLabel.className = 'peak-welcome-dropzone-label';
+      dropLabel.textContent = 'Drop .peak-export file or click to browse';
+      dropZone.appendChild(dropLabel);
+
+      // Hidden file input
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.peak-export';
+      fileInput.style.display = 'none';
+
+      dropZone.addEventListener('click', () => fileInput.click());
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+      });
+
+      async function handleImportFile(file: File) {
+        dropLabel.textContent = 'Importing...';
+        dropIcon.style.display = 'none';
+        dropZone.classList.add('importing');
+
+        try {
+          const json = await file.text();
+          const { parsePeakExport, importPeakExportToDesktop } = await import('../storage/peak-export');
+          const exportData = parsePeakExport(json);
+
+          if (!exportData) {
+            dropLabel.textContent = 'Invalid file format. Try again.';
+            dropIcon.style.display = '';
+            dropZone.classList.remove('importing');
+            return;
+          }
+
+          const count = await importPeakExportToDesktop(exportData);
+          dropLabel.textContent = `Imported ${count} note${count !== 1 ? 's' : ''} successfully!`;
+          dropZone.classList.remove('importing');
+          dropZone.classList.add('success');
+        } catch (err) {
+          console.error('Import failed:', err);
+          dropLabel.textContent = 'Import failed. Try again.';
+          dropIcon.style.display = '';
+          dropZone.classList.remove('importing');
+        }
+      }
+
+      dropZone.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const file = e.dataTransfer?.files[0];
+        if (file) await handleImportFile(file);
+      });
+
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files?.[0];
+        if (file) await handleImportFile(file);
+      });
+
+      importSection.appendChild(dropZone);
+      importSection.appendChild(fileInput);
+      card.appendChild(importSection);
+    }
+
     // Get Started button
     const btn = document.createElement('button');
     btn.className = 'peak-welcome-btn';

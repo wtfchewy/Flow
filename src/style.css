@@ -709,6 +709,23 @@ html.peak-header-bar .peak-editor-header {
   color: var(--affine-primary-color, #1e6fff);
 }
 
+.peak-mode-lottie {
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.peak-mode-lottie svg {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.peak-mode-lottie svg path {
+  stroke: currentColor;
+}
+
 .peak-editor-container {
   flex: 1;
   overflow: auto;

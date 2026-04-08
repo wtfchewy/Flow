@@ -3,8 +3,6 @@ import './editor/editor-container';
 
 import { render } from 'lit';
 import {
-  PageIcon,
-  EdgelessIcon,
   SidebarIcon,
   ArrowDownSmallIcon,
   OpenInNewIcon,
@@ -16,6 +14,7 @@ import {
   ImportIcon,
   PresentationIcon,
 } from '@blocksuite/icons/lit';
+import { createModeSwitch } from './mode-switch/mode-switch';
 import {
   initBlockSuite,
   createWorkspace,
@@ -154,33 +153,9 @@ async function main() {
   const headerCenter = document.createElement('div');
   headerCenter.className = 'peak-editor-header-center';
 
-  // Mode toggle (page/edgeless)
-  const modeToggle = document.createElement('div');
-  modeToggle.className = 'peak-mode-toggle';
-
-  const slider = document.createElement('div');
-  slider.className = 'peak-mode-slider';
-  modeToggle.appendChild(slider);
-
-  const pageBtn = document.createElement('button');
-  pageBtn.className = 'peak-mode-btn active';
-  pageBtn.title = 'Page mode';
-  render(PageIcon({ width: '20', height: '20' }), pageBtn);
-  pageBtn.addEventListener('click', () => {
-    noteStore.setMode('page');
-  });
-
-  const edgelessBtn = document.createElement('button');
-  edgelessBtn.className = 'peak-mode-btn';
-  edgelessBtn.title = 'Edgeless mode';
-  render(EdgelessIcon({ width: '20', height: '20' }), edgelessBtn);
-  edgelessBtn.addEventListener('click', () => {
-    noteStore.setMode('edgeless');
-  });
-
-  modeToggle.appendChild(pageBtn);
-  modeToggle.appendChild(edgelessBtn);
-  headerCenter.appendChild(modeToggle);
+  // Mode toggle (page/edgeless) — animated Lottie switcher
+  const headerModeSwitch = createModeSwitch((mode) => noteStore.setMode(mode));
+  headerCenter.appendChild(headerModeSwitch.element);
 
   // Title button with dropdown
   const titleBtn = document.createElement('button');
@@ -375,24 +350,9 @@ async function main() {
   floatSavingIndicator.className = 'peak-saving-indicator peak-float-saving-indicator';
   editorArea.appendChild(floatSavingIndicator);
 
-  const floatModeToggle = document.createElement('div');
-  floatModeToggle.className = 'peak-mode-toggle peak-float-mode-toggle';
-  const floatSlider = document.createElement('div');
-  floatSlider.className = 'peak-mode-slider';
-  floatModeToggle.appendChild(floatSlider);
-  const floatPageBtn = document.createElement('button');
-  floatPageBtn.className = 'peak-mode-btn active';
-  floatPageBtn.title = 'Page mode';
-  render(PageIcon({ width: '20', height: '20' }), floatPageBtn);
-  floatPageBtn.addEventListener('click', () => noteStore.setMode('page'));
-  const floatEdgelessBtn = document.createElement('button');
-  floatEdgelessBtn.className = 'peak-mode-btn';
-  floatEdgelessBtn.title = 'Edgeless mode';
-  render(EdgelessIcon({ width: '20', height: '20' }), floatEdgelessBtn);
-  floatEdgelessBtn.addEventListener('click', () => noteStore.setMode('edgeless'));
-  floatModeToggle.appendChild(floatPageBtn);
-  floatModeToggle.appendChild(floatEdgelessBtn);
-  editorArea.appendChild(floatModeToggle);
+  const floatModeSwitch = createModeSwitch((mode) => noteStore.setMode(mode));
+  floatModeSwitch.element.classList.add('peak-float-mode-toggle');
+  editorArea.appendChild(floatModeSwitch.element);
 
   effect(() => {
     savingIndicator.classList.toggle('visible', noteStore.saving.value);
@@ -417,21 +377,8 @@ async function main() {
   // React to mode changes
   effect(() => {
     const mode = noteStore.activeMode.value;
-    if (mode === 'edgeless') {
-      edgelessBtn.classList.add('active');
-      pageBtn.classList.remove('active');
-      modeToggle.classList.add('edgeless');
-      floatEdgelessBtn.classList.add('active');
-      floatPageBtn.classList.remove('active');
-      floatModeToggle.classList.add('edgeless');
-    } else {
-      pageBtn.classList.add('active');
-      edgelessBtn.classList.remove('active');
-      modeToggle.classList.remove('edgeless');
-      floatPageBtn.classList.add('active');
-      floatEdgelessBtn.classList.remove('active');
-      floatModeToggle.classList.remove('edgeless');
-    }
+    headerModeSwitch.setMode(mode);
+    floatModeSwitch.setMode(mode);
   });
 
   // React to active note changes to update header title

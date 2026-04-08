@@ -34,8 +34,7 @@ function createAnimatedBtn(
     anim.play();
   });
   btn.addEventListener('mouseleave', () => {
-    anim.setDirection(-1);
-    anim.play();
+    anim.stop();
   });
   btn.addEventListener('click', onClick);
 

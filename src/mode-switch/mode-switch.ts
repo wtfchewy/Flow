@@ -29,12 +29,11 @@ function createAnimatedBtn(
   });
   anim.setSpeed(1);
 
+  let forward = true;
   btn.addEventListener('mouseenter', () => {
-    anim.setDirection(1);
+    anim.setDirection(forward ? 1 : -1);
     anim.play();
-  });
-  btn.addEventListener('mouseleave', () => {
-    anim.stop();
+    forward = !forward;
   });
   btn.addEventListener('click', onClick);
 

@@ -1165,10 +1165,10 @@ html.vibrancy .peak-editor-drag-wrap {
 .peak-settings-reset-btn {
   flex-shrink: 0;
   padding: 6px 16px;
-  border: 0.5px solid var(--affine-border-color);
+  border: 0.5px solid rgba(255, 59, 48, 0.4);
   border-radius: 6px;
   background: transparent;
-  color: var(--affine-text-primary-color);
+  color: #ff3b30;
   font-size: 13px;
   font-family: var(--affine-font-family);
   cursor: pointer;
@@ -1176,7 +1176,7 @@ html.vibrancy .peak-editor-drag-wrap {
 }
 
 .peak-settings-reset-btn:hover {
-  background: var(--affine-hover-color);
+  background: rgba(255, 59, 48, 0.1);
 }
 
 .peak-settings-reset-btn:disabled {

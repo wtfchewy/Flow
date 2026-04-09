@@ -81,6 +81,70 @@ export function showWelcome(settings: AppSettings): Promise<void> {
       settingsSection.appendChild(icloudRow);
     }
 
+    // Compact Sidebar
+    const compactRow = createRow('Compact Sidebar', 'Show only note titles');
+    compactRow.style.position = 'relative';
+    const compactToggle = createSwitch(settings.compactSidebar, (on) => {
+      settings.compactSidebar = on;
+      applySettings(settings);
+    });
+    compactRow.appendChild(compactToggle);
+
+    // Sidebar preview tooltip
+    const preview = document.createElement('div');
+    preview.className = 'peak-welcome-sidebar-preview';
+    preview.innerHTML = `
+      <div class="peak-preview-list" data-mode="default">
+        <div class="peak-preview-item active">
+          <div class="peak-preview-title">Meeting Notes</div>
+          <div class="peak-preview-meta">2:30 PM &middot; Weekly standup agenda and...</div>
+        </div>
+        <div class="peak-preview-item">
+          <div class="peak-preview-title">Project Ideas</div>
+          <div class="peak-preview-meta">Yesterday &middot; App concepts for Q2...</div>
+        </div>
+        <div class="peak-preview-item">
+          <div class="peak-preview-title">Shopping List</div>
+          <div class="peak-preview-meta">Mon &middot; Groceries, hardware store...</div>
+        </div>
+      </div>
+      <div class="peak-preview-list" data-mode="compact">
+        <div class="peak-preview-item active">
+          <div class="peak-preview-title">Meeting Notes</div>
+        </div>
+        <div class="peak-preview-item">
+          <div class="peak-preview-title">Project Ideas</div>
+        </div>
+        <div class="peak-preview-item">
+          <div class="peak-preview-title">Shopping List</div>
+        </div>
+      </div>
+    `;
+    compactRow.appendChild(preview);
+
+    // Show/hide preview and switch mode on hover
+    compactRow.addEventListener('mouseenter', () => {
+      preview.classList.add('visible');
+      const isCompact = compactToggle.classList.contains('on');
+      preview.querySelectorAll('.peak-preview-list').forEach(el => {
+        (el as HTMLElement).style.display = el.getAttribute('data-mode') === (isCompact ? 'compact' : 'default') ? 'block' : 'none';
+      });
+    });
+    compactRow.addEventListener('mouseleave', () => {
+      preview.classList.remove('visible');
+    });
+
+    // Update preview when toggled
+    compactToggle.addEventListener('click', () => {
+      setTimeout(() => {
+        const isCompact = compactToggle.classList.contains('on');
+        preview.querySelectorAll('.peak-preview-list').forEach(el => {
+          (el as HTMLElement).style.display = el.getAttribute('data-mode') === (isCompact ? 'compact' : 'default') ? 'block' : 'none';
+        });
+      }, 10);
+    });
+
+    settingsSection.appendChild(compactRow);
     card.appendChild(settingsSection);
 
     // Get Started button

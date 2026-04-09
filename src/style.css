@@ -1423,6 +1423,79 @@ html.vibrancy .peak-welcome-overlay {
   filter: blur(0);
 }
 
+/* ===== Welcome Sidebar Preview ===== */
+
+.peak-welcome-sidebar-preview {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 12px);
+  transform: translateX(6px);
+  width: 220px;
+  background: var(--affine-background-secondary-color);
+  border: 1px solid var(--affine-border-color);
+  border-radius: 12px;
+  padding: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.peak-welcome-sidebar-preview.visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.peak-preview-list {
+  display: none;
+}
+
+.peak-preview-item {
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-bottom: 2px;
+}
+
+.peak-preview-item.active {
+  background: var(--affine-primary-color, #1e6fff);
+}
+
+.peak-preview-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--affine-text-primary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.peak-preview-item.active .peak-preview-title,
+.peak-preview-item.active .peak-preview-meta {
+  color: #fff;
+}
+
+.peak-preview-meta {
+  font-size: 10px;
+  color: var(--affine-text-secondary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+[data-mode="compact"] .peak-preview-item {
+  padding: 8px 10px;
+  border-radius: 10px;
+  margin-bottom: 3px;
+}
+
+[data-mode="compact"] .peak-preview-title {
+  font-weight: 500;
+  font-size: 11px;
+}
+
 /* ===== Browser Mode Overrides ===== */
 /* Remove rounded corners, notch, traffic lights, and desktop-specific chrome */
 

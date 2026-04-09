@@ -432,6 +432,8 @@ pub struct AppSettings {
     pub skipped_update_version: String,
     #[serde(default)]
     pub compact_sidebar: bool,
+    #[serde(default)]
+    pub traffic_lights_in_header: bool,
 }
 
 fn default_theme() -> String {
@@ -471,6 +473,7 @@ impl Default for AppSettings {
             header_bar: default_header_bar(),
             skipped_update_version: String::new(),
             compact_sidebar: false,
+            traffic_lights_in_header: false,
         }
     }
 }

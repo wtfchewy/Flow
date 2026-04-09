@@ -14,6 +14,7 @@ export interface AppSettings {
   headerBar: boolean;
   skippedUpdateVersion: string;
   compactSidebar: boolean;
+  trafficLightsInHeader: boolean;
 }
 
 const defaults: AppSettings = {
@@ -27,6 +28,7 @@ const defaults: AppSettings = {
   headerBar: true,
   skippedUpdateVersion: '',
   compactSidebar: false,
+  trafficLightsInHeader: false,
 };
 
 const isMac = isMacOS();
@@ -87,6 +89,7 @@ export function applySettings(settings: AppSettings) {
   document.documentElement.classList.toggle('vibrancy', settings.vibrancy);
   document.documentElement.classList.toggle('peak-header-bar', settings.headerBar);
   document.documentElement.classList.toggle('peak-compact-sidebar', settings.compactSidebar);
+  document.documentElement.classList.toggle('peak-header-traffic-lights', settings.trafficLightsInHeader);
 
   const root = document.documentElement.style;
   const rgb = settings.theme === 'light' ? '255, 255, 255' : '0, 0, 0';
@@ -168,6 +171,17 @@ export async function openSettings() {
   });
   compactRow.appendChild(compactToggle);
   content.appendChild(compactRow);
+
+  if (isTauri() && isMac) {
+    const trafficRow = createSettingRow('Traffic Lights in Header', 'Show window controls in the header when the sidebar is hidden');
+    const trafficToggle = createSwitch(settings.trafficLightsInHeader, async (on) => {
+      settings.trafficLightsInHeader = on;
+      document.documentElement.classList.toggle('peak-header-traffic-lights', on);
+      await saveSettingsImmediate(settings);
+    });
+    trafficRow.appendChild(trafficToggle);
+    content.appendChild(trafficRow);
+  }
 
   // ===== Vibrancy section (desktop only — requires OS compositor) =====
   if (isTauri()) {

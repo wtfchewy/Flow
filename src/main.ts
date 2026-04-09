@@ -48,6 +48,36 @@ function makeDraggable(el: HTMLElement) {
   });
 }
 
+function createHeaderTrafficLights(): HTMLElement | null {
+  if (!isTauri()) return null;
+
+  const container = document.createElement('div');
+  container.className = 'peak-traffic-lights peak-header-traffic';
+
+  const winPromise = import('@tauri-apps/api/window').then(m => m.getCurrentWindow());
+
+  const close = document.createElement('button');
+  close.className = 'peak-traffic-btn peak-traffic-close';
+  close.title = 'Close';
+  close.addEventListener('click', async () => (await winPromise).close());
+
+  const minimize = document.createElement('button');
+  minimize.className = 'peak-traffic-btn peak-traffic-minimize';
+  minimize.title = 'Minimize';
+  minimize.addEventListener('click', async () => (await winPromise).minimize());
+
+  const fullscreen = document.createElement('button');
+  fullscreen.className = 'peak-traffic-btn peak-traffic-fullscreen';
+  fullscreen.title = 'Fullscreen';
+  fullscreen.addEventListener('click', async () => (await winPromise).toggleMaximize());
+
+  container.appendChild(close);
+  container.appendChild(minimize);
+  container.appendChild(fullscreen);
+
+  return container;
+}
+
 async function main() {
   // Apply platform classes (peak-browser or peak-desktop) immediately
   applyPlatformClasses();
@@ -141,6 +171,12 @@ async function main() {
   // Left section
   const headerLeft = document.createElement('div');
   headerLeft.className = 'peak-editor-header-left';
+
+  // Traffic lights in header (shown when sidebar is hidden, if setting enabled)
+  const headerTrafficLights = createHeaderTrafficLights();
+  if (headerTrafficLights) {
+    headerLeft.appendChild(headerTrafficLights);
+  }
 
   // Sidebar toggle button (only when sidebar hidden)
   const sidebarBtn = document.createElement('button');

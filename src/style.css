@@ -694,6 +694,15 @@ html.peak-header-bar .peak-editor-header {
   flex-shrink: 0;
 }
 
+/* Header traffic lights — hidden by default, shown when setting enabled + header bar on + sidebar hidden */
+.peak-header-traffic {
+  display: none;
+}
+
+html.peak-header-bar.peak-header-traffic-lights .peak-editor-area.sidebar-hidden .peak-header-traffic {
+  display: flex;
+}
+
 .peak-mode-btn.peak-header-sidebar-btn {
   display: none;
 }

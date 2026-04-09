@@ -426,6 +426,8 @@ pub struct AppSettings {
     pub icloud_sync: bool,
     #[serde(default = "default_header_bar")]
     pub header_bar: bool,
+    #[serde(default)]
+    pub skipped_update_version: String,
 }
 
 fn default_theme() -> String {
@@ -463,6 +465,7 @@ impl Default for AppSettings {
             notch_enabled: default_notch_enabled(),
             icloud_sync: false,
             header_bar: default_header_bar(),
+            skipped_update_version: String::new(),
         }
     }
 }
@@ -710,6 +713,7 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .manage(Mutex::new(IndexCache::new()))
         .setup(|app| {
             // Build macOS-style app menu

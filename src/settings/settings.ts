@@ -12,6 +12,7 @@ export interface AppSettings {
   notchEnabled: boolean;
   icloudSync: boolean;
   headerBar: boolean;
+  skippedUpdateVersion: string;
 }
 
 const defaults: AppSettings = {
@@ -23,6 +24,7 @@ const defaults: AppSettings = {
   notchEnabled: true,
   icloudSync: false,
   headerBar: true,
+  skippedUpdateVersion: '',
 };
 
 const isMac = isMacOS();

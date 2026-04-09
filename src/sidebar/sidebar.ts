@@ -1,7 +1,7 @@
 import { render } from 'lit';
 import { NewPageIcon, SidebarIcon, SettingsIcon, OpenInNewIcon, DownloadIcon } from '@blocksuite/icons/lit';
 import { createNote, importMarkdownFile, importHtmlFile, importMarkdownZip, importNotionZip, toggleSidebar, openNoteInNewWindow, activeNoteId } from '../storage/note-store';
-import { openSettings } from '../settings/settings';
+import { openSettings, loadSettings, saveSettingsImmediate } from '../settings/settings';
 import { renderNoteList } from './note-list';
 import { isTauri } from '../platform';
 import { checkForUpdate } from '../updater';
@@ -125,13 +125,16 @@ export function createSidebar(): HTMLElement {
       })
       .catch(() => {});
 
-    initStarfield(canvas, downloadBtn);
+    initStarfield(canvas, downloadBtn); // return value unused for download btn
     sidebar.appendChild(downloadBtn);
   } else {
     // Desktop: show update button when an update is available
+    const updateWrap = document.createElement('div');
+    updateWrap.className = 'peak-update-wrap';
+    updateWrap.style.display = 'none';
+
     const updateBtn = document.createElement('button');
     updateBtn.className = 'peak-download-btn peak-update-btn';
-    updateBtn.style.display = 'none';
 
     const canvas = document.createElement('canvas');
     canvas.className = 'peak-download-stars';
@@ -144,20 +147,87 @@ export function createSidebar(): HTMLElement {
 
     const label = document.createElement('span');
     label.className = 'peak-download-label';
-    label.textContent = 'Update Available';
     updateBtn.appendChild(label);
 
-    initStarfield(canvas, updateBtn);
-    sidebar.appendChild(updateBtn);
+    // Dismiss X button
+    const dismissBtn = document.createElement('button');
+    dismissBtn.className = 'peak-update-dismiss';
+    dismissBtn.title = 'Skip this update';
+    dismissBtn.innerHTML = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+    let skippableVersion = '';
+    dismissBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      updateWrap.style.display = 'none';
+      if (skippableVersion) {
+        const settings = await loadSettings();
+        settings.skippedUpdateVersion = skippableVersion;
+        await saveSettingsImmediate(settings);
+      }
+    });
+
+    updateWrap.appendChild(updateBtn);
+    updateWrap.appendChild(dismissBtn);
+
+    const starfield = initStarfield(canvas, updateBtn);
+    sidebar.appendChild(updateWrap);
+
+    /** Map starfield progress (0-100 over full button) to the label's local clip % */
+    function updateLabelColor(progressPct: number) {
+      const btnRect = updateBtn.getBoundingClientRect();
+      const labelRect = label.getBoundingClientRect();
+      if (!btnRect.width || !labelRect.width) return;
+      const progressX = (progressPct / 100) * btnRect.width;
+      const labelLeft = labelRect.left - btnRect.left;
+      const labelWidth = labelRect.width;
+      const localPct = Math.max(0, Math.min(100, ((progressX - labelLeft) / labelWidth) * 100));
+      label.style.setProperty('--pct', `${localPct}%`);
+      label.classList.add('peak-progress-text');
+    }
+
+    function resetLabelColor() {
+      label.classList.remove('peak-progress-text');
+      label.style.removeProperty('--pct');
+    }
 
     // Check for updates and show button if available
-    checkForUpdate().then(update => {
+    checkForUpdate().then(async update => {
       if (update) {
-        updateBtn.style.display = '';
+        const settings = await loadSettings();
+        if (settings.skippedUpdateVersion === update.version) return;
+        skippableVersion = update.version;
+        updateWrap.style.display = '';
         label.textContent = `Update to v${update.version}`;
         updateBtn.addEventListener('click', async () => {
-          label.textContent = 'Downloading...';
+          if (updateBtn.disabled) return;
           updateBtn.disabled = true;
+          dismissBtn.style.display = 'none';
+          icon.style.display = 'none';
+          label.textContent = 'Downloading';
+          updateBtn.classList.add('downloading');
+          starfield.setAlwaysOn(true);
+          // Smoothly animate progress with easing
+          let displayProgress = 0;
+          let targetProgress = 0;
+          let rafId = 0;
+          function easeInOutCubic(t: number): number {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          }
+          function animateProgress() {
+            const diff = targetProgress - displayProgress;
+            if (Math.abs(diff) < 0.1) {
+              displayProgress = targetProgress;
+            } else {
+              displayProgress += diff * 0.08;
+            }
+            const eased = easeInOutCubic(displayProgress / 100) * 100;
+            starfield.setProgress(eased);
+            updateLabelColor(eased);
+            if (displayProgress < targetProgress || Math.abs(diff) > 0.1) {
+              rafId = requestAnimationFrame(animateProgress);
+            }
+          }
+          starfield.setProgress(0);
+          updateLabelColor(0);
           try {
             let downloaded = 0;
             let total = 0;
@@ -167,18 +237,33 @@ export function createSidebar(): HTMLElement {
               } else if (event.event === 'Progress') {
                 downloaded += event.data?.chunkLength ?? 0;
                 if (total > 0) {
-                  const pct = Math.round((downloaded / total) * 100);
-                  label.textContent = `Downloading... ${pct}%`;
+                  targetProgress = Math.min((downloaded / total) * 100, 100);
+                  cancelAnimationFrame(rafId);
+                  animateProgress();
                 }
               } else if (event.event === 'Finished') {
-                label.textContent = 'Restarting...';
+                targetProgress = 100;
+                cancelAnimationFrame(rafId);
+                animateProgress();
+                label.textContent = 'Installing';
               }
             });
-            // The update will be applied on next app launch
-            label.textContent = 'Restart to Update';
+            cancelAnimationFrame(rafId);
+            resetLabelColor();
+            label.textContent = 'Restarting';
+            label.style.setProperty('-webkit-text-fill-color', '#60a5fa');
+            label.style.color = '#60a5fa';
+            const { relaunch } = await import('@tauri-apps/plugin-process');
+            await relaunch();
           } catch {
+            cancelAnimationFrame(rafId);
+            resetLabelColor();
             label.textContent = 'Update Failed';
             updateBtn.disabled = false;
+            updateBtn.classList.remove('downloading');
+            icon.style.display = '';
+            dismissBtn.style.display = '';
+            starfield.setAlwaysOn(false);
           }
         });
       }
@@ -276,10 +361,17 @@ export function createSidebar(): HTMLElement {
   return sidebar;
 }
 
-function initStarfield(canvas: HTMLCanvasElement, trigger: HTMLElement) {
+interface StarfieldControls {
+  setProgress: (pct: number) => void;
+  setAlwaysOn: (on: boolean) => void;
+}
+
+function initStarfield(canvas: HTMLCanvasElement, trigger: HTMLElement): StarfieldControls {
   const ctx = canvas.getContext('2d')!;
   let animId = 0;
   let active = false;
+  let alwaysOn = false;
+  let progress = -1; // -1 = no progress, 0-100 = download progress
 
   interface Star { x: number; y: number; z: number }
   const STAR_COUNT = 80;
@@ -294,8 +386,39 @@ function initStarfield(canvas: HTMLCanvasElement, trigger: HTMLElement) {
   for (let i = 0; i < STAR_COUNT; i++) {
     const s = { x: 0, y: 0, z: 0 };
     resetStar(s);
-    s.z = Math.random(); // spread initial depth
+    s.z = Math.random();
     stars.push(s);
+  }
+
+  function ensureSize() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = devicePixelRatio;
+    if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+  }
+
+  function starColor(sx: number, w: number, alpha: number): { fill: string; stroke: string } {
+    if (progress < 0) {
+      return {
+        fill: `rgba(255, 255, 255, ${alpha})`,
+        stroke: `rgba(255, 255, 255, ${alpha * 0.5})`,
+      };
+    }
+    // Stars left of the progress line turn blue
+    const threshold = (progress / 100) * w;
+    if (sx <= threshold) {
+      return {
+        fill: `rgba(96, 165, 250, ${alpha})`,
+        stroke: `rgba(96, 165, 250, ${alpha * 0.5})`,
+      };
+    }
+    return {
+      fill: `rgba(255, 255, 255, ${alpha})`,
+      stroke: `rgba(255, 255, 255, ${alpha * 0.5})`,
+    };
   }
 
   function draw() {
@@ -318,41 +441,60 @@ function initStarfield(canvas: HTMLCanvasElement, trigger: HTMLElement) {
       const r = Math.max(0.5, (1 - s.z) * 2.5);
       const alpha = 1 - s.z;
 
-      // Motion blur streak
       const prevScale = 1 / prevZ;
       const px = cx + s.x * prevScale * cx * 0.5;
       const py = cy + s.y * prevScale * cy * 0.5;
 
+      const colors = starColor(sx, w, alpha);
+
       ctx.beginPath();
       ctx.moveTo(px, py);
       ctx.lineTo(sx, sy);
-      ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
+      ctx.strokeStyle = colors.stroke;
       ctx.lineWidth = r * 0.7;
       ctx.stroke();
 
       ctx.beginPath();
       ctx.arc(sx, sy, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.fillStyle = colors.fill;
       ctx.fill();
     }
 
-    if (active) animId = requestAnimationFrame(draw);
+    if (active || alwaysOn) animId = requestAnimationFrame(draw);
   }
 
-  trigger.addEventListener('mouseenter', () => {
+  function start() {
+    if (active || alwaysOn) return;
     active = true;
-    const rect = canvas.getBoundingClientRect();
-    const dpr = devicePixelRatio;
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
+    ensureSize();
     draw();
-  });
+  }
 
-  trigger.addEventListener('mouseleave', () => {
+  function stop() {
+    if (alwaysOn) return;
     active = false;
     cancelAnimationFrame(animId);
     const dpr = devicePixelRatio;
     ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
-  });
+  }
+
+  trigger.addEventListener('mouseenter', start);
+  trigger.addEventListener('mouseleave', stop);
+
+  return {
+    setProgress(pct: number) {
+      progress = pct;
+    },
+    setAlwaysOn(on: boolean) {
+      alwaysOn = on;
+      if (on) {
+        canvas.style.opacity = '1';
+        ensureSize();
+        if (!active) { active = true; draw(); }
+      } else {
+        canvas.style.opacity = '';
+        progress = -1;
+      }
+    },
+  };
 }

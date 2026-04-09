@@ -17,6 +17,9 @@ importers:
       '@blocksuite/integration-test':
         specifier: workspace:*
         version: link:blocksuite/packages/integration-test
+      '@blocksuite/std':
+        specifier: workspace:*
+        version: link:blocksuite/packages/framework/std
       '@floating-ui/dom':
         specifier: ^1.6.13
         version: 1.7.6

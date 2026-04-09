@@ -13,6 +13,7 @@ export interface AppSettings {
   icloudSync: boolean;
   headerBar: boolean;
   skippedUpdateVersion: string;
+  compactSidebar: boolean;
 }
 
 const defaults: AppSettings = {
@@ -25,6 +26,7 @@ const defaults: AppSettings = {
   icloudSync: false,
   headerBar: true,
   skippedUpdateVersion: '',
+  compactSidebar: false,
 };
 
 const isMac = isMacOS();
@@ -84,6 +86,7 @@ export function applySettings(settings: AppSettings) {
   document.documentElement.setAttribute('data-theme', settings.theme);
   document.documentElement.classList.toggle('vibrancy', settings.vibrancy);
   document.documentElement.classList.toggle('peak-header-bar', settings.headerBar);
+  document.documentElement.classList.toggle('peak-compact-sidebar', settings.compactSidebar);
 
   const root = document.documentElement.style;
   const rgb = settings.theme === 'light' ? '255, 255, 255' : '0, 0, 0';
@@ -156,6 +159,15 @@ export async function openSettings() {
   });
   headerBarRow.appendChild(headerBarToggle);
   content.appendChild(headerBarRow);
+
+  const compactRow = createSettingRow('Compact Sidebar', 'Show only note titles in the sidebar');
+  const compactToggle = createSwitch(settings.compactSidebar, async (on) => {
+    settings.compactSidebar = on;
+    document.documentElement.classList.toggle('peak-compact-sidebar', on);
+    await saveSettingsImmediate(settings);
+  });
+  compactRow.appendChild(compactToggle);
+  content.appendChild(compactRow);
 
   // ===== Vibrancy section (desktop only — requires OS compositor) =====
   if (isTauri()) {

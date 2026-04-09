@@ -233,14 +233,19 @@ body {
   font-size: 13px;
   font-weight: 600;
   color: var(--affine-text-primary-color);
-  padding: 12px 8px 6px;
+  padding: 12px 12px 6px;
 }
 
 .peak-note-item {
+  position: relative;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
-  margin-bottom: 1px;
+  margin-bottom: 4px;
+}
+
+.peak-note-item:not(.active):hover {
+  background: var(--affine-hover-color);
 }
 
 .peak-note-item.context-target:not(.active) {
@@ -309,6 +314,79 @@ html[data-theme='light'] .peak-note-item-folder {
 
 .peak-note-item-folder svg {
   flex-shrink: 0;
+}
+
+/* Three-dot more button (always in DOM, visible in compact on hover) */
+.peak-note-item-more {
+  display: none;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--affine-text-secondary-color);
+  cursor: pointer;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.peak-note-item-more:hover {
+  background: var(--affine-hover-color);
+  color: var(--affine-text-primary-color);
+}
+
+.peak-note-item.active .peak-note-item-more {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.peak-note-item.active .peak-note-item-more:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* ===== Compact Sidebar Mode ===== */
+
+html.peak-compact-sidebar .peak-note-item {
+  position: relative;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  margin-bottom: 4px;
+}
+
+html.peak-compact-sidebar .peak-note-item:not(.active):hover {
+  background: var(--affine-hover-color);
+}
+
+html.peak-compact-sidebar .peak-note-item-meta {
+  display: none;
+}
+
+html.peak-compact-sidebar .peak-note-item-title {
+  margin-bottom: 0;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+html.peak-compact-sidebar .peak-note-item-more {
+  display: none;
+}
+
+html.peak-compact-sidebar .peak-note-item:hover .peak-note-item-more {
+  display: flex;
+}
+
+html.peak-compact-sidebar .peak-note-group-header {
+  font-size: 11px;
+  padding-top: 10px;
+  padding-bottom: 4px;
 }
 
 .peak-empty-state {

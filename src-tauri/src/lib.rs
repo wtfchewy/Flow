@@ -428,6 +428,8 @@ pub struct AppSettings {
     pub header_bar: bool,
     #[serde(default)]
     pub skipped_update_version: String,
+    #[serde(default)]
+    pub compact_sidebar: bool,
 }
 
 fn default_theme() -> String {
@@ -466,6 +468,7 @@ impl Default for AppSettings {
             icloud_sync: false,
             header_bar: default_header_bar(),
             skipped_update_version: String::new(),
+            compact_sidebar: false,
         }
     }
 }

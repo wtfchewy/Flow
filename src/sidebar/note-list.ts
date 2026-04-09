@@ -269,8 +269,18 @@ function createNoteItem(note: NoteMeta, isActive: boolean): HTMLElement {
   metaEl.appendChild(dateEl);
   metaEl.appendChild(previewEl);
 
+  // Three-dot menu button (visible in compact mode on hover)
+  const moreBtn = document.createElement('button');
+  moreBtn.className = 'peak-note-item-more';
+  moreBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="4" cy="8" r="1.2"/><circle cx="8" cy="8" r="1.2"/><circle cx="12" cy="8" r="1.2"/></svg>`;
+  moreBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    showContextMenu(e as MouseEvent, note);
+  });
+
   item.appendChild(titleEl);
   item.appendChild(metaEl);
+  item.appendChild(moreBtn);
 
   return item;
 }

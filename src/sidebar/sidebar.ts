@@ -1,10 +1,11 @@
 import { render } from 'lit';
-import { NewPageIcon, SidebarIcon, SettingsIcon, OpenInNewIcon, DownloadIcon } from '@blocksuite/icons/lit';
+import { NewPageIcon, SidebarIcon, SettingsIcon, OpenInNewIcon, DownloadIcon, SearchIcon } from '@blocksuite/icons/lit';
 import { createNote, importMarkdownFile, importHtmlFile, importMarkdownZip, importNotionZip, toggleSidebar, openNoteInNewWindow, activeNoteId } from '../storage/note-store';
 import { openSettings, loadSettings, saveSettingsImmediate } from '../settings/settings';
 import { renderNoteList } from './note-list';
 import { isTauri } from '../platform';
 import { checkForUpdate } from '../updater';
+import { openSearchModal } from '../search/search-modal';
 
 function createTrafficLights(): HTMLElement | null {
   if (!isTauri()) return null; // No traffic lights in browser
@@ -69,7 +70,22 @@ export function createSidebar(): HTMLElement {
   leftGroup.appendChild(sidebarBtn);
   topBar.appendChild(leftGroup);
 
-  // Right: new note button
+  // Right: search + new note buttons
+  const rightGroup = document.createElement('div');
+  rightGroup.className = 'peak-topbar-right';
+
+  const searchBtn = document.createElement('button');
+  searchBtn.className = 'peak-new-note-btn';
+  const searchIconSpan = document.createElement('span');
+  searchIconSpan.className = 'peak-new-note-icon';
+  render(SearchIcon({ width: '20', height: '20' }), searchIconSpan);
+  searchBtn.appendChild(searchIconSpan);
+  const searchTooltip = document.createElement('affine-tooltip');
+  searchTooltip.setAttribute('tip-position', 'bottom');
+  searchTooltip.textContent = 'Search';
+  searchBtn.appendChild(searchTooltip);
+  searchBtn.addEventListener('click', () => openSearchModal());
+
   const newNoteBtn = document.createElement('button');
   newNoteBtn.className = 'peak-new-note-btn';
   const iconSpan = document.createElement('span');
@@ -82,7 +98,9 @@ export function createSidebar(): HTMLElement {
   newNoteBtn.appendChild(newNoteTooltip);
   newNoteBtn.addEventListener('click', () => createNote());
 
-  topBar.appendChild(newNoteBtn);
+  rightGroup.appendChild(searchBtn);
+  rightGroup.appendChild(newNoteBtn);
+  topBar.appendChild(rightGroup);
   sidebar.appendChild(topBar);
 
   // Note list container

@@ -28,6 +28,7 @@ import { showWelcome } from './welcome/welcome';
 import { isTauri, applyPlatformClasses } from './platform';
 import { openImportModal } from './import/import-modal';
 import { openExportModal } from './export/export-modal';
+import { registerSearchShortcut } from './search/search-modal';
 import { GfxControllerIdentifier } from '@blocksuite/affine/std/gfx';
 import { PresentTool } from '@blocksuite/affine/blocks/frame';
 import { EdgelessTemplatePanel } from '@blocksuite/affine/gfx/template';
@@ -493,6 +494,9 @@ async function main() {
     const { getCurrentWindow } = await import('@tauri-apps/api/window');
     await getCurrentWindow().show();
   }
+
+  // Register global search shortcut (Cmd+S / Ctrl+S)
+  registerSearchShortcut();
 
   // Watch for active note changes to mount/unmount editor
   let editorMounted = noteStore.notes.value.length > 0;

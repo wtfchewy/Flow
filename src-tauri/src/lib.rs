@@ -1,3 +1,5 @@
+mod search;
+
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
@@ -473,15 +475,22 @@ impl Default for AppSettings {
     }
 }
 
-/// In-memory cache for the notes index to avoid re-reading from disk on every save.
+/// In-memory cache for the notes index and search text.
 struct IndexCache {
     notes: Vec<NoteMeta>,
     loaded: bool,
+    search: search::SearchIndex,
+    search_built: bool,
 }
 
 impl IndexCache {
     fn new() -> Self {
-        Self { notes: vec![], loaded: false }
+        Self {
+            notes: vec![],
+            loaded: false,
+            search: search::SearchIndex::new(),
+            search_built: false,
+        }
     }
 }
 
@@ -610,15 +619,15 @@ fn save_note(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>, 
         .as_millis() as u64;
 
     if let Some(existing) = cache.notes.iter_mut().find(|n| n.id == id) {
-        existing.title = title;
+        existing.title = title.clone();
         existing.preview = preview;
         existing.mode = mode;
         existing.pinned = pinned;
         existing.updated_at = now;
     } else {
         cache.notes.push(NoteMeta {
-            id,
-            title,
+            id: id.clone(),
+            title: title.clone(),
             preview,
             mode,
             pinned,
@@ -626,6 +635,9 @@ fn save_note(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>, 
             updated_at: now,
         });
     }
+
+    // Update search index with extracted text from the Yjs binary
+    cache.search.index_note(&id, &title, now, &data);
 
     // Flush index to disk
     flush_index(&app, &cache.notes);
@@ -647,6 +659,7 @@ fn delete_note(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>
     let mut cache = state.lock().unwrap();
     ensure_cache(&app, &mut cache);
     cache.notes.retain(|n| n.id != id);
+    cache.search.remove(&id);
     flush_index(&app, &cache.notes);
 }
 
@@ -694,6 +707,8 @@ fn toggle_icloud_sync(app: tauri::AppHandle, state: tauri::State<'_, Mutex<Index
     let mut cache = state.lock().unwrap();
     cache.loaded = false;
     cache.notes.clear();
+    cache.search = search::SearchIndex::new();
+    cache.search_built = false;
 
     Ok(())
 }
@@ -708,6 +723,35 @@ fn set_notch_visible(app: tauri::AppHandle, visible: bool) {
             notch_win.hide().ok();
         }
     }
+}
+
+/// Build the search index from disk if not already built.
+/// Reads all .bin files once, extracts text, caches in memory.
+fn ensure_search_index(app: &tauri::AppHandle, cache: &mut IndexCache) {
+    if cache.search_built { return; }
+    ensure_cache(app, cache);
+
+    let notes_dir = get_notes_dir(app);
+    for meta in &cache.notes {
+        if cache.search.len() > 0 {
+            // Already indexed (e.g. via save_note during this session)
+            // Skip notes that are already in the index
+        }
+        let path = notes_dir.join(format!("{}.bin", meta.id));
+        if let Ok(data) = fs::read(&path) {
+            cache.search.index_note(&meta.id, &meta.title, meta.updated_at, &data);
+        } else {
+            cache.search.index_note_meta(&meta.id, &meta.title, &meta.preview, meta.updated_at);
+        }
+    }
+    cache.search_built = true;
+}
+
+#[tauri::command]
+fn search_notes(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>, query: String) -> Vec<search::SearchResult> {
+    let mut cache = state.lock().unwrap();
+    ensure_search_index(&app, &mut cache);
+    cache.search.search(&query)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -897,6 +941,7 @@ pub fn run() {
             notch_poll_cursor,
             notch_set_interactive,
             set_notch_visible,
+            search_notes,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");

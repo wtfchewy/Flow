@@ -6,6 +6,8 @@ use std::collections::{HashMap, HashSet};
 pub struct BlockText {
     pub block_id: String,
     pub text: String,
+    /// true if this text came from an edgeless surface element
+    pub is_surface: bool,
 }
 
 /// Cached text data for a single note.
@@ -87,7 +89,10 @@ impl SearchIndex {
                 let days = (now_ms - note.updated_at as f64) / (1000.0 * 60.0 * 60.0 * 24.0);
                 let recency = (1.0 - days / 365.0).max(0.0);
 
-                let match_block_id = find_matching_block(&note.blocks, query);
+                let (match_block_id, is_surface) = find_matching_block(&note.blocks, query);
+                let match_mode = match_block_id.as_ref().map(|_| {
+                    if is_surface { "edgeless".to_string() } else { "page".to_string() }
+                });
 
                 Some(SearchResult {
                     note_id: id.clone(),
@@ -95,6 +100,7 @@ impl SearchIndex {
                     score: score + recency * 0.5,
                     snippet: find_snippet(&note.text, query),
                     match_block_id,
+                    match_mode,
                     updated_at: note.updated_at,
                 })
             })
@@ -113,6 +119,8 @@ pub struct SearchResult {
     pub score: f64,
     pub snippet: String,
     pub match_block_id: Option<String>,
+    /// "page" or "edgeless" — which editor mode shows the matched block
+    pub match_mode: Option<String>,
     pub updated_at: u64,
 }
 
@@ -164,7 +172,7 @@ fn extract_blocks_from_yjs(data: &[u8]) -> Vec<BlockText> {
             if let Some(yrs::Out::YMap(block)) = blocks.get(&txn, key.as_str()) {
                 let text = extract_block_text(&txn, &block);
                 if !text.is_empty() {
-                    result.push(BlockText { block_id: key.clone(), text });
+                    result.push(BlockText { block_id: key.clone(), text, is_surface: false });
                 }
             }
         }
@@ -188,16 +196,21 @@ fn collect_blocks_recursive<T: ReadTxn>(
         _ => return,
     };
 
-    // Only index leaf content blocks, not page/note/surface containers
-    let is_container = block.get(txn, "sys:flavour")
-        .and_then(|v| if let yrs::Out::Any(yrs::Any::String(s)) = v { Some(s) } else { None })
-        .map(|f| CONTAINER_FLAVOURS.iter().any(|c| f.as_ref() == *c))
-        .unwrap_or(false);
+    let flavour = block.get(txn, "sys:flavour")
+        .and_then(|v| if let yrs::Out::Any(yrs::Any::String(s)) = v { Some(s.to_string()) } else { None })
+        .unwrap_or_default();
+
+    let is_container = CONTAINER_FLAVOURS.iter().any(|c| flavour.as_str() == *c);
+
+    // Extract text from surface elements (shapes, text, connectors, frames in edgeless)
+    if flavour == "affine:surface" {
+        extract_surface_elements(txn, &block, result);
+    }
 
     if !is_container {
         let text = extract_block_text(txn, &block);
         if !text.is_empty() {
-            result.push(BlockText { block_id: block_id.to_string(), text });
+            result.push(BlockText { block_id: block_id.to_string(), text, is_surface: false });
         }
     }
 
@@ -205,6 +218,58 @@ fn collect_blocks_recursive<T: ReadTxn>(
         for child in children.iter(txn) {
             if let yrs::Out::Any(yrs::Any::String(child_id)) = child {
                 collect_blocks_recursive(txn, blocks, child_id.as_ref(), result);
+            }
+        }
+    }
+}
+
+/// Extract text from edgeless surface elements (shapes, text, connectors, groups).
+/// The elements are stored in prop:elements as a Boxed Y.Map:
+///   prop:elements -> Y.Map { type: "...", value: Y.Map { elementId: Y.Map { text: Y.Text, ... } } }
+fn extract_surface_elements<T: ReadTxn>(
+    txn: &T,
+    surface_block: &yrs::MapRef,
+    result: &mut Vec<BlockText>,
+) {
+    // prop:elements is a Boxed wrapper — a Y.Map with a "value" key holding the inner Y.Map
+    let boxed = match surface_block.get(txn, "prop:elements") {
+        Some(yrs::Out::YMap(m)) => m,
+        _ => return,
+    };
+
+    let elements = match boxed.get(txn, "value") {
+        Some(yrs::Out::YMap(m)) => m,
+        _ => return,
+    };
+
+    for (elem_id, elem_val) in elements.iter(txn) {
+        if let yrs::Out::YMap(elem) = elem_val {
+            let mut parts = Vec::new();
+
+            // "text" — used by shape, text element, and connector labels
+            if let Some(yrs::Out::YText(ytext)) = elem.get(txn, "text") {
+                let s = ytext.get_string(txn);
+                let trimmed = s.trim();
+                if !trimmed.is_empty() {
+                    parts.push(trimmed.to_string());
+                }
+            }
+
+            // "title" — used by group elements and frames
+            if let Some(yrs::Out::YText(ytext)) = elem.get(txn, "title") {
+                let s = ytext.get_string(txn);
+                let trimmed = s.trim();
+                if !trimmed.is_empty() {
+                    parts.push(trimmed.to_string());
+                }
+            }
+
+            if !parts.is_empty() {
+                result.push(BlockText {
+                    block_id: elem_id.to_string(),
+                    text: parts.join(" "),
+                    is_surface: true,
+                });
             }
         }
     }
@@ -239,30 +304,34 @@ fn extract_block_text<T: ReadTxn>(
 }
 
 /// Find the block whose text best matches the query.
-fn find_matching_block(blocks: &[BlockText], query: &str) -> Option<String> {
+/// Returns (block_id, is_surface).
+fn find_matching_block(blocks: &[BlockText], query: &str) -> (Option<String>, bool) {
     if blocks.is_empty() {
-        return None;
+        return (None, false);
     }
     let lq = query.to_lowercase();
     // Prefer exact substring match
     for b in blocks {
         if b.text.to_lowercase().contains(&lq) {
-            return Some(b.block_id.clone());
+            return (Some(b.block_id.clone()), b.is_surface);
         }
     }
     // Fall back to best word overlap
     let query_tokens = tokenize(query);
-    let mut best_id = None;
+    let mut best: Option<&BlockText> = None;
     let mut best_score = 0usize;
     for b in blocks {
         let bt = b.text.to_lowercase();
         let count = query_tokens.iter().filter(|qt| bt.contains(qt.as_str())).count();
         if count > best_score {
             best_score = count;
-            best_id = Some(b.block_id.clone());
+            best = Some(b);
         }
     }
-    best_id
+    match best {
+        Some(b) => (Some(b.block_id.clone()), b.is_surface),
+        None => (None, false),
+    }
 }
 
 // ===== Scoring =====

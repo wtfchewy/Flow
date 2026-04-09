@@ -10,6 +10,7 @@ export interface SearchResult {
   score: number;
   matchSnippet: string;
   matchBlockId?: string;
+  matchMode?: 'page' | 'edgeless';
   updatedAt: number;
 }
 
@@ -47,6 +48,7 @@ interface RustSearchResult {
   score: number;
   snippet: string;
   matchBlockId: string | null;
+  matchMode: string | null;
   updatedAt: number;
 }
 
@@ -60,6 +62,7 @@ async function searchViaRust(query: string): Promise<SearchResult[]> {
     score: r.score,
     matchSnippet: r.snippet,
     matchBlockId: r.matchBlockId ?? undefined,
+    matchMode: (r.matchMode as 'page' | 'edgeless') ?? undefined,
     updatedAt: r.updatedAt,
   }));
 }
@@ -149,6 +152,14 @@ function extractTextFromBlockSuiteDoc(data: Uint8Array): string {
 function collectBlockText(blocksMap: Y.Map<unknown>, blockId: string, texts: string[]): void {
   const block = blocksMap.get(blockId);
   if (!(block instanceof Y.Map)) return;
+
+  const flavour = block.get('sys:flavour');
+
+  // Extract text from edgeless surface elements
+  if (flavour === 'affine:surface') {
+    extractSurfaceElements(block, texts);
+  }
+
   extractBlockText(block, texts);
   const children = block.get('sys:children');
   if (children instanceof Y.Array) {
@@ -156,6 +167,30 @@ function collectBlockText(blocksMap: Y.Map<unknown>, blockId: string, texts: str
       if (typeof childId === 'string') collectBlockText(blocksMap, childId, texts);
     });
   }
+}
+
+function extractSurfaceElements(surfaceBlock: Y.Map<unknown>, texts: string[]): void {
+  // prop:elements is a Boxed wrapper: Y.Map { type: "...", value: Y.Map<elements> }
+  const boxed = surfaceBlock.get('prop:elements');
+  if (!(boxed instanceof Y.Map)) return;
+  const elements = boxed.get('value');
+  if (!(elements instanceof Y.Map)) return;
+
+  elements.forEach((elemVal: unknown) => {
+    if (!(elemVal instanceof Y.Map)) return;
+    // "text" — shapes, text elements, connector labels
+    const text = elemVal.get('text');
+    if (text instanceof Y.Text) {
+      const s = text.toString().trim();
+      if (s) texts.push(s);
+    }
+    // "title" — groups, frames
+    const title = elemVal.get('title');
+    if (title instanceof Y.Text) {
+      const s = title.toString().trim();
+      if (s) texts.push(s);
+    }
+  });
 }
 
 function extractBlockText(block: Y.Map<unknown>, texts: string[]): void {

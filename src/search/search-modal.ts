@@ -187,9 +187,12 @@ export function openSearchModal() {
 
     for (let i = 0; i < results.length; i++) {
       const result = results[i];
-      const item = createResultItem(result.title, result.matchSnippet, result.updatedAt, () => {
+      const item = createResultItem(result.title, result.matchSnippet, result.updatedAt, async () => {
         closeSearchModal();
-        noteStore.selectNote(result.noteId);
+        await noteStore.selectNote(result.noteId);
+        if (result.matchMode) {
+          noteStore.setMode(result.matchMode);
+        }
         if (result.matchBlockId) {
           scrollToAndHighlightBlock(result.matchBlockId);
         }

@@ -85,6 +85,10 @@ body {
   position: relative;
   transition: none;
   background: var(--affine-hover-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .peak-traffic-btn:active {
@@ -122,7 +126,11 @@ body {
 .peak-traffic-btn::after {
   content: '';
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
   opacity: 0;
   transition: opacity 0.1s ease;
   pointer-events: none;

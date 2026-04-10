@@ -1,0 +1,349 @@
+/* ===== Peak Mobile Layout ===== */
+/* Two-view navigation: Note List (home) <-> Editor (detail) */
+/* Uses the same color system as desktop via --affine-* CSS variables */
+
+/* ===== App Container ===== */
+/* Use html.peak-mobile #app to override the desktop #app rules */
+html.peak-mobile #app {
+  display: flex;
+  width: 200vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  background: var(--affine-background-secondary-color);
+  color: var(--affine-text-primary-color);
+  font-family: var(--affine-font-family);
+  border-radius: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html.peak-mobile #app.peak-mobile-show-editor {
+  transform: translateX(-50%);
+}
+
+/* ===== Views ===== */
+.peak-mobile-view {
+  width: 50%;
+  height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===== Mobile Header (shared base) ===== */
+.peak-mobile-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: var(--affine-background-secondary-color);
+  z-index: 10;
+}
+
+/* ===== Home View ===== */
+.peak-mobile-home {
+  background: var(--affine-background-secondary-color);
+}
+
+.peak-mobile-home-header {
+  justify-content: space-between;
+  min-height: 56px;
+  padding-bottom: 4px;
+}
+
+.peak-mobile-home-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--affine-text-primary-color);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.peak-mobile-home-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.peak-mobile-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--affine-primary-color, #1e6fff);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.peak-mobile-icon-btn:active {
+  background: var(--affine-hover-color);
+}
+
+/* ===== Note List ===== */
+.peak-mobile-note-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 16px 32px;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+}
+
+.peak-mobile-note-group {
+  margin-bottom: 8px;
+}
+
+.peak-mobile-note-group-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--affine-text-secondary-color);
+  padding: 16px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.peak-mobile-note-item {
+  padding: 14px 0;
+  border-bottom: 0.5px solid var(--affine-border-color);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease;
+}
+
+.peak-mobile-note-item:active {
+  background: var(--affine-hover-color);
+  margin: 0 -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.peak-mobile-note-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--affine-text-primary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.peak-mobile-note-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--affine-text-secondary-color);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.peak-mobile-note-date {
+  flex-shrink: 0;
+}
+
+.peak-mobile-note-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-theme='light'] .peak-mobile-note-meta {
+  color: var(--affine-text-primary-color);
+  opacity: 0.55;
+}
+
+.peak-mobile-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--affine-text-secondary-color);
+  font-size: 16px;
+}
+
+/* ===== Editor View ===== */
+.peak-mobile-editor {
+  background: var(--affine-background-primary-color);
+}
+
+.peak-mobile-editor-header {
+  min-height: 48px;
+  gap: 4px;
+  border-bottom: 0.5px solid var(--affine-border-color);
+  background: var(--affine-background-primary-color);
+}
+
+.peak-mobile-editor-header-left {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.peak-mobile-editor-header-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.peak-mobile-editor-header-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.peak-mobile-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  background: transparent;
+  color: var(--affine-primary-color, #1e6fff);
+  font-size: 15px;
+  font-family: var(--affine-font-family);
+  cursor: pointer;
+  padding: 8px 4px;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+.peak-mobile-back-btn:active {
+  opacity: 0.6;
+}
+
+.peak-mobile-back-icon {
+  display: flex;
+  align-items: center;
+}
+
+.peak-mobile-back-label {
+  font-weight: 400;
+}
+
+.peak-mobile-editor-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--affine-text-primary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.peak-mobile-saving {
+  position: static;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.peak-mobile-mode-switch {
+  transform: scale(0.9);
+  transform-origin: center right;
+}
+
+.peak-mobile-editor-container {
+  flex: 1;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  height: 100%;
+  position: relative;
+  user-select: auto;
+  -webkit-user-select: auto;
+}
+
+.peak-mobile-editor-container peak-editor-container {
+  height: 100%;
+  user-select: auto;
+  -webkit-user-select: auto;
+}
+
+/* ===== Mobile overrides for BlockSuite editor ===== */
+html.peak-mobile .affine-page-viewport {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Increase tap targets for mobile editing */
+html.peak-mobile doc-title .doc-title-container {
+  padding: 16px 24px 8px;
+}
+
+html.peak-mobile .affine-paragraph-block-container {
+  padding: 2px 0;
+}
+
+/* Hide desktop-only elements on mobile */
+html.peak-mobile .peak-outline-viewer {
+  display: none;
+}
+
+/* ===== Mobile overrides for modals ===== */
+html.peak-mobile .peak-settings-panel {
+  width: calc(100vw - 32px);
+  max-width: 480px;
+  max-height: 85vh;
+  padding: 20px 20px;
+}
+
+html.peak-mobile .peak-search-panel {
+  width: calc(100vw - 32px);
+  max-width: 480px;
+  max-height: 70vh;
+}
+
+html.peak-mobile .peak-import-panel {
+  width: calc(100vw - 32px);
+  max-width: 480px;
+}
+
+html.peak-mobile .peak-export-panel {
+  width: calc(100vw - 32px);
+  max-width: 480px;
+}
+
+/* ===== Mobile body background ===== */
+html.peak-mobile,
+html.peak-mobile body {
+  background: var(--affine-background-secondary-color);
+}
+
+/* ===== Mobile Welcome Screen ===== */
+html.peak-mobile .peak-welcome-overlay {
+  border-radius: 0;
+}
+
+html.peak-mobile .peak-welcome-card {
+  width: calc(100vw - 48px);
+  max-width: 380px;
+}
+
+/* ===== Safe area handling ===== */
+@supports (padding: env(safe-area-inset-top)) {
+  .peak-mobile-home-header {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
+  }
+
+  .peak-mobile-editor-header {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+/* ===== Hide scrollbar on mobile ===== */
+.peak-mobile-note-list::-webkit-scrollbar {
+  display: none;
+}
+
+.peak-mobile-editor-container::-webkit-scrollbar {
+  display: none;
+}

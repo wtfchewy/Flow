@@ -522,6 +522,8 @@ fn save_settings(app: tauri::AppHandle, settings: AppSettings) {
 }
 
 /// Returns the iCloud Drive base directory for Peak, if available.
+/// Works on both macOS and iOS — both use the iCloud Drive container
+/// under `com~apple~CloudDocs` for cross-device sync.
 #[cfg(target_os = "macos")]
 fn get_icloud_base() -> Option<PathBuf> {
     let home = std::env::var("HOME").ok()?;
@@ -530,7 +532,24 @@ fn get_icloud_base() -> Option<PathBuf> {
     Some(icloud)
 }
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(target_os = "ios")]
+fn get_icloud_base() -> Option<PathBuf> {
+    // On iOS, iCloud Drive documents are at:
+    // /private/var/mobile/Library/Mobile Documents/com~apple~CloudDocs/Peak/
+    // The HOME env var points to the app sandbox, but iCloud Drive uses the system path.
+    let home = std::env::var("HOME").ok()?;
+    // Navigate from app sandbox to the shared iCloud Drive container
+    let icloud = PathBuf::from("/private/var/mobile/Library/Mobile Documents/com~apple~CloudDocs/Peak");
+    if icloud.exists() || fs::create_dir_all(&icloud).is_ok() {
+        return Some(icloud);
+    }
+    // Fallback: try relative to HOME for sandboxed access
+    let fallback = PathBuf::from(home)
+        .join("Library/Mobile Documents/com~apple~CloudDocs/Peak");
+    Some(fallback)
+}
+
+#[cfg(not(any(target_os = "macos", target_os = "ios")))]
 fn get_icloud_base() -> Option<PathBuf> {
     None
 }

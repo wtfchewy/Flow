@@ -43,6 +43,18 @@ let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
 let workspace: TestWorkspace;
 let editorEl: PeakEditorContainer;
 
+// Configurable spec providers — overridden by mobile layout
+let pageSpecsFn: (editor: PeakEditorContainer) => any[] = getPageSpecs;
+let edgelessSpecsFn: (editor: PeakEditorContainer) => any[] = getEdgelessSpecs;
+
+export function setSpecProviders(
+  pageFn: (editor: PeakEditorContainer) => any[],
+  edgelessFn: (editor: PeakEditorContainer) => any[]
+) {
+  pageSpecsFn = pageFn;
+  edgelessSpecsFn = edgelessFn;
+}
+
 export function init(ws: TestWorkspace, editor: PeakEditorContainer) {
   workspace = ws;
   editorEl = editor;
@@ -182,8 +194,8 @@ export async function selectNote(id: string) {
   activeMode.value = mode;
 
   editorEl.doc = store;
-  editorEl.pageSpecs = getPageSpecs(editorEl);
-  editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+  editorEl.pageSpecs = pageSpecsFn(editorEl);
+  editorEl.edgelessSpecs = edgelessSpecsFn(editorEl);
   editorEl.mode = mode;
 
   updateWindowTitle(noteMeta?.title || 'Untitled');
@@ -226,8 +238,8 @@ export async function createNote() {
 
   const store = activeStore;
   editorEl.doc = store;
-  editorEl.pageSpecs = getPageSpecs(editorEl);
-  editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+  editorEl.pageSpecs = pageSpecsFn(editorEl);
+  editorEl.edgelessSpecs = edgelessSpecsFn(editorEl);
   editorEl.mode = 'page';
   editorEl.autofocus = true;
 
@@ -304,8 +316,8 @@ export async function importMarkdownFile(file: File) {
   activeMode.value = 'page';
 
   editorEl.doc = store;
-  editorEl.pageSpecs = getPageSpecs(editorEl);
-  editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+  editorEl.pageSpecs = pageSpecsFn(editorEl);
+  editorEl.edgelessSpecs = edgelessSpecsFn(editorEl);
   editorEl.mode = 'page';
 
   attachAutoSave(store);
@@ -353,8 +365,8 @@ export async function deleteNote(id: string) {
       activeStore = createNewDoc(workspace, newId);
       activeMode.value = 'page';
       editorEl.doc = activeStore;
-      editorEl.pageSpecs = getPageSpecs(editorEl);
-      editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+      editorEl.pageSpecs = pageSpecsFn(editorEl);
+      editorEl.edgelessSpecs = edgelessSpecsFn(editorEl);
       editorEl.mode = 'page';
       editorEl.autofocus = true;
       attachAutoSave(activeStore);
@@ -644,8 +656,8 @@ async function registerImportedDoc(store: Store) {
   activeMode.value = 'page';
 
   editorEl.doc = store;
-  editorEl.pageSpecs = getPageSpecs(editorEl);
-  editorEl.edgelessSpecs = getEdgelessSpecs(editorEl);
+  editorEl.pageSpecs = pageSpecsFn(editorEl);
+  editorEl.edgelessSpecs = edgelessSpecsFn(editorEl);
   editorEl.mode = 'page';
 
   attachAutoSave(store);

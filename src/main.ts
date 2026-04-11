@@ -25,7 +25,7 @@ import * as noteStore from './storage/note-store';
 import { effect } from '@preact/signals-core';
 import { loadSettings, applySettings } from './settings/settings'; // also registers window.__openSettings
 import { showWelcome } from './welcome/welcome';
-import { isTauri, applyPlatformClasses } from './platform';
+import { isTauri, isMobile, applyPlatformClasses } from './platform';
 import { openImportModal } from './import/import-modal';
 import { openExportModal } from './export/export-modal';
 import { registerSearchShortcut } from './search/search-modal';
@@ -79,8 +79,16 @@ function createHeaderTrafficLights(): HTMLElement | null {
 }
 
 async function main() {
-  // Apply platform classes (peak-browser or peak-desktop) immediately
+  // Apply platform classes (peak-browser or peak-desktop, peak-mobile) immediately
   applyPlatformClasses();
+
+  // On mobile, use the dedicated mobile layout
+  if (isMobile()) {
+    await import('./mobile/mobile.css');
+    const { mobileMain } = await import('./mobile/mobile-app');
+    await mobileMain();
+    return;
+  }
 
   // Load and apply saved settings (theme, vibrancy)
   const settings = await loadSettings();

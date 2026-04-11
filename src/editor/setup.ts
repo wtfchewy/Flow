@@ -167,3 +167,11 @@ export function getPageSpecs(editor: PeakEditorContainer): ExtensionType[] {
 export function getEdgelessSpecs(editor: PeakEditorContainer): ExtensionType[] {
   return [...viewManager.get('edgeless'), ...getCommonExtensions(editor)];
 }
+
+export function getMobilePageSpecs(editor: PeakEditorContainer): ExtensionType[] {
+  return [...viewManager.get('mobile-page'), ...getCommonExtensions(editor)];
+}
+
+export function getMobileEdgelessSpecs(editor: PeakEditorContainer): ExtensionType[] {
+  return [...viewManager.get('mobile-edgeless'), ...getCommonExtensions(editor)];
+}

@@ -1686,3 +1686,223 @@ html.peak-browser.vibrancy #app {
   backdrop-filter: none;
   background: var(--affine-background-secondary-color);
 }
+
+/* ===== Claude Code session link ===== */
+
+.peak-claude-header-btn {
+  display: none;
+  margin-right: 4px;
+}
+
+.peak-claude-header-btn.visible {
+  display: flex;
+}
+
+.peak-claude-header-btn:hover {
+  background: var(--affine-hover-color);
+}
+
+.peak-claude-header-btn svg {
+  display: block;
+}
+
+.peak-claude-popover {
+  min-width: 280px;
+  max-width: 340px;
+  background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  padding: 12px 14px 10px;
+  z-index: 200;
+  font-family: var(--affine-font-family);
+  color: var(--affine-text-primary-color);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.peak-claude-popover-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--affine-text-secondary-color);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.peak-claude-popover-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.peak-claude-popover-label {
+  color: var(--affine-text-secondary-color);
+  flex-shrink: 0;
+}
+
+.peak-claude-popover-value {
+  color: var(--affine-text-primary-color);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.peak-claude-popover-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+}
+
+.peak-claude-popover-hint {
+  font-size: 12px;
+  color: var(--affine-text-secondary-color);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.peak-claude-popover-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.peak-claude-popover-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--affine-text-primary-color);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--affine-font-family);
+  cursor: pointer;
+}
+
+.peak-claude-popover-btn:hover:not(:disabled) {
+  background: var(--affine-hover-color);
+}
+
+.peak-claude-popover-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.peak-claude-popover-btn.primary {
+  background: var(--affine-primary-color, #1e6fff);
+  border-color: transparent;
+  color: #fff;
+}
+
+.peak-claude-popover-btn.primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+  background: var(--affine-primary-color, #1e6fff);
+}
+
+.peak-claude-popover-btn.danger {
+  color: var(--affine-error-color, #eb4141);
+}
+
+/* ===== Claude link modal ===== */
+
+.peak-claude-link-panel {
+  gap: 0;
+}
+
+.peak-claude-link-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--affine-text-secondary-color);
+  margin-bottom: 14px;
+}
+
+.peak-claude-link-desc code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--affine-hover-color);
+  color: var(--affine-text-primary-color);
+}
+
+.peak-claude-link-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--affine-text-secondary-color);
+  margin-bottom: 6px;
+  margin-top: 10px;
+}
+
+.peak-claude-link-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 12px;
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 8px;
+  background: var(--affine-background-primary-color, transparent);
+  color: var(--affine-text-primary-color);
+  font-family: var(--affine-font-family);
+  font-size: 13px;
+  outline: none;
+}
+
+.peak-claude-link-input:focus {
+  border-color: var(--affine-primary-color, #1e6fff);
+}
+
+.peak-claude-link-error {
+  min-height: 18px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--affine-error-color, #eb4141);
+}
+
+.peak-claude-link-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.peak-claude-link-btn {
+  padding: 8px 16px;
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--affine-text-primary-color);
+  font-family: var(--affine-font-family);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.peak-claude-link-btn:hover:not(:disabled) {
+  background: var(--affine-hover-color);
+}
+
+.peak-claude-link-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.peak-claude-link-btn.primary {
+  background: var(--affine-primary-color, #1e6fff);
+  border-color: transparent;
+  color: #fff;
+}
+
+.peak-claude-link-btn.primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+  background: var(--affine-primary-color, #1e6fff);
+}

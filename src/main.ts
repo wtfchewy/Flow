@@ -1,7 +1,7 @@
 import './style.css';
 import './editor/editor-container';
 
-import { render } from 'lit';
+import { render, html } from 'lit';
 import {
   SidebarIcon,
   ArrowDownSmallIcon,
@@ -14,6 +14,8 @@ import {
   ImportIcon,
   PresentationIcon,
 } from '@blocksuite/icons/lit';
+import { createClaudeButton } from './claude/claude-button';
+import { openClaudeLinkModal } from './claude/claude-link-modal';
 import { createModeSwitch } from './mode-switch/mode-switch';
 import {
   initBlockSuite,
@@ -34,6 +36,15 @@ import { PresentTool } from '@blocksuite/affine/blocks/frame';
 import { EdgelessTemplatePanel } from '@blocksuite/affine/gfx/template';
 import { peakEdgelessTemplates } from './templates/edgeless-templates';
 import { peakStickerTemplates } from './templates/sticker-templates';
+
+// Small Claude-star icon used in the title dropdown's "Link Claude Code Session" item.
+function ClaudeMenuIcon(opts: { width: string; height: string }) {
+  return html`
+    <svg width=${opts.width} height=${opts.height} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M12 2 14.2 9.8 22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/>
+    </svg>
+  `;
+}
 
 function makeDraggable(el: HTMLElement) {
   if (!isTauri()) return; // No custom dragging in browser
@@ -327,6 +338,20 @@ async function main() {
     );
     addItem(DuplicateIcon, 'Duplicate Note', () => noteStore.duplicateNote(noteId));
     addSeparator();
+    addItem(
+      ClaudeMenuIcon,
+      noteMeta.claudeSession ? 'Change Claude Code Session' : 'Link Claude Code Session',
+      () => openClaudeLinkModal(noteId)
+    );
+    if (noteMeta.claudeSession) {
+      addItem(
+        ClaudeMenuIcon,
+        'Unlink Claude Code Session',
+        () => noteStore.unlinkClaudeSession(noteId),
+        true
+      );
+    }
+    addSeparator();
     addItem(PresentationIcon, 'Present', async () => {
       // Switch to edgeless mode first if not already
       if (noteStore.activeMode.value !== 'edgeless') {
@@ -374,6 +399,10 @@ async function main() {
   const headerRight = document.createElement('div');
   headerRight.className = 'peak-editor-header-right';
   headerRight.appendChild(savingIndicator);
+
+  // Claude Code session button (visible when the active note has a linked session)
+  const claudeButton = createClaudeButton();
+  headerRight.appendChild(claudeButton.element);
 
   headerBar.appendChild(headerLeft);
   headerBar.appendChild(headerCenter);
@@ -425,12 +454,13 @@ async function main() {
     floatModeSwitch.setMode(mode);
   });
 
-  // React to active note changes to update header title
+  // React to active note changes to update header title & Claude button
   effect(() => {
     const id = noteStore.activeNoteId.value;
     const noteList = noteStore.notes.value;
     const meta = noteList.find(n => n.id === id);
     headerTitle.textContent = meta?.title || 'Untitled';
+    claudeButton.update(meta);
   });
 
   // Editor container (full height)

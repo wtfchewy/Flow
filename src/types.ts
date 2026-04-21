@@ -1,3 +1,9 @@
+export interface ClaudeSessionLink {
+  id: string;
+  projectPath?: string;
+  linkedAt: number;
+}
+
 export interface NoteMeta {
   id: string;
   title: string;
@@ -6,4 +12,5 @@ export interface NoteMeta {
   preview: string;
   mode?: 'page' | 'edgeless';
   pinned?: boolean;
+  claudeSession?: ClaudeSessionLink;
 }

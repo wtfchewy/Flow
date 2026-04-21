@@ -4,7 +4,7 @@
  */
 
 import * as Y from 'yjs';
-import type { NoteMeta } from '../types';
+import type { NoteMeta, ClaudeSessionLink } from '../types';
 
 const DB_NAME = 'peak-notes';
 const DB_VERSION = 3;
@@ -105,11 +105,14 @@ export async function saveNote(
     updatedAt: Date.now(),
   };
 
-  // Preserve original createdAt
+  // Preserve original createdAt and claudeSession across saves
   const existing = await idbReq<NoteMeta | undefined>(
     transaction.objectStore(META_STORE).get(id)
   );
   meta.createdAt = existing?.createdAt || Date.now();
+  if (existing?.claudeSession) {
+    meta.claudeSession = existing.claudeSession;
+  }
 
   transaction.objectStore(NOTES_STORE).put(data, id);
   transaction.objectStore(META_STORE).put(meta); // keyPath: 'id' — key is in the object
@@ -123,6 +126,28 @@ export async function loadNote(id: string): Promise<Uint8Array | null> {
   const data = await idbReq<number[] | undefined>(store.get(id));
   if (!data) return null;
   return new Uint8Array(data);
+}
+
+export async function setNoteClaudeSession(
+  id: string,
+  session: ClaudeSessionLink | null,
+): Promise<void> {
+  const db = await openDB();
+  const tx = db.transaction(META_STORE, 'readwrite');
+  const store = tx.objectStore(META_STORE);
+  const existing = await idbReq<NoteMeta | undefined>(store.get(id));
+  if (!existing) {
+    await txComplete(tx);
+    return;
+  }
+  const updated: NoteMeta = { ...existing };
+  if (session) {
+    updated.claudeSession = session;
+  } else {
+    delete updated.claudeSession;
+  }
+  store.put(updated);
+  await txComplete(tx);
 }
 
 export async function deleteNoteFromDisk(id: string): Promise<void> {

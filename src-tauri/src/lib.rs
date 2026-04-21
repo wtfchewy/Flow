@@ -393,6 +393,15 @@ fn notch_set_interactive(app: tauri::AppHandle, interactive: bool) {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct ClaudeSessionLink {
+    pub id: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub project_path: Option<String>,
+    pub linked_at: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct NoteMeta {
     pub id: String,
     pub title: String,
@@ -403,6 +412,8 @@ pub struct NoteMeta {
     pub mode: String,
     #[serde(default)]
     pub pinned: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub claude_session: Option<ClaudeSessionLink>,
 }
 
 fn default_mode() -> String {
@@ -627,6 +638,7 @@ fn save_note(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>, 
         existing.mode = mode;
         existing.pinned = pinned;
         existing.updated_at = now;
+        // claude_session is intentionally preserved across saves
     } else {
         cache.notes.push(NoteMeta {
             id: id.clone(),
@@ -636,6 +648,7 @@ fn save_note(app: tauri::AppHandle, state: tauri::State<'_, Mutex<IndexCache>>, 
             pinned,
             created_at: now,
             updated_at: now,
+            claude_session: None,
         });
     }
 
@@ -651,6 +664,122 @@ fn load_note(app: tauri::AppHandle, id: String) -> Option<Vec<u8>> {
     let notes_dir = get_notes_dir(&app);
     let note_path = notes_dir.join(format!("{}.bin", id));
     fs::read(note_path).ok()
+}
+
+#[tauri::command]
+fn set_note_claude_session(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, Mutex<IndexCache>>,
+    id: String,
+    session: Option<ClaudeSessionLink>,
+) {
+    let mut cache = state.lock().unwrap();
+    ensure_cache(&app, &mut cache);
+    if let Some(existing) = cache.notes.iter_mut().find(|n| n.id == id) {
+        existing.claude_session = session;
+        flush_index(&app, &cache.notes);
+    }
+}
+
+/// Launch the OS's default terminal with `claude --resume <session_id>`
+/// (and `cd <project_path>` if provided). Platform-specific.
+#[tauri::command]
+fn open_claude_terminal(session_id: String, project_path: Option<String>) -> Result<(), String> {
+    // Conservative allow-list to keep shell injection out of reach.
+    if session_id.is_empty()
+        || !session_id.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+    {
+        return Err("Invalid session id".to_string());
+    }
+    if let Some(p) = &project_path {
+        if p.contains('"') || p.contains('\n') || p.contains('`') || p.contains('$') {
+            return Err("Invalid project path".to_string());
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        let claude_cmd = format!("claude --resume {}", session_id);
+        let full_cmd = match &project_path {
+            Some(path) => format!("cd {:?} && {}", path, claude_cmd),
+            None => claude_cmd,
+        };
+        let script = format!(
+            "tell application \"Terminal\"\nactivate\ndo script \"{}\"\nend tell",
+            full_cmd.replace('\\', "\\\\").replace('"', "\\\"")
+        );
+        std::process::Command::new("osascript")
+            .arg("-e")
+            .arg(&script)
+            .spawn()
+            .map_err(|e| e.to_string())?;
+        Ok(())
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        let claude_cmd = format!("claude --resume {}", session_id);
+        let full_cmd = match &project_path {
+            Some(path) => format!("cd {:?} && {}", path, claude_cmd),
+            None => claude_cmd,
+        };
+        let wrapped = format!("{}; exec $SHELL", full_cmd);
+        let candidates: &[(&str, &[&str])] = &[
+            ("x-terminal-emulator", &["-e", "sh", "-c"]),
+            ("gnome-terminal", &["--", "sh", "-c"]),
+            ("konsole", &["-e", "sh", "-c"]),
+            ("xfce4-terminal", &["-e", "sh", "-c"]),
+            ("alacritty", &["-e", "sh", "-c"]),
+            ("kitty", &["sh", "-c"]),
+            ("xterm", &["-e", "sh", "-c"]),
+        ];
+        for (bin, args) in candidates {
+            let mut cmd = std::process::Command::new(bin);
+            for a in *args {
+                cmd.arg(a);
+            }
+            cmd.arg(&wrapped);
+            if cmd.spawn().is_ok() {
+                return Ok(());
+            }
+        }
+        Err("No supported terminal emulator found".to_string())
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        let claude_cmd = format!("claude --resume {}", session_id);
+        let ps_cmd = match &project_path {
+            Some(path) => format!(
+                "Set-Location -LiteralPath '{}'; {}",
+                path.replace('\'', "''"),
+                claude_cmd
+            ),
+            None => claude_cmd.clone(),
+        };
+        if std::process::Command::new("wt.exe")
+            .args(["powershell", "-NoExit", "-Command", &ps_cmd])
+            .spawn()
+            .is_ok()
+        {
+            return Ok(());
+        }
+        let fallback = match &project_path {
+            Some(path) => format!("cd /d {:?} && {}", path, claude_cmd),
+            None => claude_cmd,
+        };
+        std::process::Command::new("cmd")
+            .args(["/C", "start", "cmd", "/K", &fallback])
+            .spawn()
+            .map_err(|e| e.to_string())?;
+        Ok(())
+    }
+
+    #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
+    {
+        let _ = (session_id, project_path);
+        Err("Unsupported platform".to_string())
+    }
 }
 
 #[tauri::command]
@@ -938,6 +1067,8 @@ pub fn run() {
             save_note,
             load_note,
             delete_note,
+            set_note_claude_session,
+            open_claude_terminal,
             load_settings,
             save_settings,
             toggle_icloud_sync,

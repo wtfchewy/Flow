@@ -79,7 +79,10 @@ export function createNewDoc(
   const doc = collection.getDoc(docId) ?? collection.createDoc(docId);
   const store = doc.getStore({ id: docId });
 
-  doc.load(() => {
+  // store.load() (vs doc.load()) is required so HistoryExtension.loaded()
+  // fires and wires up the canUndo/canRedo signals — without it, the
+  // page-root keymap's Mod-z handler short-circuits on canUndo === false.
+  store.load(() => {
     const rootId = store.addBlock('affine:page', { title: new Text() });
     store.addBlock('affine:surface', {}, rootId);
     const noteId = store.addBlock('affine:note', {}, rootId);
@@ -98,9 +101,10 @@ export function loadExistingDoc(
   const doc = collection.getDoc(docId) ?? collection.createDoc(docId);
   const store = doc.getStore({ id: docId });
 
-  // Apply the saved Yjs state before loading
+  // Apply the saved Yjs state before loading so the loaded content isn't
+  // captured as an undoable initial transaction.
   Y.applyUpdate(doc.spaceDoc, data);
-  doc.load();
+  store.load();
 
   return store;
 }

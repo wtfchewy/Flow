@@ -433,7 +433,7 @@ export function setupLinkedDocNavigation() {
             const doc = workspace.getDoc(pageId);
             if (doc) {
               const store = doc.getStore();
-              doc.load();
+              store.load();
               const now = Date.now();
               const meta: NoteMeta = {
                 id: pageId,

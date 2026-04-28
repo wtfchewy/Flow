@@ -3,7 +3,7 @@ import type { Store } from '@blocksuite/affine/store';
 import type { TestWorkspace } from '@blocksuite/affine/store/test';
 import * as Y from 'yjs';
 
-import type { NoteMeta } from '../types';
+import type { NoteMeta, ClaudeSessionLink } from '../types';
 import {
   createNewDoc,
   loadExistingDoc,
@@ -19,6 +19,8 @@ import {
   saveNote,
   loadNote,
   deleteNoteFromDisk,
+  setNoteClaudeSession,
+  openClaudeTerminal,
 } from './persistence';
 import { isTauri } from '../platform';
 import {
@@ -394,6 +396,56 @@ export async function duplicateNote(id: string) {
   tmpDoc.destroy();
 
   await selectNote(newId);
+}
+
+/**
+ * Extract a Claude Code session id from user input. Accepts a bare id
+ * (letters/digits/hyphens/underscores) or a URL like
+ * `https://claude.ai/code/session_<id>` or `.../session/<id>`.
+ * Returns null if no valid id can be found.
+ */
+export function parseClaudeSessionInput(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  const urlMatch = trimmed.match(/session[_/]([A-Za-z0-9_-]+)/);
+  if (urlMatch) return urlMatch[1];
+  if (/^[A-Za-z0-9_-]+$/.test(trimmed)) return trimmed;
+  return null;
+}
+
+export function getClaudeWebUrl(sessionId: string): string {
+  return `https://claude.ai/code/session_${sessionId}`;
+}
+
+export async function linkClaudeSession(
+  noteId: string,
+  sessionId: string,
+  projectPath?: string,
+) {
+  const link: ClaudeSessionLink = {
+    id: sessionId,
+    linkedAt: Date.now(),
+    ...(projectPath ? { projectPath } : {}),
+  };
+  await setNoteClaudeSession(noteId, link);
+  notes.value = notes.value.map(n =>
+    n.id === noteId ? { ...n, claudeSession: link } : n
+  );
+}
+
+export async function unlinkClaudeSession(noteId: string) {
+  await setNoteClaudeSession(noteId, null);
+  notes.value = notes.value.map(n => {
+    if (n.id !== noteId) return n;
+    const { claudeSession: _omit, ...rest } = n;
+    return rest;
+  });
+}
+
+export async function openClaudeSessionInTerminal(noteId: string) {
+  const note = notes.value.find(n => n.id === noteId);
+  if (!note?.claudeSession) return;
+  await openClaudeTerminal(note.claudeSession.id, note.claudeSession.projectPath);
 }
 
 export async function togglePinNote(id: string) {

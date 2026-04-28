@@ -1,6 +1,6 @@
 import * as Y from 'yjs';
 import { isTauri } from '../platform';
-import type { NoteMeta } from '../types';
+import type { NoteMeta, ClaudeSessionLink } from '../types';
 import * as browserPersistence from './browser-persistence';
 
 // Lazy-loaded Tauri invoke
@@ -45,4 +45,24 @@ export async function deleteNoteFromDisk(id: string): Promise<void> {
   if (!isTauri()) return browserPersistence.deleteNoteFromDisk(id);
   const invoke = await getInvoke();
   await invoke('delete_note', { id });
+}
+
+export async function setNoteClaudeSession(
+  id: string,
+  session: ClaudeSessionLink | null,
+): Promise<void> {
+  if (!isTauri()) return browserPersistence.setNoteClaudeSession(id, session);
+  const invoke = await getInvoke();
+  await invoke('set_note_claude_session', { id, session });
+}
+
+export async function openClaudeTerminal(
+  sessionId: string,
+  projectPath?: string,
+): Promise<void> {
+  if (!isTauri()) {
+    throw new Error('Terminal launch is only available in the desktop app');
+  }
+  const invoke = await getInvoke();
+  await invoke('open_claude_terminal', { sessionId, projectPath: projectPath ?? null });
 }

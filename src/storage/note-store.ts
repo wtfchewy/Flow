@@ -1,5 +1,5 @@
 import { signal } from '@preact/signals-core';
-import type { Store } from '@blocksuite/affine/store';
+import { Text, type Store } from '@blocksuite/affine/store';
 import type { TestWorkspace } from '@blocksuite/affine/store/test';
 import * as Y from 'yjs';
 
@@ -237,6 +237,109 @@ export async function createNote() {
   // Save initial empty state
   const ydoc = getYDoc(store);
   await saveNote(id, 'Untitled', '', 'page', ydoc, false);
+}
+
+/**
+ * Append plain text to the end of a note as new paragraph blocks (one per line).
+ * Works whether the target note is currently active or not. Saves silently —
+ * the main window does NOT need to be visible for this to succeed.
+ */
+export async function appendTextToNote(id: string, text: string) {
+  const trimmed = text.replace(/\r\n/g, '\n');
+  if (!trimmed.trim()) return;
+
+  // Split on blank lines into paragraphs; preserve hard line breaks within
+  // a paragraph using the paragraph's text (BlockSuite paragraphs render
+  // \n as a soft break inside their YText).
+  const paragraphs = trimmed
+    .split(/\n{2,}/)
+    .map(p => p.replace(/^\n+|\n+$/g, ''))
+    .filter(p => p.length > 0);
+
+  const isActive = activeNoteId.value === id && !!activeStore;
+  const loaded = isActive
+    ? { store: activeStore as Store, temporary: false }
+    : await getStoreForNote(id);
+  const { store, temporary } = loaded;
+
+  try {
+    const noteBlock = store.root?.children.find(b => b.flavour === 'affine:note');
+    if (!noteBlock) return;
+
+    for (const p of paragraphs) {
+      store.addBlock(
+        'affine:paragraph',
+        { type: 'text', text: new Text(p) },
+        noteBlock.id
+      );
+    }
+
+    if (!isActive) {
+      // Save the off-screen doc directly; the active note flows through
+      // its own autosave pipeline.
+      const noteMeta = notes.value.find(n => n.id === id);
+      const { title, preview } = extractTitleAndPreview(store);
+      const ydoc = getYDoc(store);
+      await saveNote(id, title, preview, noteMeta?.mode || 'page', ydoc, noteMeta?.pinned || false);
+
+      const updated = notes.value.map(n =>
+        n.id === id
+          ? { ...n, title, preview, updatedAt: Date.now() }
+          : n
+      );
+      updated.sort((a, b) => b.updatedAt - a.updatedAt);
+      notes.value = updated;
+    }
+    // For the active note, the YDoc 'update' observer will trigger autosave.
+  } finally {
+    if (temporary) cleanupTemporaryStore(id);
+  }
+}
+
+/**
+ * Append a markdown snippet to the end of a note. Uses BlockSuite's markdown
+ * importer so headings, lists, code blocks, etc. round-trip correctly.
+ */
+export async function appendMarkdownToNote(id: string, markdown: string) {
+  if (!markdown.trim()) return;
+
+  const isActive = activeNoteId.value === id && !!activeStore;
+  const loaded = isActive
+    ? { store: activeStore as Store, temporary: false }
+    : await getStoreForNote(id);
+  const { store, temporary } = loaded;
+
+  try {
+    const noteBlock = store.root?.children.find(b => b.flavour === 'affine:note');
+    if (!noteBlock) return;
+
+    // importMarkdownToBlock appends children to the note block — we don't
+    // delete existing children (unlike the full-doc importer), so the
+    // existing content is preserved.
+    await MarkdownTransformer.importMarkdownToBlock({
+      doc: store,
+      blockId: noteBlock.id,
+      markdown,
+      extensions: getStoreExtensions(),
+    });
+
+    if (!isActive) {
+      const noteMeta = notes.value.find(n => n.id === id);
+      const { title, preview } = extractTitleAndPreview(store);
+      const ydoc = getYDoc(store);
+      await saveNote(id, title, preview, noteMeta?.mode || 'page', ydoc, noteMeta?.pinned || false);
+
+      const updated = notes.value.map(n =>
+        n.id === id
+          ? { ...n, title, preview, updatedAt: Date.now() }
+          : n
+      );
+      updated.sort((a, b) => b.updatedAt - a.updatedAt);
+      notes.value = updated;
+    }
+  } finally {
+    if (temporary) cleanupTemporaryStore(id);
+  }
 }
 
 export async function importMarkdownFile(file: File) {

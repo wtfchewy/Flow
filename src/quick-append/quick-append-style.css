@@ -1,3 +1,5 @@
+@import '@toeverything/theme/style.css';
+
 *,
 *::before,
 *::after {
@@ -13,17 +15,14 @@ body {
   height: 100%;
   overflow: hidden;
   background: transparent;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--affine-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  color: var(--affine-text-primary-color);
 }
 
 #quick-append-root {
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-  padding: 8px;
 }
 
 .qa-card {
@@ -31,32 +30,21 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: rgba(28, 28, 30, 0.78);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  background: var(--affine-background-secondary-color);
+  color: var(--affine-text-primary-color);
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.45),
-    0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  border: 0.5px solid var(--affine-border-color);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   -webkit-app-region: drag;
-}
-
-[data-theme='light'] .qa-card {
-  background: rgba(245, 245, 247, 0.86);
-  color: rgba(0, 0, 0, 0.88);
-  border-color: rgba(0, 0, 0, 0.06);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.18),
-    0 1px 0 rgba(255, 255, 255, 0.6) inset;
 }
 
 .qa-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px 6px;
+  padding: 12px 14px 8px;
+  border-bottom: 0.5px solid var(--affine-border-color);
   -webkit-app-region: drag;
 }
 
@@ -67,24 +55,21 @@ body {
 .qa-label {
   font-size: 12px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.5);
-  letter-spacing: 0.02em;
-}
-
-[data-theme='light'] .qa-label {
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--affine-text-secondary-color);
+  letter-spacing: 0.01em;
 }
 
 .qa-note-picker {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 12px;
+  gap: 6px;
+  padding: 4px 10px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--affine-hover-color);
+  border: 0.5px solid var(--affine-border-color);
+  color: var(--affine-text-primary-color);
+  font-size: 13px;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
@@ -95,18 +80,13 @@ body {
 }
 
 .qa-note-picker:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--affine-hover-color-filled, var(--affine-hover-color));
+  filter: brightness(1.1);
 }
 
 .qa-note-picker:focus-visible {
-  outline: 2px solid rgba(120, 160, 255, 0.6);
+  outline: 2px solid var(--affine-primary-color);
   outline-offset: 1px;
-}
-
-[data-theme='light'] .qa-note-picker {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.08);
-  color: rgba(0, 0, 0, 0.88);
 }
 
 .qa-note-picker .qa-chevron {
@@ -121,7 +101,7 @@ body {
 
 .qa-hint {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--affine-text-secondary-color);
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -132,19 +112,16 @@ body {
   font-size: 10px;
   padding: 1px 5px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.7);
+  background: var(--affine-hover-color);
+  border: 0.5px solid var(--affine-border-color);
+  color: var(--affine-text-primary-color);
 }
 
-[data-theme='light'] .qa-hint {
-  color: rgba(0, 0, 0, 0.45);
-}
-
-[data-theme='light'] .qa-hint kbd {
-  background: rgba(0, 0, 0, 0.06);
-  border-color: rgba(0, 0, 0, 0.08);
-  color: rgba(0, 0, 0, 0.7);
+.qa-body {
+  flex: 1;
+  position: relative;
+  display: flex;
+  min-height: 0;
 }
 
 .qa-editor {
@@ -154,98 +131,95 @@ body {
   background: transparent;
   border: 0;
   outline: none;
-  padding: 8px 14px 14px;
+  padding: 12px 14px 14px;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.5;
   color: inherit;
   -webkit-app-region: no-drag;
 }
 
 .qa-editor::placeholder {
-  color: rgba(255, 255, 255, 0.32);
+  color: var(--affine-text-secondary-color);
+  opacity: 0.6;
 }
 
-[data-theme='light'] .qa-editor::placeholder {
-  color: rgba(0, 0, 0, 0.32);
-}
+/* ===== In-card note picker (matches the editor header context menu) ===== */
 
-/* Note picker dropdown */
-.qa-dropdown {
+.qa-picker-panel {
   position: absolute;
-  top: 38px;
-  left: 12px;
-  min-width: 240px;
-  max-width: 360px;
-  max-height: 280px;
-  overflow-y: auto;
-  background: rgba(36, 36, 38, 0.92);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  padding: 6px;
-  z-index: 10;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
+  -webkit-app-region: no-drag;
 }
 
-[data-theme='light'] .qa-dropdown {
-  background: rgba(255, 255, 255, 0.94);
-  border-color: rgba(0, 0, 0, 0.08);
+.qa-picker-search-wrap {
+  flex-shrink: 0;
+  padding: 8px 10px;
+  border-bottom: 0.5px solid var(--affine-border-color);
 }
 
-.qa-dropdown-search {
+.qa-picker-search {
   width: 100%;
-  background: transparent;
-  border: 0;
+  height: 28px;
+  background: var(--affine-hover-color);
+  border: 0.5px solid var(--affine-border-color);
+  border-radius: 7px;
   outline: none;
-  padding: 6px 8px;
+  padding: 0 10px;
   font-family: inherit;
   font-size: 13px;
-  color: inherit;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  margin-bottom: 4px;
+  color: var(--affine-text-primary-color);
 }
 
-[data-theme='light'] .qa-dropdown-search {
-  border-bottom-color: rgba(0, 0, 0, 0.08);
+.qa-picker-search:focus {
+  border-color: var(--affine-primary-color);
 }
 
-.qa-dropdown-item {
+.qa-picker-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.qa-picker-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  cursor: pointer;
+  gap: 10px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 7px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--affine-text-primary-color);
+  cursor: pointer;
+  user-select: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.qa-dropdown-item:hover,
-.qa-dropdown-item.qa-active {
-  background: rgba(255, 255, 255, 0.08);
+.qa-picker-item:hover,
+.qa-picker-item.qa-active {
+  background: var(--affine-hover-color);
 }
 
-[data-theme='light'] .qa-dropdown-item {
-  color: rgba(0, 0, 0, 0.85);
+.qa-picker-item-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-[data-theme='light'] .qa-dropdown-item:hover,
-[data-theme='light'] .qa-dropdown-item.qa-active {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.qa-dropdown-empty {
-  padding: 10px;
+.qa-picker-item-check {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
-  text-align: center;
+  opacity: 0.7;
 }
 
-[data-theme='light'] .qa-dropdown-empty {
-  color: rgba(0, 0, 0, 0.5);
+.qa-picker-empty {
+  padding: 18px 10px;
+  font-size: 12px;
+  color: var(--affine-text-secondary-color);
+  text-align: center;
 }

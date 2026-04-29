@@ -745,8 +745,8 @@ fn ensure_quick_append_window(app: &tauri::AppHandle) -> Option<tauri::WebviewWi
         return Some(win);
     }
 
-    let width: f64 = 540.0;
-    let height: f64 = 220.0;
+    let width: f64 = 560.0;
+    let height: f64 = 300.0;
 
     let res = WebviewWindowBuilder::new(
         app,
@@ -757,12 +757,13 @@ fn ensure_quick_append_window(app: &tauri::AppHandle) -> Option<tauri::WebviewWi
     .inner_size(width, height)
     .min_inner_size(420.0, 180.0)
     .max_inner_size(720.0, 480.0)
+    .title_bar_style(tauri::TitleBarStyle::Overlay)
+    .hidden_title(true)
     .decorations(false)
     .transparent(true)
     .always_on_top(true)
     .skip_taskbar(true)
     .resizable(false)
-    .shadow(true)
     .visible(false)
     .focused(false)
     .build();

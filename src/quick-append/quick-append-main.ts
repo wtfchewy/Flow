@@ -18,11 +18,7 @@ const root = document.getElementById('quick-append-root')!;
 async function applyTheme() {
   try {
     const settings = await invoke<{ theme: string }>('load_settings');
-    if (settings?.theme === 'light') {
-      document.documentElement.dataset.theme = 'light';
-    } else {
-      document.documentElement.dataset.theme = 'dark';
-    }
+    document.documentElement.dataset.theme = settings?.theme === 'light' ? 'light' : 'dark';
   } catch {
     document.documentElement.dataset.theme = 'dark';
   }
@@ -65,20 +61,27 @@ header.appendChild(pickerBtn);
 header.appendChild(spacer);
 header.appendChild(hint);
 
+const body = document.createElement('div');
+body.className = 'qa-body';
+
 const editor = document.createElement('textarea');
 editor.className = 'qa-editor';
 editor.placeholder = 'Type to append…';
 editor.spellcheck = true;
 editor.autocapitalize = 'sentences';
 
+body.appendChild(editor);
+
 card.appendChild(header);
-card.appendChild(editor);
+card.appendChild(body);
 root.appendChild(card);
 
 // --- State ---
 let allNotes: NoteMeta[] = [];
 let selectedNoteId: string | null = null;
-let dropdown: HTMLDivElement | null = null;
+let pickerPanel: HTMLDivElement | null = null;
+let pickerActiveIdx = 0;
+let pickerFiltered: NoteMeta[] = [];
 
 const LAST_NOTE_KEY = 'peak-last-note';
 const LAST_QUICK_NOTE_KEY = 'peak-last-quick-append-note';
@@ -87,7 +90,6 @@ function pickDefaultNoteId(): string | null {
   const stored = localStorage.getItem(LAST_QUICK_NOTE_KEY)
     || localStorage.getItem(LAST_NOTE_KEY);
   if (stored && allNotes.find(n => n.id === stored)) return stored;
-  // Fall back to most recently updated note.
   if (allNotes.length > 0) return allNotes[0].id;
   return null;
 }
@@ -110,144 +112,154 @@ async function loadNotes() {
   setSelectedNote(pickDefaultNoteId());
 }
 
-// --- Note picker dropdown ---
-function closeDropdown() {
-  if (!dropdown) return;
-  dropdown.remove();
-  dropdown = null;
-  document.removeEventListener('mousedown', onDocClickAway, true);
-  document.removeEventListener('keydown', onDropdownKey, true);
-}
+// --- Note picker (in-card panel that replaces the editor while open) ---
 
-function onDocClickAway(ev: MouseEvent) {
-  if (!dropdown) return;
-  const target = ev.target as Node;
-  if (dropdown.contains(target) || pickerBtn.contains(target)) return;
-  closeDropdown();
-}
+function renderPickerList(query: string) {
+  if (!pickerPanel) return;
+  const list = pickerPanel.querySelector('.qa-picker-list') as HTMLDivElement;
+  list.innerHTML = '';
 
-let dropdownActiveIdx = 0;
-let dropdownFiltered: NoteMeta[] = [];
-
-function renderDropdown(query: string) {
-  if (!dropdown) return;
   const q = query.trim().toLowerCase();
-  dropdownFiltered = q
+  pickerFiltered = q
     ? allNotes.filter(n => (n.title || 'Untitled').toLowerCase().includes(q))
     : allNotes;
-  dropdownActiveIdx = Math.min(dropdownActiveIdx, Math.max(0, dropdownFiltered.length - 1));
+  pickerActiveIdx = Math.min(pickerActiveIdx, Math.max(0, pickerFiltered.length - 1));
 
-  // Clear existing items (keep search input)
-  const itemsContainer = dropdown.querySelector('.qa-dropdown-items') as HTMLDivElement;
-  itemsContainer.innerHTML = '';
-
-  if (dropdownFiltered.length === 0) {
+  if (pickerFiltered.length === 0) {
     const empty = document.createElement('div');
-    empty.className = 'qa-dropdown-empty';
+    empty.className = 'qa-picker-empty';
     empty.textContent = allNotes.length === 0 ? 'No notes yet' : 'No matching notes';
-    itemsContainer.appendChild(empty);
+    list.appendChild(empty);
     return;
   }
 
-  dropdownFiltered.forEach((note, idx) => {
+  pickerFiltered.forEach((note, idx) => {
     const item = document.createElement('div');
-    item.className = 'qa-dropdown-item';
-    if (idx === dropdownActiveIdx) item.classList.add('qa-active');
-    item.textContent = note.title?.trim() || 'Untitled';
+    item.className = 'qa-picker-item';
+    if (idx === pickerActiveIdx) item.classList.add('qa-active');
+
+    const title = document.createElement('span');
+    title.className = 'qa-picker-item-title';
+    title.textContent = note.title?.trim() || 'Untitled';
+    item.appendChild(title);
+
+    if (note.id === selectedNoteId) {
+      const check = document.createElement('span');
+      check.className = 'qa-picker-item-check';
+      check.textContent = '✓';
+      item.appendChild(check);
+    }
+
     item.addEventListener('mouseenter', () => {
-      dropdownActiveIdx = idx;
-      itemsContainer.querySelectorAll('.qa-dropdown-item').forEach((el, i) => {
+      pickerActiveIdx = idx;
+      list.querySelectorAll('.qa-picker-item').forEach((el, i) => {
         el.classList.toggle('qa-active', i === idx);
       });
     });
     item.addEventListener('mousedown', (ev) => {
       ev.preventDefault();
       setSelectedNote(note.id);
-      closeDropdown();
+      closePicker();
       editor.focus();
     });
-    itemsContainer.appendChild(item);
+    list.appendChild(item);
   });
 }
 
-function onDropdownKey(ev: KeyboardEvent) {
-  if (!dropdown) return;
+function highlightActive() {
+  if (!pickerPanel) return;
+  const list = pickerPanel.querySelector('.qa-picker-list') as HTMLDivElement;
+  list.querySelectorAll('.qa-picker-item').forEach((el, i) => {
+    el.classList.toggle('qa-active', i === pickerActiveIdx);
+  });
+  const active = list.querySelector('.qa-picker-item.qa-active') as HTMLElement | null;
+  if (active) active.scrollIntoView({ block: 'nearest' });
+}
+
+function onPickerKey(ev: KeyboardEvent) {
+  if (!pickerPanel) return;
   if (ev.key === 'Escape') {
     ev.preventDefault();
     ev.stopPropagation();
-    closeDropdown();
+    closePicker();
     editor.focus();
     return;
   }
   if (ev.key === 'ArrowDown') {
     ev.preventDefault();
-    if (dropdownFiltered.length === 0) return;
-    dropdownActiveIdx = (dropdownActiveIdx + 1) % dropdownFiltered.length;
-    renderDropdownActive();
+    if (pickerFiltered.length === 0) return;
+    pickerActiveIdx = (pickerActiveIdx + 1) % pickerFiltered.length;
+    highlightActive();
     return;
   }
   if (ev.key === 'ArrowUp') {
     ev.preventDefault();
-    if (dropdownFiltered.length === 0) return;
-    dropdownActiveIdx = (dropdownActiveIdx - 1 + dropdownFiltered.length) % dropdownFiltered.length;
-    renderDropdownActive();
+    if (pickerFiltered.length === 0) return;
+    pickerActiveIdx = (pickerActiveIdx - 1 + pickerFiltered.length) % pickerFiltered.length;
+    highlightActive();
     return;
   }
   if (ev.key === 'Enter') {
     ev.preventDefault();
-    const note = dropdownFiltered[dropdownActiveIdx];
+    const note = pickerFiltered[pickerActiveIdx];
     if (note) {
       setSelectedNote(note.id);
-      closeDropdown();
+      closePicker();
       editor.focus();
     }
   }
 }
 
-function renderDropdownActive() {
-  if (!dropdown) return;
-  dropdown.querySelectorAll('.qa-dropdown-item').forEach((el, i) => {
-    el.classList.toggle('qa-active', i === dropdownActiveIdx);
-  });
-  const active = dropdown.querySelector('.qa-dropdown-item.qa-active') as HTMLElement | null;
-  if (active) active.scrollIntoView({ block: 'nearest' });
-}
-
-function openDropdown() {
-  if (dropdown) {
-    closeDropdown();
+function openPicker() {
+  if (pickerPanel) {
+    closePicker();
     return;
   }
-  dropdown = document.createElement('div');
-  dropdown.className = 'qa-dropdown';
+  pickerPanel = document.createElement('div');
+  pickerPanel.className = 'qa-picker-panel';
+
+  const searchWrap = document.createElement('div');
+  searchWrap.className = 'qa-picker-search-wrap';
 
   const search = document.createElement('input');
   search.type = 'text';
-  search.className = 'qa-dropdown-search';
+  search.className = 'qa-picker-search';
   search.placeholder = 'Search notes…';
-  search.addEventListener('input', () => renderDropdown(search.value));
+  search.addEventListener('input', () => renderPickerList(search.value));
 
-  const items = document.createElement('div');
-  items.className = 'qa-dropdown-items';
+  searchWrap.appendChild(search);
 
-  dropdown.appendChild(search);
-  dropdown.appendChild(items);
+  const list = document.createElement('div');
+  list.className = 'qa-picker-list';
 
-  card.appendChild(dropdown);
+  pickerPanel.appendChild(searchWrap);
+  pickerPanel.appendChild(list);
+  body.appendChild(pickerPanel);
 
   // Default-highlight the currently selected note for fast confirmation.
   const currentIdx = allNotes.findIndex(n => n.id === selectedNoteId);
-  dropdownActiveIdx = currentIdx >= 0 ? currentIdx : 0;
-  renderDropdown('');
+  pickerActiveIdx = currentIdx >= 0 ? currentIdx : 0;
+  renderPickerList('');
 
   search.focus();
-  document.addEventListener('mousedown', onDocClickAway, true);
-  document.addEventListener('keydown', onDropdownKey, true);
+  document.addEventListener('keydown', onPickerKey, true);
+}
+
+function closePicker() {
+  if (!pickerPanel) return;
+  pickerPanel.remove();
+  pickerPanel = null;
+  document.removeEventListener('keydown', onPickerKey, true);
 }
 
 pickerBtn.addEventListener('click', (ev) => {
   ev.stopPropagation();
-  openDropdown();
+  if (pickerPanel) {
+    closePicker();
+    editor.focus();
+  } else {
+    openPicker();
+  }
 });
 
 // --- Submission ---
@@ -257,8 +269,6 @@ async function submit() {
   const text = editor.value;
   if (!text.trim() || !selectedNoteId) return;
 
-  // Send the payload directly to the main window — no Rust intermediary,
-  // so the listener receives the structured object as-is.
   try {
     await emitTo('main', 'quick-append-submit', { noteId: selectedNoteId, text });
   } catch (err) {
@@ -270,7 +280,7 @@ async function submit() {
 async function dismiss() {
   lastDismissAt = Date.now();
   editor.value = '';
-  closeDropdown();
+  closePicker();
   try {
     await invoke('hide_quick_append');
   } catch {
@@ -279,7 +289,6 @@ async function dismiss() {
 }
 
 editor.addEventListener('keydown', (ev) => {
-  // Cmd/Ctrl + Enter → submit
   if ((ev.metaKey || ev.ctrlKey) && ev.key === 'Enter') {
     ev.preventDefault();
     ev.stopPropagation();
@@ -287,9 +296,9 @@ editor.addEventListener('keydown', (ev) => {
   }
 });
 
-// Escape closes the popup (unless the picker dropdown is open and handles it).
+// Escape closes the popup (unless the picker is open and handles it).
 document.addEventListener('keydown', (ev) => {
-  if (ev.key === 'Escape' && !dropdown) {
+  if (ev.key === 'Escape' && !pickerPanel) {
     ev.preventDefault();
     dismiss();
   }
@@ -297,7 +306,7 @@ document.addEventListener('keydown', (ev) => {
 
 // Reset state and refresh the note list each time the popup is shown.
 async function activate() {
-  closeDropdown();
+  closePicker();
   editor.value = '';
   await loadNotes();
   requestAnimationFrame(() => editor.focus());
@@ -308,8 +317,8 @@ listen('quick-append-opened', activate);
 window.addEventListener('focus', activate);
 
 // Auto-dismiss when the popup loses focus (clicked away). Skip if we just
-// dismissed programmatically — the window is already hidden, this blur is
-// the consequence of that.
+// dismissed programmatically — the window is already hidden and this blur
+// is the consequence.
 window.addEventListener('blur', () => {
   if (Date.now() - lastDismissAt < 250) return;
   setTimeout(() => {
@@ -321,5 +330,4 @@ window.addEventListener('blur', () => {
 (async () => {
   await applyTheme();
   await loadNotes();
-  // The window starts hidden — focus will be set on the first open event.
 })();

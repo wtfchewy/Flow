@@ -157,7 +157,10 @@ function resetEditor() {
   scratchEditor.pageSpecs = getPageSpecs(scratchEditor);
   scratchEditor.edgelessSpecs = getEdgelessSpecs(scratchEditor);
   scratchEditor.mode = 'page';
-  scratchEditor.autofocus = true;
+  // Don't use the editor's built-in autofocus — it targets the doc-title's
+  // rich-text first, which we hide in the popup. focusEditor() polls and
+  // skips doc-title to land on the body paragraph instead.
+  scratchEditor.autofocus = false;
 }
 
 // Walk the scratch doc's affine:note children and produce a markdown string.
@@ -412,6 +415,18 @@ pickerBtn.addEventListener('click', (ev) => {
 // already-focused element are a no-op so this is safe.
 let focusInterval: ReturnType<typeof setInterval> | null = null;
 
+function findEditableRichText(): any {
+  if (!scratchEditor) return null;
+  // doc-title is hidden in the popup — querySelector('rich-text') would
+  // return ITS rich-text first and our focus call would silently land on
+  // a hidden element. Walk past anything inside doc-title.
+  const all = scratchEditor.querySelectorAll('rich-text');
+  for (const rt of all) {
+    if (!rt.closest('doc-title')) return rt as any;
+  }
+  return null;
+}
+
 function focusEditor() {
   if (focusInterval) clearInterval(focusInterval);
   if (!scratchEditor) return;
@@ -422,8 +437,8 @@ function focusEditor() {
       focusInterval = null;
       return;
     }
-    const richText = scratchEditor.querySelector('rich-text') as any;
-    richText?.inlineEditor?.focusEnd?.();
+    const rt = findEditableRichText();
+    rt?.inlineEditor?.focusEnd?.();
     if (++attempts >= 30) {
       if (focusInterval) clearInterval(focusInterval);
       focusInterval = null;
@@ -447,34 +462,37 @@ async function submit() {
   await dismiss();
 }
 
-async function dismiss() {
+function dismiss() {
   lastDismissAt = Date.now();
   closePicker();
   // Clear the editor BEFORE hiding so the next time the window is shown
   // it's already blank — no flash of the previous snippet.
   resetEditor();
-  try {
-    await invoke('hide_quick_append');
-  } catch {
-    // ignore
-  }
+  // Fire-and-forget: don't await the hide, the user already moved on.
+  invoke('hide_quick_append').catch(() => {});
 }
 
-// Cmd/Ctrl + Enter → submit. Use the capture phase so we beat any BlockSuite
-// keymap that might also bind Enter.
-document.addEventListener('keydown', (ev) => {
+// Cmd/Ctrl + Enter → submit. Use the capture phase + stopImmediatePropagation
+// so we beat any BlockSuite keymap (Escape inside an editor can otherwise
+// drop blocks into selection mode, etc.).
+function onKeydown(ev: KeyboardEvent) {
   if ((ev.metaKey || ev.ctrlKey) && ev.key === 'Enter') {
     ev.preventDefault();
-    ev.stopPropagation();
+    ev.stopImmediatePropagation();
     submit();
     return;
   }
-  // Escape closes the popup (unless the picker is open and handles it).
   if (ev.key === 'Escape' && !pickerPanel) {
     ev.preventDefault();
+    ev.stopImmediatePropagation();
     dismiss();
   }
-}, true);
+}
+
+// Bind on both document and window in capture so nothing inside the editor
+// can swallow the event before we see it.
+document.addEventListener('keydown', onKeydown, true);
+window.addEventListener('keydown', onKeydown, true);
 
 // Each time the popup is shown: refresh notes and focus the editor. The
 // editor itself was already reset on the last dismiss so no flicker.

@@ -195,8 +195,14 @@ body {
   font-family: inherit;
   font-size: 13px;
   color: var(--affine-text-primary-color);
+  caret-color: var(--affine-primary-color, #1e6fff);
   user-select: auto;
   -webkit-user-select: auto;
+}
+
+.qa-picker-search::placeholder {
+  color: var(--affine-text-secondary-color);
+  opacity: 0.6;
 }
 
 .qa-picker-search:focus {

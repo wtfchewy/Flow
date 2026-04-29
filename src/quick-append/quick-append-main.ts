@@ -4,6 +4,19 @@ import { emitTo, listen } from '@tauri-apps/api/event';
 import { render } from 'lit';
 import { ArrowDownSmallIcon } from '@blocksuite/icons/lit';
 
+import {
+  initBlockSuite,
+  createWorkspace,
+  createNewDoc,
+  getPageSpecs,
+  getEdgelessSpecs,
+} from '../editor/setup';
+import '../editor/editor-container';
+import type { PeakEditorContainer } from '../editor/editor-container';
+import type { Store } from '@blocksuite/affine/store';
+import type { TestWorkspace } from '@blocksuite/affine/store/test';
+import type { BlockModel } from '@blocksuite/affine/store';
+
 interface NoteMeta {
   id: string;
   title: string;
@@ -32,7 +45,11 @@ function makeDraggable(el: HTMLElement) {
   el.addEventListener('mousedown', async (e) => {
     if (e.button !== 0) return;
     const target = e.target as HTMLElement;
-    if (target.closest('button, input, textarea, select, a, [contenteditable], .qa-picker-panel')) return;
+    if (target.closest(
+      'button, input, textarea, select, a, [contenteditable], '
+      + '.qa-picker-panel, .peak-editor-container, peak-editor-container, '
+      + '.affine-page-viewport, rich-text, .qa-editor-host'
+    )) return;
     e.preventDefault();
     try {
       const { getCurrentWindow } = await import('@tauri-apps/api/window');
@@ -59,9 +76,9 @@ panel.className = 'qa-panel';
 const header = document.createElement('div');
 header.className = 'qa-header';
 
-const label = document.createElement('span');
-label.className = 'qa-label';
-label.textContent = 'Append to';
+const labelEl = document.createElement('span');
+labelEl.className = 'qa-label';
+labelEl.textContent = 'Append to';
 
 const pickerBtn = document.createElement('button');
 pickerBtn.className = 'qa-note-picker';
@@ -85,7 +102,7 @@ const hint = document.createElement('div');
 hint.className = 'qa-hint';
 hint.innerHTML = '<kbd>⌘</kbd><kbd>↵</kbd> to append';
 
-header.appendChild(label);
+header.appendChild(labelEl);
 header.appendChild(pickerBtn);
 header.appendChild(spacer);
 header.appendChild(hint);
@@ -93,24 +110,126 @@ header.appendChild(hint);
 const body = document.createElement('div');
 body.className = 'qa-body';
 
-const editor = document.createElement('textarea');
-editor.className = 'qa-editor';
-editor.placeholder = 'Type to append…';
-editor.spellcheck = true;
-editor.autocapitalize = 'sentences';
-
-body.appendChild(editor);
+// Host element for the BlockSuite editor — the editor sets its own height,
+// we just give it a flex container.
+const editorHost = document.createElement('div');
+editorHost.className = 'qa-editor-host';
+body.appendChild(editorHost);
 
 panel.appendChild(header);
 panel.appendChild(body);
 dragWrap.appendChild(panel);
 root.appendChild(dragWrap);
 
-// The 8px padding around the inner panel is the draggable border, just like
-// the main app's editor-drag-wrap.
 makeDraggable(dragWrap);
 
-// --- State ---
+// --- BlockSuite scratch editor ---
+
+const SCRATCH_DOC_ID = 'quick-append-scratch';
+
+let scratchWorkspace: TestWorkspace | null = null;
+let scratchEditor: PeakEditorContainer | null = null;
+let scratchStore: Store | null = null;
+
+function ensureEditor() {
+  if (scratchEditor) return;
+  initBlockSuite();
+  scratchWorkspace = createWorkspace();
+
+  const editor = document.createElement('peak-editor-container') as PeakEditorContainer;
+  editor.classList.add('qa-editor');
+  editor.style.flex = '1';
+  editor.style.minHeight = '0';
+  editor.style.width = '100%';
+  editorHost.appendChild(editor);
+  scratchEditor = editor;
+}
+
+function resetEditor() {
+  if (!scratchWorkspace) ensureEditor();
+  if (!scratchWorkspace || !scratchEditor) return;
+
+  // Tear down the previous scratch doc so the editor starts empty.
+  try { scratchWorkspace.removeDoc(SCRATCH_DOC_ID); } catch { /* ignore */ }
+
+  scratchStore = createNewDoc(scratchWorkspace, SCRATCH_DOC_ID);
+  scratchEditor.doc = scratchStore;
+  scratchEditor.pageSpecs = getPageSpecs(scratchEditor);
+  scratchEditor.edgelessSpecs = getEdgelessSpecs(scratchEditor);
+  scratchEditor.mode = 'page';
+  scratchEditor.autofocus = true;
+}
+
+// Walk the scratch doc's affine:note children and produce a markdown string.
+// Loses inline formatting but preserves block structure (headings, lists,
+// quotes, code blocks, dividers). Good enough for quick-append; the receiver
+// uses BlockSuite's markdown importer so anything we emit gets faithfully
+// re-blocked.
+function docToMarkdown(store: Store): string {
+  const noteBlock = store.root?.children.find(b => b.flavour === 'affine:note');
+  if (!noteBlock) return '';
+
+  const lines: string[] = [];
+  for (const child of noteBlock.children) {
+    const md = blockToMarkdown(child, 0);
+    if (md.length > 0) lines.push(md);
+  }
+  return lines.join('\n\n');
+}
+
+function blockToMarkdown(block: BlockModel, depth: number): string {
+  const flavour = block.flavour;
+  const props = (block as any).props ?? {};
+  const text = (props.text?.toString() ?? '').replace(/​/g, '');
+  const indent = '  '.repeat(depth);
+
+  let out = '';
+  switch (flavour) {
+    case 'affine:paragraph': {
+      const type = props.type || 'text';
+      if (type === 'h1') out = `# ${text}`;
+      else if (type === 'h2') out = `## ${text}`;
+      else if (type === 'h3') out = `### ${text}`;
+      else if (type === 'h4') out = `#### ${text}`;
+      else if (type === 'h5') out = `##### ${text}`;
+      else if (type === 'h6') out = `###### ${text}`;
+      else if (type === 'quote') out = `> ${text}`;
+      else out = text;
+      break;
+    }
+    case 'affine:list': {
+      const type = props.type || 'bulleted';
+      if (type === 'todo') out = `${indent}- [${props.checked ? 'x' : ' '}] ${text}`;
+      else if (type === 'numbered') out = `${indent}1. ${text}`;
+      else out = `${indent}- ${text}`;
+      break;
+    }
+    case 'affine:code': {
+      const lang = (props.language || '').toString();
+      out = `\`\`\`${lang}\n${text}\n\`\`\``;
+      break;
+    }
+    case 'affine:divider':
+      out = '---';
+      break;
+    default:
+      out = text;
+  }
+
+  if (block.children.length > 0) {
+    const childLines: string[] = [];
+    for (const child of block.children) {
+      const md = blockToMarkdown(child, depth + 1);
+      if (md.length > 0) childLines.push(md);
+    }
+    if (childLines.length > 0) {
+      out += (out ? '\n' : '') + childLines.join('\n');
+    }
+  }
+  return out;
+}
+
+// --- Note picker state ---
 let allNotes: NoteMeta[] = [];
 let selectedNoteId: string | null = null;
 let pickerPanel: HTMLDivElement | null = null;
@@ -146,7 +265,7 @@ async function loadNotes() {
   setSelectedNote(pickDefaultNoteId());
 }
 
-// --- Note picker (in-card panel that replaces the editor while open) ---
+// --- Note picker (in-card panel) ---
 
 function renderPickerList(query: string) {
   if (!pickerPanel) return;
@@ -184,7 +303,7 @@ function renderPickerList(query: string) {
       ev.preventDefault();
       setSelectedNote(note.id);
       closePicker();
-      editor.focus();
+      focusEditor();
     });
     list.appendChild(item);
   });
@@ -206,7 +325,7 @@ function onPickerKey(ev: KeyboardEvent) {
     ev.preventDefault();
     ev.stopPropagation();
     closePicker();
-    editor.focus();
+    focusEditor();
     return;
   }
   if (ev.key === 'ArrowDown') {
@@ -223,13 +342,13 @@ function onPickerKey(ev: KeyboardEvent) {
     highlightActive();
     return;
   }
-  if (ev.key === 'Enter') {
+  if (ev.key === 'Enter' && !ev.metaKey && !ev.ctrlKey) {
     ev.preventDefault();
     const note = pickerFiltered[pickerActiveIdx];
     if (note) {
       setSelectedNote(note.id);
       closePicker();
-      editor.focus();
+      focusEditor();
     }
   }
 }
@@ -260,7 +379,6 @@ function openPicker() {
   pickerPanel.appendChild(list);
   body.appendChild(pickerPanel);
 
-  // Default-highlight the currently selected note for fast confirmation.
   const currentIdx = allNotes.findIndex(n => n.id === selectedNoteId);
   pickerActiveIdx = currentIdx >= 0 ? currentIdx : 0;
   renderPickerList('');
@@ -280,21 +398,31 @@ pickerBtn.addEventListener('click', (ev) => {
   ev.stopPropagation();
   if (pickerPanel) {
     closePicker();
-    editor.focus();
+    focusEditor();
   } else {
     openPicker();
   }
 });
 
+function focusEditor() {
+  if (!scratchEditor) return;
+  // Try the doc-title first (initial caret), fall back to the first rich-text.
+  setTimeout(() => {
+    const richText = scratchEditor!.querySelector('rich-text') as any;
+    richText?.inlineEditor?.focusEnd();
+  }, 30);
+}
+
 // --- Submission ---
 let lastDismissAt = 0;
 
 async function submit() {
-  const text = editor.value;
-  if (!text.trim() || !selectedNoteId) return;
+  if (!scratchStore || !selectedNoteId) return;
+  const markdown = docToMarkdown(scratchStore).trim();
+  if (!markdown) return;
 
   try {
-    await emitTo('main', 'quick-append-submit', { noteId: selectedNoteId, text });
+    await emitTo('main', 'quick-append-submit', { noteId: selectedNoteId, markdown });
   } catch (err) {
     console.error('quick-append: failed to dispatch', err);
   }
@@ -303,7 +431,6 @@ async function submit() {
 
 async function dismiss() {
   lastDismissAt = Date.now();
-  editor.value = '';
   closePicker();
   try {
     await invoke('hide_quick_append');
@@ -312,36 +439,34 @@ async function dismiss() {
   }
 }
 
-editor.addEventListener('keydown', (ev) => {
+// Cmd/Ctrl + Enter → submit. Use the capture phase so we beat any BlockSuite
+// keymap that might also bind Enter.
+document.addEventListener('keydown', (ev) => {
   if ((ev.metaKey || ev.ctrlKey) && ev.key === 'Enter') {
     ev.preventDefault();
     ev.stopPropagation();
     submit();
+    return;
   }
-});
-
-// Escape closes the popup (unless the picker is open and handles it).
-document.addEventListener('keydown', (ev) => {
+  // Escape closes the popup (unless the picker is open and handles it).
   if (ev.key === 'Escape' && !pickerPanel) {
     ev.preventDefault();
     dismiss();
   }
-});
+}, true);
 
 // Reset state and refresh the note list each time the popup is shown.
 async function activate() {
   closePicker();
-  editor.value = '';
+  resetEditor();
   await loadNotes();
-  requestAnimationFrame(() => editor.focus());
+  requestAnimationFrame(focusEditor);
 }
 
 listen('quick-append-opened', activate);
 window.addEventListener('focus', activate);
 
-// Auto-dismiss when the popup loses focus (clicked away). Skip if we just
-// dismissed programmatically — the window is already hidden and this blur
-// is the consequence.
+// Auto-dismiss when the popup loses focus (clicked away).
 window.addEventListener('blur', () => {
   if (Date.now() - lastDismissAt < 250) return;
   setTimeout(() => {
@@ -352,5 +477,7 @@ window.addEventListener('blur', () => {
 // --- Boot ---
 (async () => {
   await applyTheme();
+  ensureEditor();
+  resetEditor();
   await loadNotes();
 })();

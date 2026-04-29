@@ -296,6 +296,52 @@ export async function appendTextToNote(id: string, text: string) {
   }
 }
 
+/**
+ * Append a markdown snippet to the end of a note. Uses BlockSuite's markdown
+ * importer so headings, lists, code blocks, etc. round-trip correctly.
+ */
+export async function appendMarkdownToNote(id: string, markdown: string) {
+  if (!markdown.trim()) return;
+
+  const isActive = activeNoteId.value === id && !!activeStore;
+  const loaded = isActive
+    ? { store: activeStore as Store, temporary: false }
+    : await getStoreForNote(id);
+  const { store, temporary } = loaded;
+
+  try {
+    const noteBlock = store.root?.children.find(b => b.flavour === 'affine:note');
+    if (!noteBlock) return;
+
+    // importMarkdownToBlock appends children to the note block — we don't
+    // delete existing children (unlike the full-doc importer), so the
+    // existing content is preserved.
+    await MarkdownTransformer.importMarkdownToBlock({
+      doc: store,
+      blockId: noteBlock.id,
+      markdown,
+      extensions: getStoreExtensions(),
+    });
+
+    if (!isActive) {
+      const noteMeta = notes.value.find(n => n.id === id);
+      const { title, preview } = extractTitleAndPreview(store);
+      const ydoc = getYDoc(store);
+      await saveNote(id, title, preview, noteMeta?.mode || 'page', ydoc, noteMeta?.pinned || false);
+
+      const updated = notes.value.map(n =>
+        n.id === id
+          ? { ...n, title, preview, updatedAt: Date.now() }
+          : n
+      );
+      updated.sort((a, b) => b.updatedAt - a.updatedAt);
+      notes.value = updated;
+    }
+  } finally {
+    if (temporary) cleanupTemporaryStore(id);
+  }
+}
+
 export async function importMarkdownFile(file: File) {
   await saveCurrentNote();
 

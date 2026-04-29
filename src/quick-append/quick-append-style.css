@@ -137,28 +137,35 @@ body {
   flex: 1;
   position: relative;
   display: flex;
+  flex-direction: column;
   min-height: 0;
-}
-
-.qa-editor {
-  flex: 1;
-  width: 100%;
-  resize: none;
-  background: transparent;
-  border: 0;
-  outline: none;
-  padding: 12px 14px 14px;
-  font-family: inherit;
-  font-size: 14px;
-  line-height: 1.5;
-  color: inherit;
   user-select: auto;
   -webkit-user-select: auto;
 }
 
-.qa-editor::placeholder {
-  color: var(--affine-text-secondary-color);
-  opacity: 0.6;
+/* Host for the BlockSuite editor — gives the editor a flex container
+   without imposing any visual styling. */
+.qa-editor-host {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.qa-editor-host peak-editor-container {
+  flex: 1;
+  min-height: 0;
+}
+
+/* The BlockSuite page-editor needs its scrollable viewport to fill the host. */
+.qa-editor-host .affine-page-viewport {
+  height: 100%;
+}
+
+/* Hide the auto-generated doc-title — the popup is a snippet editor, not a
+   note with its own title. */
+.qa-editor-host doc-title {
+  display: none !important;
 }
 
 /* ===== In-card note picker (matches the editor header context menu) ===== */

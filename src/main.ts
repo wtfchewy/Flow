@@ -527,11 +527,17 @@ async function main() {
     });
 
     // Listen for quick-append submissions sent directly from the popup window.
-    listen<{ noteId: string; text: string }>('quick-append-submit', async (event) => {
+    // The popup uses BlockSuite, so the payload is markdown — preserves
+    // headings, lists, code blocks, etc.
+    listen<{ noteId: string; markdown?: string; text?: string }>('quick-append-submit', async (event) => {
       const data = event.payload;
-      if (!data?.noteId || !data?.text) return;
+      if (!data?.noteId) return;
       try {
-        await noteStore.appendTextToNote(data.noteId, data.text);
+        if (data.markdown && data.markdown.trim()) {
+          await noteStore.appendMarkdownToNote(data.noteId, data.markdown);
+        } else if (data.text && data.text.trim()) {
+          await noteStore.appendTextToNote(data.noteId, data.text);
+        }
       } catch (err) {
         console.error('Quick append failed:', err);
       }

@@ -404,24 +404,31 @@ pickerBtn.addEventListener('click', (ev) => {
   }
 });
 
-// Focus the editor reliably. The popup is shown asynchronously by the OS,
-// and BlockSuite's rich-text mounts on its own render schedule, so a single
-// focus call right after activate() will often miss. Poll for ~1s until
-// the inline editor is available, then focus it.
+// Focus the editor's rich-text reliably. The popup is shown asynchronously
+// and the WebView body grabs focus once the OS makes the window key, so a
+// single focus call loses the race. Instead we re-apply focusEnd() every
+// ~16ms for half a second — once the inline editor exists and the OS has
+// finished focusing the window, our call sticks. Subsequent calls on an
+// already-focused element are a no-op so this is safe.
+let focusInterval: ReturnType<typeof setInterval> | null = null;
+
 function focusEditor() {
+  if (focusInterval) clearInterval(focusInterval);
   if (!scratchEditor) return;
-  let tries = 0;
-  const attempt = () => {
-    if (!scratchEditor) return;
-    const richText = scratchEditor.querySelector('rich-text') as any;
-    const inline = richText?.inlineEditor;
-    if (inline?.focusEnd) {
-      inline.focusEnd();
+  let attempts = 0;
+  focusInterval = setInterval(() => {
+    if (!scratchEditor) {
+      if (focusInterval) clearInterval(focusInterval);
+      focusInterval = null;
       return;
     }
-    if (tries++ < 60) requestAnimationFrame(attempt);
-  };
-  attempt();
+    const richText = scratchEditor.querySelector('rich-text') as any;
+    richText?.inlineEditor?.focusEnd?.();
+    if (++attempts >= 30) {
+      if (focusInterval) clearInterval(focusInterval);
+      focusInterval = null;
+    }
+  }, 16);
 }
 
 // --- Submission ---
@@ -443,6 +450,9 @@ async function submit() {
 async function dismiss() {
   lastDismissAt = Date.now();
   closePicker();
+  // Clear the editor BEFORE hiding so the next time the window is shown
+  // it's already blank — no flash of the previous snippet.
+  resetEditor();
   try {
     await invoke('hide_quick_append');
   } catch {
@@ -466,15 +476,11 @@ document.addEventListener('keydown', (ev) => {
   }
 }, true);
 
-// Reset state and refresh the note list each time the popup is shown.
+// Each time the popup is shown: refresh notes and focus the editor. The
+// editor itself was already reset on the last dismiss so no flicker.
 function activate() {
   closePicker();
-  resetEditor();
-  // Refresh the note list without blocking focus.
   loadNotes();
-  // Defer focus until after the window has actually become focused at the
-  // OS level (otherwise the body element grabs focus once the OS catches
-  // up, and our focusEnd call gets clobbered).
   focusEditor();
 }
 

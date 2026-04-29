@@ -728,6 +728,89 @@ fn set_notch_visible(app: tauri::AppHandle, visible: bool) {
     }
 }
 
+/// The keyboard shortcut that opens the quick-append popup.
+/// Cmd+Option+Enter on macOS, Ctrl+Alt+Enter elsewhere.
+fn quick_append_shortcut() -> tauri_plugin_global_shortcut::Shortcut {
+    use tauri_plugin_global_shortcut::{Code, Modifiers, Shortcut};
+    #[cfg(target_os = "macos")]
+    let mods = Modifiers::SUPER | Modifiers::ALT;
+    #[cfg(not(target_os = "macos"))]
+    let mods = Modifiers::CONTROL | Modifiers::ALT;
+    Shortcut::new(Some(mods), Code::Enter)
+}
+
+/// Build (if needed) the quick-append popup window.
+fn ensure_quick_append_window(app: &tauri::AppHandle) -> Option<tauri::WebviewWindow> {
+    if let Some(win) = app.get_webview_window("quick-append") {
+        return Some(win);
+    }
+
+    let width: f64 = 540.0;
+    let height: f64 = 220.0;
+
+    let res = WebviewWindowBuilder::new(
+        app,
+        "quick-append",
+        tauri::WebviewUrl::App("quick-append.html".into()),
+    )
+    .title("Quick Append")
+    .inner_size(width, height)
+    .min_inner_size(420.0, 180.0)
+    .max_inner_size(720.0, 480.0)
+    .decorations(false)
+    .transparent(true)
+    .always_on_top(true)
+    .skip_taskbar(true)
+    .resizable(false)
+    .shadow(true)
+    .visible(false)
+    .focused(false)
+    .build();
+
+    res.ok().map(|w| {
+        let _ = w.center();
+        w
+    })
+}
+
+/// Show & focus the quick-append window. If already visible, hide it.
+fn toggle_quick_append_window(app: &tauri::AppHandle) {
+    let win = match ensure_quick_append_window(app) {
+        Some(w) => w,
+        None => return,
+    };
+
+    let visible = win.is_visible().unwrap_or(false);
+    if visible {
+        let _ = win.emit("quick-append-closing", ());
+        let _ = win.hide();
+    } else {
+        let _ = win.center();
+        let _ = win.show();
+        let _ = win.set_focus();
+        let _ = win.emit("quick-append-opened", ());
+    }
+}
+
+/// Hide the quick-append window from JS.
+#[tauri::command]
+fn hide_quick_append(app: tauri::AppHandle) {
+    if let Some(win) = app.get_webview_window("quick-append") {
+        let _ = win.hide();
+    }
+}
+
+/// Show the quick-append window from JS (e.g. menu invocation).
+#[tauri::command]
+fn show_quick_append(app: tauri::AppHandle) {
+    if let Some(win) = ensure_quick_append_window(&app) {
+        let _ = win.center();
+        let _ = win.show();
+        let _ = win.set_focus();
+        let _ = win.emit("quick-append-opened", ());
+    }
+}
+
 /// Build the search index from disk if not already built.
 /// Reads all .bin files once, extracts text, caches in memory.
 fn ensure_search_index(app: &tauri::AppHandle, cache: &mut IndexCache) {
@@ -764,6 +847,16 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
+        .plugin(
+            tauri_plugin_global_shortcut::Builder::new()
+                .with_handler(|app, _shortcut, event| {
+                    use tauri_plugin_global_shortcut::ShortcutState;
+                    if event.state() == ShortcutState::Pressed {
+                        toggle_quick_append_window(app);
+                    }
+                })
+                .build(),
+        )
         .manage(Mutex::new(IndexCache::new()))
         .setup(|app| {
             // Build macOS-style app menu
@@ -826,8 +919,13 @@ pub fn run() {
                             // Notch is running — just hide the main window
                             api.prevent_close();
                             w.hide().ok();
+                        } else {
+                            // App is about to quit — close the quick-append popup
+                            // window so it doesn't keep the process alive.
+                            if let Some(qa) = handle.get_webview_window("quick-append") {
+                                qa.close().ok();
+                            }
                         }
-                        // Otherwise let the close proceed normally (app quits)
                     }
                 });
             }
@@ -931,6 +1029,14 @@ pub fn run() {
                 }
             });
 
+            // --- Register the global Cmd+Opt+Enter shortcut for quick-append ---
+            {
+                use tauri_plugin_global_shortcut::GlobalShortcutExt;
+                if let Err(err) = app.global_shortcut().register(quick_append_shortcut()) {
+                    eprintln!("failed to register quick-append shortcut: {err}");
+                }
+            }
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -945,6 +1051,8 @@ pub fn run() {
             notch_set_interactive,
             set_notch_visible,
             search_notes,
+            hide_quick_append,
+            show_quick_append,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");

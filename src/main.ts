@@ -526,6 +526,17 @@ async function main() {
       }
     });
 
+    // Listen for quick-append submissions sent directly from the popup window.
+    listen<{ noteId: string; text: string }>('quick-append-submit', async (event) => {
+      const data = event.payload;
+      if (!data?.noteId || !data?.text) return;
+      try {
+        await noteStore.appendTextToNote(data.noteId, data.text);
+      } catch (err) {
+        console.error('Quick append failed:', err);
+      }
+    });
+
     // Show the main window now that the UI is fully ready
     const { getCurrentWindow } = await import('@tauri-apps/api/window');
     await getCurrentWindow().show();

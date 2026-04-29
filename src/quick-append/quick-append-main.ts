@@ -1,6 +1,8 @@
 import './quick-append-style.css';
 import { invoke } from '@tauri-apps/api/core';
 import { emitTo, listen } from '@tauri-apps/api/event';
+import { render } from 'lit';
+import { ArrowDownSmallIcon } from '@blocksuite/icons/lit';
 
 interface NoteMeta {
   id: string;
@@ -24,9 +26,32 @@ async function applyTheme() {
   }
 }
 
+// Mirror main.ts's makeDraggable: clicking on non-interactive areas of the
+// element starts a native window drag.
+function makeDraggable(el: HTMLElement) {
+  el.addEventListener('mousedown', async (e) => {
+    if (e.button !== 0) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('button, input, textarea, select, a, [contenteditable], .qa-picker-panel')) return;
+    e.preventDefault();
+    try {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window');
+      getCurrentWindow().startDragging();
+    } catch {
+      // Not running in Tauri.
+    }
+  });
+}
+
 // --- DOM scaffolding ---
-const card = document.createElement('div');
-card.className = 'qa-card';
+
+// Outer drag wrap: transparent 8px padding gives the popup its draggable
+// border and lets the panel's shadow render past the panel edge.
+const dragWrap = document.createElement('div');
+dragWrap.className = 'qa-drag-wrap';
+
+const panel = document.createElement('div');
+panel.className = 'qa-panel';
 
 const header = document.createElement('div');
 header.className = 'qa-header';
@@ -40,11 +65,12 @@ pickerBtn.className = 'qa-note-picker';
 pickerBtn.type = 'button';
 
 const pickerLabel = document.createElement('span');
+pickerLabel.className = 'qa-note-picker-label';
 pickerLabel.textContent = 'Loading…';
 
 const pickerChevron = document.createElement('span');
 pickerChevron.className = 'qa-chevron';
-pickerChevron.textContent = '▾';
+render(ArrowDownSmallIcon({ width: '14', height: '14' }), pickerChevron);
 
 pickerBtn.appendChild(pickerLabel);
 pickerBtn.appendChild(pickerChevron);
@@ -72,9 +98,12 @@ editor.autocapitalize = 'sentences';
 
 body.appendChild(editor);
 
-card.appendChild(header);
-card.appendChild(body);
-root.appendChild(card);
+panel.appendChild(header);
+panel.appendChild(body);
+dragWrap.appendChild(panel);
+root.appendChild(dragWrap);
+
+makeDraggable(dragWrap);
 
 // --- State ---
 let allNotes: NoteMeta[] = [];
@@ -137,18 +166,8 @@ function renderPickerList(query: string) {
     const item = document.createElement('div');
     item.className = 'qa-picker-item';
     if (idx === pickerActiveIdx) item.classList.add('qa-active');
-
-    const title = document.createElement('span');
-    title.className = 'qa-picker-item-title';
-    title.textContent = note.title?.trim() || 'Untitled';
-    item.appendChild(title);
-
-    if (note.id === selectedNoteId) {
-      const check = document.createElement('span');
-      check.className = 'qa-picker-item-check';
-      check.textContent = '✓';
-      item.appendChild(check);
-    }
+    if (note.id === selectedNoteId) item.classList.add('qa-selected');
+    item.textContent = note.title?.trim() || 'Untitled';
 
     item.addEventListener('mouseenter', () => {
       pickerActiveIdx = idx;
@@ -313,7 +332,6 @@ async function activate() {
 }
 
 listen('quick-append-opened', activate);
-// Window focus is the most reliable signal that the popup just became visible.
 window.addEventListener('focus', activate);
 
 // Auto-dismiss when the popup loses focus (clicked away). Skip if we just

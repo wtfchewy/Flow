@@ -755,8 +755,6 @@ fn ensure_quick_append_window(app: &tauri::AppHandle) -> Option<tauri::WebviewWi
     )
     .title("Quick Append")
     .inner_size(width, height)
-    .min_inner_size(420.0, 180.0)
-    .max_inner_size(720.0, 480.0)
     .title_bar_style(tauri::TitleBarStyle::Overlay)
     .hidden_title(true)
     .decorations(false)
@@ -765,7 +763,6 @@ fn ensure_quick_append_window(app: &tauri::AppHandle) -> Option<tauri::WebviewWi
     .skip_taskbar(true)
     .resizable(false)
     .visible(false)
-    .focused(false)
     .build();
 
     res.ok().map(|w| {

@@ -404,13 +404,24 @@ pickerBtn.addEventListener('click', (ev) => {
   }
 });
 
+// Focus the editor reliably. The popup is shown asynchronously by the OS,
+// and BlockSuite's rich-text mounts on its own render schedule, so a single
+// focus call right after activate() will often miss. Poll for ~1s until
+// the inline editor is available, then focus it.
 function focusEditor() {
   if (!scratchEditor) return;
-  // Try the doc-title first (initial caret), fall back to the first rich-text.
-  setTimeout(() => {
-    const richText = scratchEditor!.querySelector('rich-text') as any;
-    richText?.inlineEditor?.focusEnd();
-  }, 30);
+  let tries = 0;
+  const attempt = () => {
+    if (!scratchEditor) return;
+    const richText = scratchEditor.querySelector('rich-text') as any;
+    const inline = richText?.inlineEditor;
+    if (inline?.focusEnd) {
+      inline.focusEnd();
+      return;
+    }
+    if (tries++ < 60) requestAnimationFrame(attempt);
+  };
+  attempt();
 }
 
 // --- Submission ---
@@ -456,11 +467,15 @@ document.addEventListener('keydown', (ev) => {
 }, true);
 
 // Reset state and refresh the note list each time the popup is shown.
-async function activate() {
+function activate() {
   closePicker();
   resetEditor();
-  await loadNotes();
-  requestAnimationFrame(focusEditor);
+  // Refresh the note list without blocking focus.
+  loadNotes();
+  // Defer focus until after the window has actually become focused at the
+  // OS level (otherwise the body element grabs focus once the OS catches
+  // up, and our focusEnd call gets clobbered).
+  focusEditor();
 }
 
 listen('quick-append-opened', activate);

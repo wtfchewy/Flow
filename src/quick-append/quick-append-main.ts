@@ -44,9 +44,12 @@ function makeDraggable(el: HTMLElement) {
 }
 
 // --- DOM scaffolding ---
+//
+// Mirrors the main app's structure exactly:
+//   #quick-append-root  ← like #app: full-window rounded secondary surface
+//     .qa-drag-wrap     ← like .peak-editor-drag-wrap: 8px draggable padding
+//       .qa-panel       ← like .peak-editor-area: rounded primary panel
 
-// Outer drag wrap: transparent 8px padding gives the popup its draggable
-// border and lets the panel's shadow render past the panel edge.
 const dragWrap = document.createElement('div');
 dragWrap.className = 'qa-drag-wrap';
 
@@ -103,6 +106,8 @@ panel.appendChild(body);
 dragWrap.appendChild(panel);
 root.appendChild(dragWrap);
 
+// The 8px padding around the inner panel is the draggable border, just like
+// the main app's editor-drag-wrap.
 makeDraggable(dragWrap);
 
 // --- State ---

@@ -748,6 +748,10 @@ fn ensure_quick_append_window(app: &tauri::AppHandle) -> Option<tauri::WebviewWi
     let width: f64 = 560.0;
     let height: f64 = 300.0;
 
+    // Match the main window's builder as closely as possible (Overlay
+    // title bar + hidden title + transparent + decorations:false is what
+    // gives macOS a properly rounded window mask + shadow). Only diverge
+    // on always-on-top + skip-taskbar so it behaves like a popup.
     let res = WebviewWindowBuilder::new(
         app,
         "quick-append",
@@ -755,13 +759,13 @@ fn ensure_quick_append_window(app: &tauri::AppHandle) -> Option<tauri::WebviewWi
     )
     .title("Quick Append")
     .inner_size(width, height)
+    .min_inner_size(420.0, 220.0)
     .title_bar_style(tauri::TitleBarStyle::Overlay)
     .hidden_title(true)
     .decorations(false)
     .transparent(true)
     .always_on_top(true)
     .skip_taskbar(true)
-    .resizable(false)
     .visible(false)
     .build();
 

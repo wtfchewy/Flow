@@ -15,43 +15,50 @@ body {
   height: 100%;
   overflow: hidden;
   background: transparent;
-  font-family: var(--affine-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
-  color: var(--affine-text-primary-color);
 }
 
+/* Outer container — mirrors #app exactly. Fills the window with a rounded
+   secondary-colored surface; macOS sees the rounded alpha mask and shadows
+   the popup's true rounded shape. */
 #quick-append-root {
-  position: fixed;
-  inset: 0;
   display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--affine-background-secondary-color);
+  color: var(--affine-text-primary-color);
+  font-family: var(--affine-font-family);
+  border-radius: 14px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* Outer wrap mirrors .peak-editor-drag-wrap — transparent padding around the
-   panel that doubles as the draggable region and gives the panel's shadow
-   room to render. */
+/* Mirrors .peak-editor-drag-wrap — 8px padding around the inner panel that
+   doubles as the draggable border. */
 .qa-drag-wrap {
   flex: 1;
   display: flex;
   padding: 8px;
+  min-height: 0;
 }
 
+/* Mirrors .peak-editor-area — the inner rounded panel with the primary
+   background. */
 .qa-panel {
   flex: 1;
-  position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--affine-background-secondary-color);
-  color: var(--affine-text-primary-color);
-  border: 0.5px solid var(--affine-border-color);
-  border-radius: 12px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
   overflow: hidden;
+  position: relative;
+  background: var(--affine-background-primary-color);
+  border-radius: 12px;
 }
 
 .qa-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 14px 8px;
+  padding: 12px 14px 10px;
   border-bottom: 0.5px solid var(--affine-border-color);
 }
 
@@ -65,8 +72,8 @@ body {
 .qa-note-picker {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px 4px 10px;
+  gap: 4px;
+  padding: 4px 6px 4px 10px;
   height: 26px;
   border-radius: 7px;
   background: var(--affine-hover-color);
@@ -77,9 +84,6 @@ body {
   font-family: inherit;
   cursor: pointer;
   max-width: 280px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
 }
 
 .qa-note-picker:hover {
@@ -148,6 +152,8 @@ body {
   font-size: 14px;
   line-height: 1.5;
   color: inherit;
+  user-select: auto;
+  -webkit-user-select: auto;
 }
 
 .qa-editor::placeholder {
@@ -162,7 +168,7 @@ body {
   inset: 0;
   display: flex;
   flex-direction: column;
-  background: var(--affine-background-overlay-panel-color, var(--affine-background-secondary-color));
+  background: var(--affine-background-primary-color);
 }
 
 .qa-picker-search-wrap {
@@ -182,6 +188,8 @@ body {
   font-family: inherit;
   font-size: 13px;
   color: var(--affine-text-primary-color);
+  user-select: auto;
+  -webkit-user-select: auto;
 }
 
 .qa-picker-search:focus {

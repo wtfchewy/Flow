@@ -791,6 +791,13 @@ fn toggle_quick_append_window(app: &tauri::AppHandle) {
         let _ = win.show();
         let _ = win.set_focus();
         let _ = win.emit("quick-append-opened", ());
+        // macOS sometimes doesn't focus the window immediately after show();
+        // re-focus after a short delay to ensure the webview is active.
+        let win2 = win.clone();
+        std::thread::spawn(move || {
+            std::thread::sleep(std::time::Duration::from_millis(50));
+            let _ = win2.set_focus();
+        });
     }
 }
 
@@ -810,6 +817,11 @@ fn show_quick_append(app: tauri::AppHandle) {
         let _ = win.show();
         let _ = win.set_focus();
         let _ = win.emit("quick-append-opened", ());
+        let win2 = win.clone();
+        std::thread::spawn(move || {
+            std::thread::sleep(std::time::Duration::from_millis(50));
+            let _ = win2.set_focus();
+        });
     }
 }
 

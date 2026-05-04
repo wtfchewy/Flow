@@ -15,7 +15,6 @@ import '../editor/editor-container';
 import type { PeakEditorContainer } from '../editor/editor-container';
 import type { Store } from '@blocksuite/affine/store';
 import type { TestWorkspace } from '@blocksuite/affine/store/test';
-import type { BlockModel } from '@blocksuite/affine/store';
 
 interface NoteMeta {
   id: string;
@@ -163,73 +162,20 @@ function resetEditor() {
   scratchEditor.autofocus = false;
 }
 
-// Walk the scratch doc's affine:note children and produce a markdown string.
-// Loses inline formatting but preserves block structure (headings, lists,
-// quotes, code blocks, dividers). Good enough for quick-append; the receiver
-// uses BlockSuite's markdown importer so anything we emit gets faithfully
-// re-blocked.
-function docToMarkdown(store: Store): string {
+// Serialize the scratch doc's note-block children as BlockSuite snapshots.
+// Sending snapshots (instead of markdown) preserves all inline formatting
+// (bold, italic, code, links, etc.) with perfect fidelity.
+function getBlockSnapshots(store: Store): any[] | null {
+  const job = store.getTransformer();
   const noteBlock = store.root?.children.find(b => b.flavour === 'affine:note');
-  if (!noteBlock) return '';
+  if (!noteBlock || noteBlock.children.length === 0) return null;
 
-  const lines: string[] = [];
+  const snapshots: any[] = [];
   for (const child of noteBlock.children) {
-    const md = blockToMarkdown(child, 0);
-    if (md.length > 0) lines.push(md);
+    const snap = job.blockToSnapshot(child);
+    if (snap) snapshots.push(snap);
   }
-  return lines.join('\n\n');
-}
-
-function blockToMarkdown(block: BlockModel, depth: number): string {
-  const flavour = block.flavour;
-  const props = (block as any).props ?? {};
-  const text = (props.text?.toString() ?? '').replace(/​/g, '');
-  const indent = '  '.repeat(depth);
-
-  let out = '';
-  switch (flavour) {
-    case 'affine:paragraph': {
-      const type = props.type || 'text';
-      if (type === 'h1') out = `# ${text}`;
-      else if (type === 'h2') out = `## ${text}`;
-      else if (type === 'h3') out = `### ${text}`;
-      else if (type === 'h4') out = `#### ${text}`;
-      else if (type === 'h5') out = `##### ${text}`;
-      else if (type === 'h6') out = `###### ${text}`;
-      else if (type === 'quote') out = `> ${text}`;
-      else out = text;
-      break;
-    }
-    case 'affine:list': {
-      const type = props.type || 'bulleted';
-      if (type === 'todo') out = `${indent}- [${props.checked ? 'x' : ' '}] ${text}`;
-      else if (type === 'numbered') out = `${indent}1. ${text}`;
-      else out = `${indent}- ${text}`;
-      break;
-    }
-    case 'affine:code': {
-      const lang = (props.language || '').toString();
-      out = `\`\`\`${lang}\n${text}\n\`\`\``;
-      break;
-    }
-    case 'affine:divider':
-      out = '---';
-      break;
-    default:
-      out = text;
-  }
-
-  if (block.children.length > 0) {
-    const childLines: string[] = [];
-    for (const child of block.children) {
-      const md = blockToMarkdown(child, depth + 1);
-      if (md.length > 0) childLines.push(md);
-    }
-    if (childLines.length > 0) {
-      out += (out ? '\n' : '') + childLines.join('\n');
-    }
-  }
-  return out;
+  return snapshots.length > 0 ? snapshots : null;
 }
 
 // --- Note picker state ---
@@ -380,7 +326,7 @@ function openPicker() {
 
   pickerPanel.appendChild(searchWrap);
   pickerPanel.appendChild(list);
-  body.appendChild(pickerPanel);
+  header.appendChild(pickerPanel);
 
   const currentIdx = allNotes.findIndex(n => n.id === selectedNoteId);
   pickerActiveIdx = currentIdx >= 0 ? currentIdx : 0;
@@ -437,8 +383,19 @@ function focusEditor() {
       focusInterval = null;
       return;
     }
+    // Force the webview to be focused at the DOM level first.
+    window.focus();
     const rt = findEditableRichText();
-    rt?.inlineEditor?.focusEnd?.();
+    if (rt) {
+      // Try focusEnd on the inline editor.
+      rt.inlineEditor?.focusEnd?.();
+      // Fallback: directly focus the contenteditable host element.
+      const editable = rt.querySelector('[contenteditable="true"]') as HTMLElement | null;
+      if (editable && document.activeElement !== editable) {
+        editable.focus();
+        rt.inlineEditor?.focusEnd?.();
+      }
+    }
     if (++attempts >= 30) {
       if (focusInterval) clearInterval(focusInterval);
       focusInterval = null;
@@ -451,11 +408,11 @@ let lastDismissAt = 0;
 
 async function submit() {
   if (!scratchStore || !selectedNoteId) return;
-  const markdown = docToMarkdown(scratchStore).trim();
-  if (!markdown) return;
+  const snapshots = getBlockSnapshots(scratchStore);
+  if (!snapshots) return;
 
   try {
-    await emitTo('main', 'quick-append-submit', { noteId: selectedNoteId, markdown });
+    await emitTo('main', 'quick-append-submit', { noteId: selectedNoteId, snapshots });
   } catch (err) {
     console.error('quick-append: failed to dispatch', err);
   }
@@ -499,6 +456,10 @@ window.addEventListener('keydown', onKeydown, true);
 function activate() {
   closePicker();
   loadNotes();
+  // Request OS-level focus from the Tauri side (fire-and-forget).
+  import('@tauri-apps/api/window')
+    .then(m => m.getCurrentWindow().setFocus())
+    .catch(() => {});
   focusEditor();
 }
 

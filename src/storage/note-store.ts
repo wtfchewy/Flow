@@ -342,6 +342,48 @@ export async function appendMarkdownToNote(id: string, markdown: string) {
   }
 }
 
+/**
+ * Append block snapshots (from the quick-append popup) directly into a note.
+ * This preserves all inline formatting (bold, italic, code, links) with
+ * perfect fidelity — no markdown roundtrip needed.
+ */
+export async function appendSnapshotsToNote(id: string, snapshots: any[]) {
+  if (!snapshots.length) return;
+
+  const isActive = activeNoteId.value === id && !!activeStore;
+  const loaded = isActive
+    ? { store: activeStore as Store, temporary: false }
+    : await getStoreForNote(id);
+  const { store, temporary } = loaded;
+
+  try {
+    const noteBlock = store.root?.children.find(b => b.flavour === 'affine:note');
+    if (!noteBlock) return;
+
+    const job = store.getTransformer();
+    for (const snap of snapshots) {
+      await job.snapshotToBlock(snap, store, noteBlock.id);
+    }
+
+    if (!isActive) {
+      const noteMeta = notes.value.find(n => n.id === id);
+      const { title, preview } = extractTitleAndPreview(store);
+      const ydoc = getYDoc(store);
+      await saveNote(id, title, preview, noteMeta?.mode || 'page', ydoc, noteMeta?.pinned || false);
+
+      const updated = notes.value.map(n =>
+        n.id === id
+          ? { ...n, title, preview, updatedAt: Date.now() }
+          : n
+      );
+      updated.sort((a, b) => b.updatedAt - a.updatedAt);
+      notes.value = updated;
+    }
+  } finally {
+    if (temporary) cleanupTemporaryStore(id);
+  }
+}
+
 export async function importMarkdownFile(file: File) {
   await saveCurrentNote();
 

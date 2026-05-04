@@ -85,7 +85,14 @@ export async function saveSettingsImmediate(settings: AppSettings) {
 }
 
 export function applySettings(settings: AppSettings) {
+  const prevTheme = document.documentElement.getAttribute('data-theme');
   document.documentElement.setAttribute('data-theme', settings.theme);
+
+  // Smooth fade when theme actually changes
+  if (prevTheme && prevTheme !== settings.theme) {
+    document.documentElement.classList.add('peak-theme-transition');
+    setTimeout(() => document.documentElement.classList.remove('peak-theme-transition'), 400);
+  }
   document.documentElement.classList.toggle('vibrancy', settings.vibrancy);
   document.documentElement.classList.toggle('peak-header-bar', settings.headerBar);
   document.documentElement.classList.toggle('peak-compact-sidebar', settings.compactSidebar);

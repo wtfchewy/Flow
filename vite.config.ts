@@ -20,7 +20,7 @@ export default defineConfig({
     target: 'es2022',
   },
   optimizeDeps: {
-    entries: ['index.html', 'notch.html'],
+    entries: ['index.html', 'notch.html', 'quick-append.html'],
   },
   resolve: {
     extensions: ['.ts', '.js'],
@@ -38,6 +38,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         notch: resolve(__dirname, 'notch.html'),
+        quickAppend: resolve(__dirname, 'quick-append.html'),
       },
       onwarn(warning, defaultHandler) {
         if (

@@ -526,6 +526,21 @@ async function main() {
       }
     });
 
+    // Listen for quick-append submissions sent directly from the popup window.
+    // The popup sends BlockSuite block snapshots so inline formatting (bold,
+    // italic, code, links, etc.) is preserved with perfect fidelity.
+    listen<{ noteId: string; snapshots?: any[] }>('quick-append-submit', async (event) => {
+      const data = event.payload;
+      if (!data?.noteId) return;
+      try {
+        if (data.snapshots && data.snapshots.length > 0) {
+          await noteStore.appendSnapshotsToNote(data.noteId, data.snapshots);
+        }
+      } catch (err) {
+        console.error('Quick append failed:', err);
+      }
+    });
+
     // Show the main window now that the UI is fully ready
     const { getCurrentWindow } = await import('@tauri-apps/api/window');
     await getCurrentWindow().show();

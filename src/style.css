@@ -9,6 +9,27 @@ body {
   background: transparent;
 }
 
+/* Smooth theme transition — class added temporarily during theme switch */
+html.peak-theme-transition #app,
+html.peak-theme-transition .peak-sidebar,
+html.peak-theme-transition .peak-editor-area,
+html.peak-theme-transition .peak-editor-header,
+html.peak-theme-transition .peak-note-list,
+html.peak-theme-transition .peak-note-item,
+html.peak-theme-transition .peak-note-group-header,
+html.peak-theme-transition .peak-note-item-title,
+html.peak-theme-transition .peak-note-item-meta,
+html.peak-theme-transition .peak-note-item-folder,
+html.peak-theme-transition .peak-editor-header-title,
+html.peak-theme-transition .peak-settings-panel,
+html.peak-theme-transition .peak-context-menu,
+html.peak-theme-transition .peak-mode-toggle,
+html.peak-theme-transition .peak-editor-sidebar-pill,
+html.peak-theme-transition .peak-editor-container {
+  transition: background-color 0.35s ease, color 0.35s ease,
+              border-color 0.35s ease !important;
+}
+
 *::-webkit-scrollbar {
   display: none;
 }
